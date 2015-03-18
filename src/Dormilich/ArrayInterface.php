@@ -158,6 +158,23 @@ interface ArrayInterface
 	 * @return mixed Returns the resulting value. 
 	 */
 	public function reduce(callable $callback, $initial = NULL);
+	/**
+	 * Replaces the values of the array with values having the same keys in 
+	 * each of the following arrays. If a key from the first array exists in 
+	 * the second array, its value will be replaced by the value from the 
+	 * second array. If the key exists in the second array, and not the first, 
+	 * it will be created in the first array. If a key only exists in the first 
+	 * array, it will be left as is. If several arrays are passed for replacement, 
+	 * they will be processed in order, the later arrays overwriting the previous 
+	 * values. 
+	 * 
+	 * Note: replace() is not recursive: it will replace values in the first 
+	 * array by whatever type is in the second array. 
+	 * 
+	 * @param mixed $input The array from which elements will be extracted. 
+	 * @return ArrayObject Returns an array on success.
+	 * @throws Exception An error occurred.
+	 */
 	public function replace($input);
 	/**
 	 * Return an array with elements in reverse order.
