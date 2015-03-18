@@ -295,9 +295,80 @@ interface ArrayInterface
 	 * @return ArrayObject Returns the slice. 
 	 */
 	public function slice ($offset, $length = NULL, $preserve_keys = false);
+	/**
+	 * This method sorts the array. Elements will be arranged from lowest to 
+	 * highest when this function has completed. 
+	 * 
+	 * @param integer $sort_flags The optional second parameter sort_flags may 
+	 *          be used to modify the sorting behavior using these values: 
+	 *           · SORT_REGULAR - compare items normally (don't change types)
+	 *           · SORT_NUMERIC - compare items numerically
+	 *           · SORT_STRING - compare items as strings 
+	 *           · SORT_LOCALE_STRING - compare items as strings, based on the 
+	 *                  current locale. It uses the locale, which can be 
+	 *                  changed using setlocale() 
+	 *           · SORT_NATURAL - compare items as strings using "natural 
+	 *                  ordering" like natsort() 
+	 *           · SORT_FLAG_CASE - can be combined (bitwise OR) with SORT_STRING 
+	 *                  or SORT_NATURAL to sort strings case-insensitively 
+	 * @param integer $mode Determines whether the comparison should be made 
+	 * 			on the array values or the array keys using the 
+	 * 			ArrayInterface::USE_VALUE and ArrayInterface::USE_KEY constants.
+	 * @param boolean $preserve_keys If this parameter is set to TRUE the array 
+	 * 			indices maintain their correlation with the array elements they 
+	 * 			are associated with. This is used mainly when sorting associative 
+	 * 			arrays where the actual element order is significant. 
+	 * @return ArrayObject Returns the array on success.
+	 * @throws Exception Sorting failed.
+	 */
 	public function sort($sort_flags = \SORT_REGULAR, $mode = ArrayInterface::USE_VALUE, $preserve_keys = false);
+	/**
+	 * This method sorts the array. Elements will be arranged from highest to 
+	 * lowest (reverse order) when this function has completed. 
+	 * 
+	 * @param integer $sort_flags The optional second parameter sort_flags may 
+	 *          be used to modify the sorting behavior using these values: 
+	 *           · SORT_REGULAR - compare items normally (don't change types)
+	 *           · SORT_NUMERIC - compare items numerically
+	 *           · SORT_STRING - compare items as strings 
+	 *           · SORT_LOCALE_STRING - compare items as strings, based on the 
+	 *                  current locale. It uses the locale, which can be 
+	 *                  changed using setlocale() 
+	 *           · SORT_NATURAL - compare items as strings using "natural 
+	 *                  ordering" like natsort() 
+	 *           · SORT_FLAG_CASE - can be combined (bitwise OR) with SORT_STRING 
+	 *                  or SORT_NATURAL to sort strings case-insensitively 
+	 * @param integer $mode Determines whether the comparison should be made 
+	 * 			on the array values or the array keys using the 
+	 * 			ArrayInterface::USE_VALUE and ArrayInterface::USE_KEY constants.
+	 * @param boolean $preserve_keys If this parameter is set to TRUE the array 
+	 * 			indices maintain their correlation with the array elements they 
+	 * 			are associated with. This is used mainly when sorting associative 
+	 * 			arrays where the actual element order is significant. 
+	 * @return ArrayObject Returns the array on success.
+	 * @throws Exception Sorting failed.
+	 */
 	public function rsort($sort_flags = \SORT_REGULAR, $mode = ArrayInterface::USE_VALUE, $preserve_keys = false);
-	public function usort($callback, $mode = ArrayInterface::USE_VALUE, $preserve_keys = false);
+	/**
+	 * This method sorts the array using a user-supplied comparison function. 
+	 * If the array you wish to sort needs to be sorted by some non-trivial 
+	 * criteria, you should use this function. 
+	 * 
+	 * @param callable $callback The comparison function must return an integer 
+	 * 			less than, equal to, or greater than zero if the first argument 
+	 * 			is considered to be respectively less than, equal to, or greater 
+	 * 			than the second. 
+	 * @param integer $mode Determines whether the comparison should be made 
+	 * 			on the array values or the array keys using the 
+	 * 			ArrayInterface::USE_VALUE and ArrayInterface::USE_KEY constants.
+	 * @param boolean $preserve_keys If this parameter is set to TRUE the array 
+	 * 			indices maintain their correlation with the array elements they 
+	 * 			are associated with. This is used mainly when sorting associative 
+	 * 			arrays where the actual element order is significant. 
+	 * @return ArrayObject Returns the array on success.
+	 * @throws Exception Sorting failed.
+	 */
+	public function usort(callable $callback, $mode = ArrayInterface::USE_VALUE, $preserve_keys = false);
 	/**
 	 * Removes the elements designated by offset and length from the input 
 	 * array, and replaces them with the elements of the replacement array, 
