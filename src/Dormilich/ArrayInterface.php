@@ -102,6 +102,22 @@ interface ArrayInterface
 	 *          array after applying the callback function to each one. 
 	 */
 	public function map(callable $callback);
+	/**
+	 * Merges the elements of the array with one or more arrays together so 
+	 * that the values of one are appended to the end of the previous one. 
+	 * It returns the resulting array. 
+	 * 
+	 * If the input arrays have the same string keys, then the later value for 
+	 * that key will overwrite the previous one. If, however, the arrays 
+	 * contain numeric keys, the later value will not overwrite the original 
+	 * value, but will be appended. 
+	 * 
+	 * Values in the input array with numeric keys will be renumbered with 
+	 * incrementing keys starting from zero in the result array.
+	 * 
+	 * @param mixed $input First array to merge. 
+	 * @return ArrayObject Returns the resulting array. 
+	 */
 	public function merge($input);
 	/**
 	 * Pops and returns the last value of the array, shortening the array by 
