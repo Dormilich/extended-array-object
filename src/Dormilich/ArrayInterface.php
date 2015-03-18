@@ -51,7 +51,38 @@ interface ArrayInterface
 	 *          as keys and their count as value. 
 	 */
 	public function countValues();
+	/**
+	 * Compares the array against one or more other arrays and returns the 
+	 * elements in the array that are not present in any of the other arrays. 
+	 * 
+	 * @param mixed $input First array to compare against.
+	 * @param integer $mode Determines whether the comparison should be made 
+	 * 			on the array values, the array keys or on both using the 
+	 * 			ArrayInterface::USE_VALUE and ArrayInterface::USE_KEY constants.
+	 * @return ArrayObject Returns an array containing all the entries from 
+	 * 			the array that are not present in any of the other arrays. 
+	 */
 	public function diff($input, $mode = ArrayInterface::USE_VALUE);
+	/**
+	 * Computes the difference of arrays by using callback function(s) for 
+	 * comparison. This is unlike diff() which uses an internal function for 
+	 * comparing the elements. 
+	 * 
+	 * When using either USE_VALUE or USE_KEY only one compare function must 
+	 * be provided. If USE_VALUE|USE_KEY is used the first compare function 
+	 * compares the array values, the second the array keys. If the internal 
+	 * function should be used for comparison, set the appropriate callback 
+	 * parameter to NULL.
+	 * 
+	 * @param mixed $input The first array to compare against.
+	 * @param callable $val_compare_func 
+	 * @param callable $key_compare_func 
+	 * @param integer $mode Determines whether the comparison should be made 
+	 * 			on the array values, the array keys or on both using the 
+	 * 			ArrayInterface::USE_VALUE and ArrayInterface::USE_KEY constants.
+	 * @return ArrayObject Returns an array containing all the entries from 
+	 * 			the array that are not present in any of the other arrays. 
+	 */
 	public function udiff($input, $compare_func, $mode = ArrayInterface::USE_VALUE);
 	/**
 	 * Iterates over each value in the array passing them to the callback 
