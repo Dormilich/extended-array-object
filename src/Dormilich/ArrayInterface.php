@@ -43,6 +43,13 @@ interface ArrayInterface
 	 * @return boolean Returns TRUE if needle is found in the array, FALSE otherwise. 
 	 */
 	public function contains($needle, $strict = false);
+	/**
+	 * Returns an array using the values of the array as keys and their 
+	 * frequency in the array as values. 
+	 * 
+	 * @return ArrayObject Returns an associative array of values from array 
+	 *          as keys and their count as value. 
+	 */
 	public function countValues();
 	public function diff($input, $mode = ArrayInterface::USE_VALUE);
 	public function udiff($input, $compare_func, $mode = ArrayInterface::USE_VALUE);
