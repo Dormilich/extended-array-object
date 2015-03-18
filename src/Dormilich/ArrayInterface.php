@@ -144,6 +144,14 @@ interface ArrayInterface
 	 */
 	public function reverse($preserve_keys = false);
 	public function search($search_value, $strict = false);
+	/**
+	 * Shifts the first value of the array off and returns it, shortening the 
+	 * array by one element and moving everything down. All numerical array 
+	 * keys will be modified to start counting from zero while literal keys 
+	 * won’t be touched. 
+	 * 
+	 * @return mixed Returns the shifted value, or NULL if the array is empty.
+	 */
 	public function shift();
 	public function shuffle();
 	public function slice ($offset, $length = NULL, $preserve_keys = false);
