@@ -234,6 +234,11 @@ interface ArrayInterface
 	 * @return ArrayObject Returns the array.
 	 */
 	public function unshift($value);
+	/**
+	 * Returns all the values from the array and indexes the array numerically. 
+	 * 
+	 * @return ArrayObject The array. 
+	 */
 	public function values();
 	public function walk ($callback, $userdata = NULL);
 }
