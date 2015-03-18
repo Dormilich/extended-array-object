@@ -134,6 +134,14 @@ interface ArrayInterface
 	 */
 	public function reduce(callable $callback, $initial = NULL);
 	public function replace($input);
+	/**
+	 * Return an array with elements in reverse order.
+	 * 
+	 * @param boolean $preserve_keys If set to TRUE numeric keys are preserved. 
+	 *          Non-numeric keys are not affected by this setting and will 
+	 *          always be preserved. 
+	 * @return ArrayObject Returns the reversed array. 
+	 */
 	public function reverse($preserve_keys = false);
 	public function search($search_value, $strict = false);
 	public function shift();
