@@ -118,7 +118,21 @@ interface ArrayInterface
 	 * @return ArrayObject Returns an array of the selected entries.
 	 */
 	public function rand($num = 1);
-	public function reduce($callback, $initial = NULL);
+	/**
+	 * Applies iteratively the callback function to the elements of the array, 
+	 * so as to reduce the array to a single value. 
+	 * 
+	 * @param callable $callback 
+	 *          mixed callback ( mixed $carry , $mixed $item )
+	 *          > carry Holds the return value of the previous iteration; in 
+	 *                  the case of the first iteration it instead holds the 
+	 *                  value of initial. 
+	 *          > item  Holds the value of the current iteration.  
+	 * @param mixed $initial It will be used at the beginning of the process, 
+	 *          or as a final result in case the array is empty. 
+	 * @return mixed Returns the resulting value. 
+	 */
+	public function reduce(callable $callback, $initial = NULL);
 	public function replace($input);
 	public function reverse($preserve_keys = false);
 	public function search($search_value, $strict = false);
