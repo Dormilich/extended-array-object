@@ -31,6 +31,7 @@ interface ArrayInterface
 	 * @return ArrayObject Returns a multidimensional numerically indexed 
 	 *			array, starting with zero, with each dimension containing size 
 	 *			elements. 
+	 * @throws Exception $size is less than 1.
 	 */
 	public function chunk($size, $preserve_keys = false);
 	/**
