@@ -94,6 +94,13 @@ interface ArrayInterface
 	 */
 	public function map(callable $callback);
 	public function merge($input);
+	/**
+	 * Pops and returns the last value of the array, shortening the array by 
+	 * one element. 
+	 * 
+	 * @return mixed Returns the last value of the array. If the array is 
+	 * 			empty, NULL will be returned. 
+	 */
 	public function pop();
 	public function rand($num = 1);
 	public function reduce($callback, $initial = NULL);
