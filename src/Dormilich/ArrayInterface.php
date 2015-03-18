@@ -5,8 +5,21 @@ namespace Dormilich;
 
 interface ArrayInterface
 {
+	/**
+	 * @var integer
+	 */
 	const USE_VALUE = 1;
+	/**
+	 * @var integer
+	 */
 	const USE_KEY   = 2;
+	/**
+	 * Returns an array with all keys from array lowercased or uppercased. 
+	 * Numbered indices are left as is. 
+	 * 
+	 * @param integer $case Either CASE_UPPER or CASE_LOWER (default).
+	 * @return ArrayObject Returns an array with its keys lower or uppercased.
+	 */
 	public function changeKeyCase($case = \CASE_LOWER);
 	public function chunk($size, $preserve_keys = false);
 	public function contains($needle, $strict = false);
