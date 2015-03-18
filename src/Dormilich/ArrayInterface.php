@@ -62,6 +62,20 @@ interface ArrayInterface
 	 * @return ArrayObject Returns the filtered array. 
 	 */
 	public function filter(callable $callback);
+	/**
+	 * Exchanges all keys with their associated values in the array.
+	 * 
+	 * Note that the values of array need to be valid keys, i.e. they need to 
+	 * be either integer or string. A warning will be emitted if a value has 
+	 * the wrong type, and the key/value pair in question will not be included 
+	 * in the result. 
+	 * 
+	 * If a value has several occurrences, the latest key will be used as its 
+	 * value, and all others will be lost. 
+	 * 
+	 * @return ArrayObject Returns the flipped array.
+	 * @throws Exception Failed to flip the array.
+	 */
 	public function flip();
 	public function intersect($input, $mode = ArrayInterface::USE_VALUE);
 	public function uintersect($input, $compare_func, $mode = ArrayInterface::USE_VALUE);
