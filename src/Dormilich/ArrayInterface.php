@@ -240,5 +240,20 @@ interface ArrayInterface
 	 * @return ArrayObject The array. 
 	 */
 	public function values();
-	public function walk ($callback, $userdata = NULL);
+	/**
+	 * Applies the user-defined callback function to each element of the array. 
+	 * 
+	 * Only the values of the array may potentially be changed; its structure 
+	 * cannot be altered, i.e., the programmer cannot add, unset or reorder 
+	 * elements. If the callback does not respect this requirement, the 
+	 * behavior of this function is undefined, and unpredictable. 
+	 * 
+	 * @param callable $callback Typically, callback takes on two parameters. 
+	 *          The array parameter’s value being the first, and the key/index second. 
+	 * @param mixed $userdata If the optional userdata parameter is supplied, 
+	 *          it will be passed as the third parameter to the callback. 
+	 * @return ArrayObject Returns the array on success.
+	 * @throws Exception Execution failed.
+	 */
+	public function walk (callable $callback, $userdata = NULL);
 }
