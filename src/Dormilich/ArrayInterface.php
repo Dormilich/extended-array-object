@@ -53,7 +53,15 @@ interface ArrayInterface
 	public function countValues();
 	public function diff($input, $mode = ArrayInterface::USE_VALUE);
 	public function udiff($input, $compare_func, $mode = ArrayInterface::USE_VALUE);
-	public function filter($callback); // flag
+	/**
+	 * Iterates over each value in the array passing them to the callback 
+	 * function. If the callback function returns true, the current value from 
+	 * the array is returned into the result array. Array keys are preserved. 
+	 * 
+	 * @param callable $callback The callback function to use.
+	 * @return ArrayObject Returns the filtered array. 
+	 */
+	public function filter(callable $callback);
 	public function flip();
 	public function intersect($input, $mode = ArrayInterface::USE_VALUE);
 	public function uintersect($input, $compare_func, $mode = ArrayInterface::USE_VALUE);
