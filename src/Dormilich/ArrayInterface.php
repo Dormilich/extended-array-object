@@ -102,6 +102,13 @@ interface ArrayInterface
 	 * 			empty, NULL will be returned. 
 	 */
 	public function pop();
+	/**
+	 * Push one or more elements onto the end of the array.
+	 * 
+	 * @param mixed $value The first value to push onto the end of the array. 
+	 * @return ArrayObject Returns the array.
+	 */
+	public function push($value);
 	public function rand($num = 1);
 	public function reduce($callback, $initial = NULL);
 	public function replace($input);
