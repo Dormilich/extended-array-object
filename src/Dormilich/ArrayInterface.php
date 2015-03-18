@@ -153,6 +153,11 @@ interface ArrayInterface
 	 * @return mixed Returns the shifted value, or NULL if the array is empty.
 	 */
 	public function shift();
+	/**
+	 * Shuffles (randomizes the order of the elements in) the array. 
+	 * 
+	 * @return ArrayObject Returns the array.
+	 */
 	public function shuffle();
 	public function slice ($offset, $length = NULL, $preserve_keys = false);
 	public function sort($sort_flags = \SORT_REGULAR, $mode = ArrayInterface::USE_VALUE, $preserve_keys = false);
