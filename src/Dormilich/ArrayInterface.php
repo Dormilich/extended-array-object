@@ -33,6 +33,15 @@ interface ArrayInterface
 	 *			elements. 
 	 */
 	public function chunk($size, $preserve_keys = false);
+	/**
+	 * Checks if a value exists in the array using loose comparison unless 
+	 * strict is set.
+	 * 
+	 * @param mixed $needle The searched value.
+	 * @param bool $strict If the parameter strict is set to TRUE then method 
+	 *          will also check the types of the needle in the array.
+	 * @return boolean Returns TRUE if needle is found in the array, FALSE otherwise. 
+	 */
 	public function contains($needle, $strict = false);
 	public function countValues();
 	public function diff($input, $mode = ArrayInterface::USE_VALUE);
