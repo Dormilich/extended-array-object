@@ -1,0 +1,19 @@
+{
+	"name": "Dormilich/extended-array-object",
+	"description" : "Bringing array functions to the ArrayObject",
+	"license": "GPL v2.0",
+	"authors": [
+		{
+			"name": "Bertold von Dormilich",
+			"email": "Dormilich@netscape.net"
+		}
+	],
+	"require" : {
+		"php": ">=5.4.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Dormilich\\": "src/"
+		}
+	}
+}
