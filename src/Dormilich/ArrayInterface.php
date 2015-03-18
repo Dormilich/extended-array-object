@@ -206,8 +206,24 @@ interface ArrayInterface
 	 * 			array are not preserved. 
 	 * @return ArrayObject Returns the array consisting of the extracted elements. 
 	 */
-	public function splice($offset); // length, replacement
-	public function unique ($sort_flags = \SORT_STRING);
+	public function splice($offset);
+	/**
+	 * returns a new array without duplicate values. 
+	 * 
+	 * Note that keys are preserved. unique() sorts the values treated as 
+	 * string at first, then will keep the first key encountered for every 
+	 * value, and ignore all following keys. It does not mean that the key 
+	 * of the first related value from the unsorted array will be kept. 
+	 * 
+	 * Two elements are considered equal if and only if 
+	 * (string) $elem1 === (string) $elem2 i.e. when the string 
+	 * representation is the same, the first element will be used. 
+	 * 
+	 * @param integer $sort_flags The optional second parameter sort_flags 
+	 *          may be used to modify the sorting behavior.
+	 * @return ArrayObject Returns the filtered array. 
+	 */
+	public function unique($sort_flags = \SORT_STRING);
 	public function unshift($input);
 	public function values();
 	public function walk ($callback, $userdata = NULL);
