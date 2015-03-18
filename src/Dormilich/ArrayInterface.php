@@ -6,11 +6,11 @@ namespace Dormilich;
 interface ArrayInterface
 {
 	/**
-	 * @var integer
+	 * @var integer Compare using the array values.
 	 */
 	const USE_VALUE = 1;
 	/**
-	 * @var integer
+	 * @var integer Compare using the array keys.
 	 */
 	const USE_KEY   = 2;
 	/**
@@ -79,7 +79,16 @@ interface ArrayInterface
 	public function flip();
 	public function intersect($input, $mode = ArrayInterface::USE_VALUE);
 	public function uintersect($input, $compare_func, $mode = ArrayInterface::USE_VALUE);
-	public function keys(); // search_value, strict
+	/**
+	 * Return all the keys or a subset of the keys of the array.
+	 * 
+	 * @param mixed $search_value If specified, then only keys containing 
+	 * 			these values are returned. 
+	 * @param boolean $strict Determines if strict comparison (===) should be 
+	 * 			used during the search. 
+	 * @return ArrayObject Returns an array of all the (specified) keys in the array.  
+	 */
+	public function keys();
 	/**
 	 * Returns an array containing all the elements of the array after 
 	 * applying the callback function to each one.
