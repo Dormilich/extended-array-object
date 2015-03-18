@@ -80,7 +80,19 @@ interface ArrayInterface
 	public function intersect($input, $mode = ArrayInterface::USE_VALUE);
 	public function uintersect($input, $compare_func, $mode = ArrayInterface::USE_VALUE);
 	public function keys(); // search_value, strict
-	public function map($callback);
+	/**
+	 * Returns an array containing all the elements of the array after 
+	 * applying the callback function to each one.
+	 * 
+	 * Note: this implementation differs from array_map() with regards to the 
+	 * parameters passed to the callback.
+	 * 
+	 * @param callable $callback Callback function to run for each element 
+	 *          in each array. Receives the element’s value and key as parameters.
+	 * @return ArrayObject Returns an array containing all the elements of the 
+	 *          array after applying the callback function to each one. 
+	 */
+	public function map(callable $callback);
 	public function merge($input);
 	public function pop();
 	public function rand($num = 1);
