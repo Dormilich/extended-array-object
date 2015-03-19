@@ -142,6 +142,15 @@ interface ArrayInterface
 	 */
 	public function uintersect($input, $compare_func, $mode = ArrayInterface::USE_VALUE);
 	/**
+	 * Join the array’s elements with a string.
+	 * 
+	 * @param string $glue Defaults to an empty string. 
+	 * @return string Returns a string containing a string representation of 
+	 *          all the array elements in the same order, with the glue string 
+	 *          between each element. 
+	 */
+	public function join($glue = '');
+	/**
 	 * Return all the keys or a subset of the keys of the array.
 	 * 
 	 * @param mixed $search_value If specified, then only keys containing 
