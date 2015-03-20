@@ -162,6 +162,25 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $xao->getArrayCopy());
 	}
 
+	public function testJsonSerializableInterfaceExists()
+	{
+		$xao = new XArray;
+
+		$this->assertInstanceOf('JsonSerializable', $xao);
+	}
+
+	/**
+     * @depends testJsonSerializableInterfaceExists
+     */
+	public function testJsonSerializable()
+	{
+		$array = [1, 2, 3];
+		$xao   = new XArray($array);
+		$json  = json_encode($xao);
+
+		$this->assertEquals($array, json_decode($json, true));
+	}
+
 	### changeKeyCase()
 	#######################################################
 
