@@ -106,7 +106,7 @@ interface ArrayInterface
 	 * value, and all others will be lost. 
 	 * 
 	 * @return ArrayObject Returns the flipped array.
-	 * @throws Exception Failed to flip the array.
+	 * @throws RuntimeException Failed to flip the array.
 	 */
 	public function flip();
 	/**

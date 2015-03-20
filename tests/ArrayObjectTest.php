@@ -301,4 +301,14 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertInstanceOf($this->classname, $obj);
 		$this->assertEquals($expected, $obj->getArrayCopy());
 	}
+
+	/**
+	 * @expectedException RuntimeException
+	 */
+	public function testFlipWithInvalidArray()
+	{
+		$array = [true, null, ['foo' => 'bar']];
+		$xao   = new XArray($array);
+		$obj   = $xao->flip();
+	}
 }
