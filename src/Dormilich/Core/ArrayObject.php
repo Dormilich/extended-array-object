@@ -89,4 +89,18 @@ class ArrayObject extends \ArrayObject # implements ArrayInterface
 
     	return $value;
     }
+
+	/**
+	 * Push one or more elements onto the end of the array.
+	 * 
+	 * @param mixed $value The first value to push onto the end of the array. 
+	 * @return ArrayObject Returns the array.
+	 */
+    public function push($value)
+    {
+    	foreach (func_get_args() as $arg) {
+    		$this->append($arg);
+    	}
+    	return $this;
+    }
 }
