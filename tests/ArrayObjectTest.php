@@ -339,7 +339,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	#######################################################
 
 	/**
-     * @depends testCountableInterface
+     * @depends testCountableInterfaceExists
      */
 	public function testPopOnNumericArray()
 	{
@@ -351,7 +351,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-     * @depends testCountableInterface
+     * @depends testCountableInterfaceExists
      */
 	public function testPopOnAssocArray()
 	{
@@ -363,7 +363,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-     * @depends testCountableInterface
+     * @depends testCountableInterfaceExists
      */
 	public function testPopOnEmptyArray()
 	{
@@ -385,8 +385,8 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-     * @depends testCountableInterface
-     * @depends testArrayAccessInterface
+     * @depends testCountableInterfaceExists
+     * @depends testArrayAccessInterfaceExists
      */
 	public function testPushWithSingleElementOnNumericArray()
 	{
@@ -399,8 +399,8 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-     * @depends testCountableInterface
-     * @depends testArrayAccessInterface
+     * @depends testCountableInterfaceExists
+     * @depends testArrayAccessInterfaceExists
      */
 	public function testPushWithSingleElementOnHigherIndexedNumericArray()
 	{
@@ -413,8 +413,8 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-     * @depends testCountableInterface
-     * @depends testArrayAccessInterface
+     * @depends testCountableInterfaceExists
+     * @depends testArrayAccessInterfaceExists
      */
 	public function testPushWithMultipleElementsOnNumericArray()
 	{
@@ -422,15 +422,15 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertCount(1, $xao);
 		$xao->push(8, 'x', true);
 		
-		$this->assertCount(5,   $xao);
+		$this->assertCount(4,   $xao);
 		$this->assertSame(8,    $xao[1]);
 		$this->assertSame('x',  $xao[2]);
 		$this->assertSame(true, $xao[3]);
 	}
 
 	/**
-     * @depends testCountableInterface
-     * @depends testArrayAccessInterface
+     * @depends testCountableInterfaceExists
+     * @depends testArrayAccessInterfaceExists
      */
 	public function testPushWithSingleElementOnAssocArray()
 	{
@@ -441,9 +441,10 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertCount(2, $xao);
 		$this->assertSame(8,  $xao[0]);
 	}
+
 	/**
-     * @depends testCountableInterface
-     * @depends testArrayAccessInterface
+     * @depends testCountableInterfaceExists
+     * @depends testArrayAccessInterfaceExists
      */
 	public function testPushWithMultipleElementsOnAssocArray()
 	{
@@ -451,7 +452,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertCount(1, $xao);
 		$xao->push(8, 'x', true);
 		
-		$this->assertCount(5,   $xao);
+		$this->assertCount(4,   $xao);
 		$this->assertSame(8,    $xao[0]);
 		$this->assertSame('x',  $xao[1]);
 		$this->assertSame(true, $xao[2]);
