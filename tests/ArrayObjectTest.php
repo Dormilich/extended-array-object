@@ -334,4 +334,30 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$xao   = new XArray($array);
 		$obj   = $xao->flip();
 	}
+
+	### pop()
+	#######################################################
+
+	public function testPopOnNumericArray()
+	{
+		$xao = new XArray([3, 7]);
+		
+		$this->assertSame(7, $xao->pop());
+		$this->assertSame(3, $xao->pop());
+	}
+
+	public function testPopOnAssocArray()
+	{
+		$xao = new XArray(['bar', 'foo']);
+		
+		$this->assertSame('foo', $xao->pop());
+		$this->assertSame('bar', $xao->pop());
+	}
+
+	public function testPopOnEmptyArray()
+	{
+		$xao = new XArray([]);
+		
+		$this->assertNull($xao->pop());
+	}
 }
