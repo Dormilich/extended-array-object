@@ -343,7 +343,8 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$xao = new XArray([3, 7]);
 		
 		$this->assertSame(7, $xao->pop());
-		$this->assertSame(3, $xao->pop());
+		$this->assertCount(1, $xao);
+		$this->assertEquals([3], $xao->getArrayCopy());
 	}
 
 	public function testPopOnAssocArray()
@@ -351,13 +352,15 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$xao = new XArray(['bar', 'foo']);
 		
 		$this->assertSame('foo', $xao->pop());
-		$this->assertSame('bar', $xao->pop());
+		$this->assertCount(1, $xao);
+		$this->assertEquals(['bar'], $xao->getArrayCopy());
 	}
 
 	public function testPopOnEmptyArray()
 	{
 		$xao = new XArray([]);
 		
+		$this->assertCount(0, $xao);
 		$this->assertNull($xao->pop());
 	}
 }
