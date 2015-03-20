@@ -291,15 +291,29 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	### flip()
 	#######################################################
 
-	public function testFlip()
+	public function testFlipReturnsArrayObject()
+	{
+		$xao = new XArray([1, 2, 3]);
+		
+		$this->assertInstanceOf($this->classname, $xao->flip());
+	}
+
+	public function testFlipSuccess()
 	{
 		$array    = [1 => 'foo', 3 => 'bar'];
 		$expected = ['foo' => 1, 'bar' => 3];
 		$xao      = new XArray($array);
-		$obj 	  = $xao->flip();
 		
-		$this->assertInstanceOf($this->classname, $obj);
-		$this->assertEquals($expected, $obj->getArrayCopy());
+		$this->assertEquals($expected, $xao->flip()->getArrayCopy());
+	}
+
+	public function testFlipWithMultipleValueArray()
+	{
+		$array    = ['a', 'b', 'c', 'b'];
+		$expected = ['a' => 0, 'b' => 3, 'c' => 2, ];
+		$xao      = new XArray($array);
+		
+		$this->assertEquals($expected, $xao->flip()->getArrayCopy());
 	}
 
 	/**
