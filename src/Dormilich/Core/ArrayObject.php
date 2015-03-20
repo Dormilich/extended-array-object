@@ -48,4 +48,14 @@ class ArrayObject extends \ArrayObject # implements ArrayInterface
 
 		return in_array($needle, $this->getArrayCopy(), $flag);
 	}
+
+    public function flip()
+    {
+        $array = array_flip($this->getArrayCopy());
+
+        if (is_null($array)) {
+            throw new \RuntimeException('Failed to flip array.');
+        }
+        return new static($array);
+    }
 }
