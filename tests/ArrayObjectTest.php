@@ -307,6 +307,109 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertSame(false, $xao->contains('foo'));
 	}
 
+	### filter()
+	#######################################################
+
+	public function testFilterAcceptsFunction()
+	{
+		$array = [1, 2, 3];
+		$xao   = new XArray($array);
+
+		function test() { return true; }
+
+		$xao->filter('test');
+
+		$this->assertEquals($array, (array) $xao);
+	}
+
+	public function testFilterAcceptsClosure()
+	{
+		$array = [1, 2, 3];
+		$xao   = new XArray($array);
+
+		$xao->filter(function () {
+			return true;
+		});
+
+		$this->assertEquals($array, (array) $xao);
+	}
+
+	/**
+     * @depends testFilterAcceptsClosure
+     */
+	public function testFilterReturnsArrayObject()
+	{
+		$xao = new XArray([1, 2, 3]);
+
+		$obj = $xao->filter(function ($value) { return true; });
+
+		$this->assertInstanceOf($this->classname, $obj);
+	}
+
+	/**
+     * @depends testFilterAcceptsClosure
+     */
+	public function testFilterValueCallbackParameter()
+	{
+		$xao      = new XArray([1, 2, 3]);
+		$expected = [2, 3];
+
+		$obj      = $xao->filter(function ($value) { 
+			return ($value > 1); 
+		});
+
+		$this->assertEquals($expected, $obj->getArrayCopy());
+	}
+
+	public function testFilterFlagAvailable()
+	{
+		$this->assertTrue(defined('ARRAY_FILTER_USE_BOTH'));
+	}
+
+	/**
+     * @depends testFilterFlagAvailable
+     * @depends testFilterAcceptsClosure
+     */
+	public function testFilterKeyValueCallbackParameters()
+	{
+		$xao      = new XArray([2 => 3, 5 => 1, 7 => 9]);
+		$expected = [2 => 3, 7 => 9];
+
+		$obj      = $xao->filter(function ($value, $key) { 
+			return ($value > $key); 
+		});
+
+		$this->assertEquals($expected, $obj->getArrayCopy());
+	}
+
+	/**
+     * @depends testCountableInterfaceExists
+     * @depends testFilterAcceptsClosure
+     */
+	public function testFilterBindsArrayObjectToClosure()
+	{
+		$array = [1, 2, 3];
+		$xao   = new XArray($array);
+
+		$xao->filter(function () {
+			return (bool) $this->count();
+		});
+
+		$this->assertEquals($array, (array) $xao);
+	}
+
+	/**
+	 * @expectedException LogicException
+	 */
+	public function testFilterFailsForInvalidCallback()
+	{
+		$xao = new XArray([1, 2]);
+
+		// ArrayObject::count() is non-static and accepts no parameters
+		// though the syntax for the callable is correct the execution will fail
+		$xao->filter(['ArrayObject', 'count']);
+	}
+
 	### flip()
 	#######################################################
 
