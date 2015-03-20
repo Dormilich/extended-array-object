@@ -5,8 +5,10 @@ namespace Dormilich\Core;
 
 class ArrayObject extends \ArrayObject # implements ArrayInterface
 {
-	// using parent Constructor unmodified
-
+	public function errorHandler($code, $msg, $file, $line)
+	{
+		throw new \ErrorException($msg, 0, $code, $file, $line);
+	}
 	/**
 	 * Returns an array with all keys from the array lowercased or uppercased. 
 	 * Numbered indices are left as is. 
@@ -51,11 +53,15 @@ class ArrayObject extends \ArrayObject # implements ArrayInterface
 
     public function flip()
     {
-        $array = array_flip($this->getArrayCopy());
+    	try {
+    		set_error_handler([$this, 'errorHandler']);
+			$array = array_flip($this->getArrayCopy());
+			restore_error_handler();
 
-        if (is_null($array)) {
-            throw new \RuntimeException('Failed to flip array.');
-        }
-        return new static($array);
+			return new static($array);
+
+    	} catch (\ErrorException $exc) {
+    		throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
+    	}
     }
 }
