@@ -335,6 +335,37 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$obj   = $xao->flip();
 	}
 
+	### join()
+	#######################################################
+
+	public function testJoinReturnsString()
+	{
+		$xao = new XArray;
+
+		$this->assertInternalType('string', $xao->join());
+	}
+
+	public function testJoinWithScalarArrayWithoutGlue()
+	{
+		$xao = new XArray([13, 2.87, null, 'foo', true, false]);
+
+		$this->assertSame('132.87foo1', $xao->join());
+	}
+
+	public function testJoinWithScalarArrayWithGlue()
+	{
+		$xao = new XArray([13, 2.87, null, 'foo', true, false]);
+
+		$this->assertSame('13, 2.87, , foo, 1, ', $xao->join(', '));
+	}
+
+	public function testJoinWithNonscalarArray()
+	{
+		$xao = new XArray([1, ['foo'], 7]);
+
+		$this->assertSame('1-Array-7', $xao->join('-'));
+	}
+
 	### pop()
 	#######################################################
 
