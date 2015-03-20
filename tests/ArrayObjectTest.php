@@ -298,10 +298,19 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertInstanceOf($this->classname, $xao->flip());
 	}
 
-	public function testFlipSuccess()
+	public function testFlipNumericValues()
 	{
 		$array    = [1 => 'foo', 3 => 'bar'];
 		$expected = ['foo' => 1, 'bar' => 3];
+		$xao      = new XArray($array);
+		
+		$this->assertEquals($expected, $xao->flip()->getArrayCopy());
+	}
+
+	public function testFlipStringValues()
+	{
+		$array    = ['foo' => 1, 'bar' => 3];
+		$expected = [1 => 'foo', 3 => 'bar'];
 		$xao      = new XArray($array);
 		
 		$this->assertEquals($expected, $xao->flip()->getArrayCopy());
