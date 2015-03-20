@@ -4,6 +4,8 @@ use Dormilich\Core\ArrayObject as XArray;
 
 class ArrayObjectTest extends PHPUnit_Framework_TestCase
 {
+	private $classname = '\Dormilich\Core\ArrayObject';
+
 	public function testArrayAccessInterfaceExists()
 	{
 		$xao = new XArray;
@@ -177,7 +179,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $obj->getArrayCopy());
 
 		$this->assertNotEquals($xao, $obj);
-		$this->assertInstanceOf('\Dormilich\Core\ArrayObject', $obj);
+		$this->assertInstanceOf($this->classname, $obj);
 	}
 
 	public function testChangeKeyCaseToLower()
@@ -194,7 +196,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $obj->getArrayCopy());
 
 		$this->assertNotEquals($xao, $obj);
-		$this->assertInstanceOf('\Dormilich\Core\ArrayObject', $obj);
+		$this->assertInstanceOf($this->classname, $obj);
 	}
 
 	public function testChangeKeyCaseUsingDefault()
@@ -211,7 +213,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $obj->getArrayCopy());
 
 		$this->assertNotEquals($xao, $obj);
-		$this->assertInstanceOf('\Dormilich\Core\ArrayObject', $obj);
+		$this->assertInstanceOf($this->classname, $obj);
 	}
 
 	public function invalidCaseConstantProvider()
@@ -236,7 +238,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		];
 		$obj = $xao->changeKeyCase($param);
 
-		$this->assertInstanceOf('\Dormilich\Core\ArrayObject', $obj);
+		$this->assertInstanceOf($this->classname, $obj);
 		$this->assertEquals($expected, $obj->getArrayCopy());
 		$this->assertNotEquals($xao, $obj);
 	}
@@ -284,5 +286,19 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertSame(false, $xao->contains('foo', true));
 		$this->assertSame(false, $xao->contains('foo', false));
 		$this->assertSame(false, $xao->contains('foo'));
+	}
+
+	### flip()
+	#######################################################
+
+	public function testFlip()
+	{
+		$array    = [1 => 'foo', 3 => 'bar'];
+		$expected = ['foo' => 1, 'bar' => 3];
+		$xao      = new XArray($array);
+		$obj 	  = $xao->flip();
+		
+		$this->assertInstanceOf($this->classname, $obj);
+		$this->assertEquals($expected, $obj->getArrayCopy());
 	}
 }
