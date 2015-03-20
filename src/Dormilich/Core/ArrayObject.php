@@ -73,4 +73,20 @@ class ArrayObject extends \ArrayObject # implements ArrayInterface
     		throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
     	}
     }
+
+	/**
+	 * Pops and returns the last value of the array, shortening the array by 
+	 * one element. 
+	 * 
+	 * @return mixed Returns the last value of the array. If the array is 
+	 * 			empty, NULL will be returned. 
+	 */
+    public function pop()
+    {
+    	$array = $this->getArrayCopy();
+    	$value = array_pop($array);
+    	$this->exchangeArray($array);
+
+    	return $value;
+    }
 }
