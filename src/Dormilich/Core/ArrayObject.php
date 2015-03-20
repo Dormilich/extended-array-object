@@ -3,12 +3,25 @@
 
 namespace Dormilich\Core;
 
-class ArrayObject extends \ArrayObject # implements ArrayInterface
+class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInterface
 {
 	public function errorHandler($code, $msg, $file, $line)
 	{
 		throw new \ErrorException($msg, 0, $code, $file, $line);
 	}
+
+	/**
+	 * Specify data which should be serialized to JSON. Serializes the object 
+	 * to a value that can be serialized natively by json_encode().
+	 * 
+	 * @return mixed Returns data which can be serialized by json_encode(), 
+	 *          which is a value of any type other than a resource. 
+	 */
+	public function jsonSerialize()
+	{
+		return $this->getArrayCopy();
+	}
+
 	/**
 	 * Returns an array with all keys from the array lowercased or uppercased. 
 	 * Numbered indices are left as is. 
