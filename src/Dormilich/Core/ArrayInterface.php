@@ -1,7 +1,7 @@
 <?php
 // ArrayInterface.php
 
-namespace Dormilich;
+namespace Dormilich\Core;
 
 interface ArrayInterface
 {

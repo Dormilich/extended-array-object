@@ -1,6 +1,6 @@
 <?php
 
-use Dormilich\ArrayObject as XArray;
+use Dormilich\Core\ArrayObject as XArray;
 
 class ArrayObjectTest extends PHPUnit_Framework_TestCase
 {
@@ -177,7 +177,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $obj->getArrayCopy());
 
 		$this->assertNotEquals($xao, $obj);
-		$this->assertInstanceOf('\Dormilich\ArrayObject', $obj);
+		$this->assertInstanceOf('\Dormilich\Core\ArrayObject', $obj);
 	}
 
 	public function testChangeKeyCaseToLower()
@@ -194,7 +194,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $obj->getArrayCopy());
 
 		$this->assertNotEquals($xao, $obj);
-		$this->assertInstanceOf('\Dormilich\ArrayObject', $obj);
+		$this->assertInstanceOf('\Dormilich\Core\ArrayObject', $obj);
 	}
 
 	public function testChangeKeyCaseUsingDefault()
@@ -211,7 +211,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $obj->getArrayCopy());
 
 		$this->assertNotEquals($xao, $obj);
-		$this->assertInstanceOf('\Dormilich\ArrayObject', $obj);
+		$this->assertInstanceOf('\Dormilich\Core\ArrayObject', $obj);
 	}
 
 	public function invalidCaseConstantProvider()
@@ -236,7 +236,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		];
 		$obj = $xao->changeKeyCase($param);
 
-		$this->assertInstanceOf('\Dormilich\ArrayObject', $obj);
+		$this->assertInstanceOf('\Dormilich\Core\ArrayObject', $obj);
 		$this->assertEquals($expected, $obj->getArrayCopy());
 		$this->assertNotEquals($xao, $obj);
 	}

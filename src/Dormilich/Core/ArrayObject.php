@@ -1,7 +1,7 @@
 <?php
 // ArrayObject.php
 
-namespace Dormilich;
+namespace Dormilich\Core;
 
 class ArrayObject extends \ArrayObject # implements ArrayInterface
 {
