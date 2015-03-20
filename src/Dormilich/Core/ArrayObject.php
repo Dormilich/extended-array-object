@@ -32,4 +32,11 @@ class ArrayObject extends \ArrayObject # implements ArrayInterface
 
 		return new static($array);
 	}
+
+	public function contains($needle, $strict = false)
+	{
+		$flag  = filter_var($strict, \FILTER_VALIDATE_BOOLEAN);
+
+		return in_array($needle, $this->getArrayCopy(), $flag);
+	}
 }
