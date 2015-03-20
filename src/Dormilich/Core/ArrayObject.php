@@ -75,6 +75,19 @@ class ArrayObject extends \ArrayObject # implements ArrayInterface
     }
 
 	/**
+	 * Join the array’s elements with a string.
+	 * 
+	 * @param string $glue Defaults to an empty string. 
+	 * @return string Returns a string containing a string representation of 
+	 *          all the array elements in the same order, with the glue string 
+	 *          between each element. 
+	 */
+    public function join($glue = '')
+    {
+    	return implode($glue, $this->getArrayCopy());
+    }
+
+	/**
 	 * Pops and returns the last value of the array, shortening the array by 
 	 * one element. 
 	 * 
