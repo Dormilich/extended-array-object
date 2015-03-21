@@ -243,6 +243,18 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return $value;
 	}
 
+	public function unshift($value)
+	{
+		$array = $this->getArrayCopy();
+		foreach (array_reverse(func_get_args()) as $arg) {
+			// cannot use call_user_func_array() due to the reference
+			array_unshift($array, $arg);
+		}
+		$this->exchangeArray($array);
+
+		return $this;
+	}
+
 	/**
 	 * Returns all the values from the array and indexes the array numerically. 
 	 * 
