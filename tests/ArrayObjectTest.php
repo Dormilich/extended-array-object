@@ -358,6 +358,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$obj = $xao->filter(function ($value) { return true; });
 
 		$this->assertInstanceOf($this->classname, $obj);
+	#	$this->assertNotSame($xao, $obj);
 	}
 
 	/**
@@ -406,7 +407,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$xao->filter(function () {
 			return (bool) $this->count();
 		});
-
+	// tests maybe needs further assertions
 		$this->assertEquals($array, (array) $xao);
 	}
 
@@ -501,6 +502,90 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$xao = new XArray([1, ['foo'], 7]);
 
 		$xao->join('-');
+	}
+
+	### map()
+	#######################################################
+
+	public function testMapAcceptsFunction()
+	{
+		$array = [1, 2, 3];
+		$xao   = new XArray($array);
+
+		function test($value) { return $value; }
+
+		$obj   = $xao->map('test');
+
+		$this->assertEquals($array, (array) $obj);
+	}
+
+	public function testMapAcceptsClosure()
+	{
+		$array = [1, 2, 3];
+		$xao   = new XArray($array);
+
+		$obj   = $xao->map(function ($value) {
+			return $value;
+		});
+
+		$this->assertEquals($array, (array) $obj);
+	}
+
+	/**
+	 * @depends testMapAcceptsClosure
+	 */
+	public function testMapReturnsArrayObject()
+	{
+		$xao = new XArray([1, 2, 3]);
+		$obj = $xao->map(function ($value) {
+			return $value;
+		});
+		
+		$this->assertInstanceOf($this->classname, $obj);
+		$this->assertNotSame($xao, $obj);
+	}
+
+	/**
+     * @depends testMapAcceptsClosure
+     */
+	public function testMapCallbackParameters()
+	{
+		$xao      = new XArray(['bar' => ' jeder Vernunft']);
+		$expected = ['bar jeder Vernunft'];
+
+		$obj      = $xao->map(function ($value, $key) { 
+			return $key . $value; 
+		});
+
+		$this->assertEquals($expected, (array) $obj);
+	}
+
+	/**
+     * @depends testCountableInterfaceExists
+     * @depends testMapAcceptsClosure
+     */
+	public function testMapBindsArrayObjectToClosure()
+	{
+		$xao   = new XArray([1, 2, 3]);
+		$array = [3, 6, 9];
+
+		$obj   = $xao->map(function ($value) {
+			return $value * $this->count();
+		});
+	// tests maybe needs further assertions
+		$this->assertEquals($array, (array) $obj);
+	}
+
+	/**
+	 * @expectedException LogicException
+	 */
+	public function testMapFailsForInvalidCallback()
+	{
+		$xao = new XArray([1, 2]);
+
+		// ArrayObject::count() is non-static and accepts no parameters
+		// though the syntax for the callable is correct the execution will fail
+		$xao->map(['ArrayObject', 'count']);
 	}
 
 	### pop()
