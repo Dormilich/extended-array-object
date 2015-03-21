@@ -832,6 +832,28 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertSame(true, $xao[2]);
 	}
 
+	### values()
+	#######################################################
+
+	public function testValuesReturnsArrayObject()
+	{
+		$xao = new XArray([1, 2, 3]);
+		$obj = $xao->values();
+
+		$this->assertInstanceOf($this->classname, $obj);
+		$this->assertNotSame($xao, $obj);
+	}
+
+	public function testValuesSuccess()
+	{
+		$expected = [0 => 'bar', 1 => 'y'];
+		$xao      = new XArray(['foo' => 'bar', 'x' => 'y']);
+		$obj      = $xao->keys();
+
+		$this->assertCount(2, $obj);
+		$this->assertEquals($expected, (array) $obj);
+	}
+
 	### walk()
 	#######################################################
 
