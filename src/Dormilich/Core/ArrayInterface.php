@@ -22,19 +22,6 @@ interface ArrayInterface
 	 */
 	public function changeKeyCase($case = \CASE_LOWER);
 	/**
-	 * Chunks an array into arrays with {size} elements. The last chunk may 
-	 * contain less than {size} elements.  
-	 * 
-	 * @param integer $size The size of each chunk.
-	 * @param boolean $preserve_keys When set to TRUE keys will be preserved. 
-	 * 			Default is FALSE which will reindex the chunk numerically.
-	 * @return ArrayObject Returns a multidimensional numerically indexed 
-	 *			array, starting with zero, with each dimension containing size 
-	 *			elements. 
-	 * @throws Exception $size is less than 1.
-	 */
-	public function chunk($size, $preserve_keys = false);
-	/**
 	 * Checks if a value exists in the array using loose comparison unless 
 	 * strict is set.
 	 * 
