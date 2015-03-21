@@ -832,6 +832,35 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertSame(true, $xao[2]);
 	}
 
+	### shift()
+	#######################################################
+
+	public function testShiftOnNumericArray()
+	{
+		$xao = new XArray([3, 7]);
+		
+		$this->assertSame(7, $xao->shift());
+		$this->assertCount(1, $xao);
+		$this->assertEquals([3], (array) $xao);
+	}
+
+	public function testShiftOnAssocArray()
+	{
+		$xao = new XArray(['bar', 'foo']);
+		
+		$this->assertSame('foo', $xao->shift());
+		$this->assertCount(1, $xao);
+		$this->assertEquals(['bar'], (array) $xao);
+	}
+
+	public function testShiftOnEmptyArray()
+	{
+		$xao = new XArray([]);
+		
+		$this->assertCount(0, $xao);
+		$this->assertNull($xao->shift());
+	}
+
 	### values()
 	#######################################################
 
