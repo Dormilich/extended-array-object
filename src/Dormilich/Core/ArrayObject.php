@@ -243,6 +243,15 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return $value;
 	}
 
+	/**
+	 * Prepends passed elements to the front of the array. Note that the list 
+	 * of elements is prepended as a whole, so that the prepended elements stay 
+	 * in the same order. All numerical array keys will be modified to start 
+	 * counting from zero while literal keys won’t be touched. 
+	 * 
+	 * @param mixed $value First value to prepend.  
+	 * @return ArrayObject Returns the array.
+	 */
 	public function unshift($value)
 	{
 		$array = $this->getArrayCopy();
