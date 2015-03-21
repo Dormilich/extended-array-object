@@ -329,9 +329,9 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$array = [1, 2, 3];
 		$xao   = new XArray($array);
 
-		function test() { return true; }
+		function test_filter() { return true; }
 
-		$xao->filter('test');
+		$xao->filter('test_filter');
 
 		$this->assertEquals($array, (array) $xao);
 	}
@@ -512,9 +512,9 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$array = [1, 2, 3];
 		$xao   = new XArray($array);
 
-		function test($value) { return $value; }
+		function test_map($value) { return $value; }
 
-		$obj   = $xao->map('test');
+		$obj   = $xao->map('test_map');
 
 		$this->assertEquals($array, (array) $obj);
 	}
