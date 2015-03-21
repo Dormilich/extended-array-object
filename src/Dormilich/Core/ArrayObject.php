@@ -108,7 +108,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @return string Returns a string containing a string representation of 
 	 *          all the array elements in the same order, with the glue string 
 	 *          between each element. 
-	 * @throws RuntimeExceeption Non-scalar 
+	 * @throws RuntimeExceeption Forced string conversion of a non-scalar value.
 	 */
 	public function join($glue = '')
 	{
