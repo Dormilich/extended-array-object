@@ -196,6 +196,17 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	public function merge($input)
+	{
+		$args  = array_map(function ($item) {
+			return (array) $item;
+		}, func_get_args());
+		array_unshift($args, $this->getArrayCopy());
+		$array = call_user_func_array('array_merge', $args);
+
+		return new static($array);
+	}
+
 	/**
 	 * Pops and returns the last value of the array, shortening the array by 
 	 * one element. 
