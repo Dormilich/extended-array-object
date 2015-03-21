@@ -64,16 +64,29 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return in_array($needle, $this->getArrayCopy(), $flag);
 	}
 
+	/**
+	 * Iterates over each value in the array passing them to the callback 
+	 * function. If the callback function returns true, the current value from 
+	 * the array is returned into the result array. Array keys are preserved. 
+	 * 
+	 * @param callable $callback The callback function to use.
+	 * @return ArrayObject Returns the filtered array. 
+	 * @throws LogicException Invalid callback definition given.
+	 */
 	public function filter(callable $callback)
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
+			if ($callback instanceof \Closure) {
+				$callback = $callback->bindTo($this);
+			}
 			$array = array_filter($this->getArrayCopy(), $callback);
 			restore_error_handler();
 
 			return new static($array);
 		} 
 		catch (\ErrorException $exc) {
+			restore_error_handler();
 			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
 		}
 	}
@@ -97,6 +110,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 			return new static($array);
 		} 
 		catch (\ErrorException $exc) {
+			restore_error_handler();
 			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
 		}
 	}
@@ -123,6 +137,32 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 			restore_error_handler();
 			// e.g. Notice: aray to string conversion
 			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
+		}
+	}
+
+	public function map(callable $callback, $preserve_keys = false)
+	{
+		try {
+			set_error_handler([$this, 'errorHandler']);
+
+			$values = $this->getArrayCopy();
+			$keys   = array_keys($values);
+
+			if ($callback instanceof \Closure) {
+				$callback = $callback->bindTo($this);
+			}
+			$result = array_map($callback, $values, $keys);
+
+			if ($preserve_keys) {
+				$result = array_combine($keys, $result);
+			}
+			restore_error_handler();
+
+			return new static($result);
+		} 
+		catch (\ErrorException $exc) {
+			restore_error_handler();
+			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
 		}
 	}
 
