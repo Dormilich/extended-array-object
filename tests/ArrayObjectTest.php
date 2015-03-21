@@ -745,6 +745,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	{
 		$xao = new XArray([3, 7]);
 		
+		$this->assertCount(2, $xao);
 		$this->assertSame(7, $xao->pop());
 		$this->assertCount(1, $xao);
 		$this->assertEquals([3], (array) $xao);
@@ -754,6 +755,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	{
 		$xao = new XArray(['bar', 'foo']);
 		
+		$this->assertCount(2, $xao);
 		$this->assertSame('foo', $xao->pop());
 		$this->assertCount(1, $xao);
 		$this->assertEquals(['bar'], (array) $xao);
@@ -839,7 +841,8 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	{
 		$xao = new XArray([3, 7]);
 		
-		$this->assertSame(7, $xao->shift());
+		$this->assertCount(2, $xao);
+		$this->assertSame(7,  $xao->shift());
 		$this->assertCount(1, $xao);
 		$this->assertEquals([3], (array) $xao);
 	}
@@ -848,6 +851,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	{
 		$xao = new XArray(['bar', 'foo']);
 		
+		$this->assertCount(2, $xao);
 		$this->assertSame('foo', $xao->shift());
 		$this->assertCount(1, $xao);
 		$this->assertEquals(['bar'], (array) $xao);
