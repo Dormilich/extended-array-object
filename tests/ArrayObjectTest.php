@@ -865,6 +865,44 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertNull($xao->shift());
 	}
 
+	### unshift()
+	#######################################################
+
+	public function testUnshiftReturnsArrayObject()
+	{
+		$xao = new XArray;
+		$obj = $xao->unshift('x');
+
+		$this->assertSame($xao, $obj);
+	}
+
+	public function testUnshiftAddSingleElement()
+	{
+		$expected = ['bar', 'foo'];
+		$xao = new XArray(['foo']);
+		$xao->unshift('bar');
+
+		$this->assertEquals($expected, (array) $xao);
+	}
+
+	public function testUnshiftAddMultipleElements()
+	{
+		$expected = ['bar', 1, false, 'foo'];
+		$xao = new XArray(['foo']);
+		$xao->unshift('bar', 1, false);
+
+		$this->assertEquals($expected, (array) $xao);
+	}
+
+	public function testUnshiftRetainAssocKeys()
+	{
+		$expected = ['bar', 'foo' => 5];
+		$xao = new XArray(['foo' => 5]);
+		$xao->unshift('bar');
+
+		$this->assertEquals($expected, (array) $xao);
+	}
+
 	### values()
 	#######################################################
 
