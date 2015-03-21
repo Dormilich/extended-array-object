@@ -226,6 +226,14 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return $this;
 	}
 
+	/**
+	 * Shifts the first value of the array off and returns it, shortening the 
+	 * array by one element and moving everything down. All numerical array 
+	 * keys will be modified to start counting from zero while literal keys 
+	 * won’t be touched. 
+	 * 
+	 * @return mixed Returns the shifted value, or NULL if the array is empty.
+	 */
 	public function shift()
 	{
 		$array = $this->getArrayCopy();
