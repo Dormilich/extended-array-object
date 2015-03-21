@@ -68,7 +68,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
-			$array = array_filter((array) $this, $callback);
+			$array = array_filter($this->getArrayCopy(), $callback);
 			restore_error_handler();
 
 			return new static($array);

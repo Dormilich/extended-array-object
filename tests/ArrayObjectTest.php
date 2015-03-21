@@ -152,6 +152,20 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
+     * @depends testArrayObjectParentExists
+     */
+	public function testArrayObjectCastToArray()
+	{
+		$array = [
+			'foo' => 1, 
+			'bar' => 2, 
+		];
+		$xao = new XArray($array);
+
+		$this->assertEquals($array, (array) $xao);
+	}
+
+	/**
      * @depends testArrayObjectGetArrayCopy
      */
 	public function testConstructorHasCorrectDefaultValue()
@@ -195,7 +209,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 			'BAR' => 2, 
 		];
 		$obj = $xao->changeKeyCase(\CASE_UPPER);
-		$this->assertEquals($expected, $obj->getArrayCopy());
+		$this->assertEquals($expected, (array) $obj);
 
 		$this->assertNotEquals($xao, $obj);
 		$this->assertInstanceOf($this->classname, $obj);
@@ -212,7 +226,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 			'bar' => 2, 
 		];
 		$obj = $xao->changeKeyCase(\CASE_LOWER);
-		$this->assertEquals($expected, $obj->getArrayCopy());
+		$this->assertEquals($expected, (array) $obj);
 
 		$this->assertNotEquals($xao, $obj);
 		$this->assertInstanceOf($this->classname, $obj);
@@ -229,7 +243,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 			'bar' => 2, 
 		];
 		$obj = $xao->changeKeyCase();
-		$this->assertEquals($expected, $obj->getArrayCopy());
+		$this->assertEquals($expected, (array) $obj);
 
 		$this->assertNotEquals($xao, $obj);
 		$this->assertInstanceOf($this->classname, $obj);
@@ -258,7 +272,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$obj = $xao->changeKeyCase($param);
 
 		$this->assertInstanceOf($this->classname, $obj);
-		$this->assertEquals($expected, $obj->getArrayCopy());
+		$this->assertEquals($expected, (array) $obj);
 		$this->assertNotEquals($xao, $obj);
 	}
 
@@ -424,7 +438,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$expected = ['foo' => 1, 'bar' => 3];
 		$xao      = new XArray($array);
 		
-		$this->assertEquals($expected, $xao->flip()->getArrayCopy());
+		$this->assertEquals($expected, (array) $xao->flip());
 	}
 
 	public function testFlipStringValues()
@@ -492,33 +506,24 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	### pop()
 	#######################################################
 
-	/**
-     * @depends testCountableInterfaceExists
-     */
 	public function testPopOnNumericArray()
 	{
 		$xao = new XArray([3, 7]);
 		
 		$this->assertSame(7, $xao->pop());
 		$this->assertCount(1, $xao);
-		$this->assertEquals([3], $xao->getArrayCopy());
+		$this->assertEquals([3], (array) $xao);
 	}
 
-	/**
-     * @depends testCountableInterfaceExists
-     */
 	public function testPopOnAssocArray()
 	{
 		$xao = new XArray(['bar', 'foo']);
 		
 		$this->assertSame('foo', $xao->pop());
 		$this->assertCount(1, $xao);
-		$this->assertEquals(['bar'], $xao->getArrayCopy());
+		$this->assertEquals(['bar'], (array) $xao);
 	}
 
-	/**
-     * @depends testCountableInterfaceExists
-     */
 	public function testPopOnEmptyArray()
 	{
 		$xao = new XArray([]);
@@ -538,10 +543,6 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertSame($xao, $obj);
 	}
 
-	/**
-     * @depends testCountableInterfaceExists
-     * @depends testArrayAccessInterfaceExists
-     */
 	public function testPushWithSingleElementOnNumericArray()
 	{
 		$xao = new XArray(['foo']);
@@ -552,10 +553,6 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertSame(8,  $xao[1]);
 	}
 
-	/**
-     * @depends testCountableInterfaceExists
-     * @depends testArrayAccessInterfaceExists
-     */
 	public function testPushWithSingleElementOnHigherIndexedNumericArray()
 	{
 		$xao = new XArray([5 => 'foo']);
@@ -566,10 +563,6 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertSame(8,  $xao[6]);
 	}
 
-	/**
-     * @depends testCountableInterfaceExists
-     * @depends testArrayAccessInterfaceExists
-     */
 	public function testPushWithMultipleElementsOnNumericArray()
 	{
 		$xao = new XArray(['foo']);
@@ -582,10 +575,6 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertSame(true, $xao[3]);
 	}
 
-	/**
-     * @depends testCountableInterfaceExists
-     * @depends testArrayAccessInterfaceExists
-     */
 	public function testPushWithSingleElementOnAssocArray()
 	{
 		$xao = new XArray(['foo' => 'bar']);
@@ -596,10 +585,6 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertSame(8,  $xao[0]);
 	}
 
-	/**
-     * @depends testCountableInterfaceExists
-     * @depends testArrayAccessInterfaceExists
-     */
 	public function testPushWithMultipleElementsOnAssocArray()
 	{
 		$xao = new XArray(['foo' => 'bar']);
