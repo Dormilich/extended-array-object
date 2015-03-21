@@ -208,6 +208,23 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return $this;
 	}
 
+	/**
+	 * Applies the user-defined callback function to each element of the array. 
+	 * 
+	 * Only the values of the array may potentially be changed; its structure 
+	 * cannot be altered, i.e., the programmer cannot add, unset or reorder 
+	 * elements. If the callback does not respect this requirement, the 
+	 * behavior of this function is undefined, and unpredictable. 
+	 * 
+	 * @param callable $callback Callback takes on three parameters. 
+	 *          The element’s value, key, and the array itself. 
+	 * @param mixed $userdata If the optional userdata parameter is supplied, 
+	 *          it will be passed as the third parameter to the callback 
+	 *          instead of the array. 
+	 * @return ArrayObject Returns the array on success.
+	 * @throws LogicException Invalid callback definition given.
+	 * @throws RuntimeException Execution failed.
+	 */
 	public function walk(callable $callback, $userdata = NULL)
 	{
 		try {
