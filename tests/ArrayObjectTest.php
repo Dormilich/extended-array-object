@@ -538,6 +538,8 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	### map()
 	#######################################################
 
+	# => no same test on array return !
+
 	public function testMapAcceptsFunction()
 	{
 		$array = [1, 2, 3];
@@ -559,15 +561,46 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($array, (array) $obj);
 	}
 
+	public function testMapAcceptsStaticCallback()
+	{
+		$array = [1, 2, 3];
+		$xao   = new XArray($array);
+
+		$obj   = $xao->map(['CallbackTestMethods', 'static_map']);
+
+		$this->assertEquals($array, (array) $obj);
+	}
+
+	public function testMapAcceptsCallback()
+	{
+		$array = [1, 2, 3];
+		$xao   = new XArray($array);
+		$test  = new CallbackTestMethods;
+
+		$obj   = $xao->map([$test, 'static_map']);
+
+		$this->assertEquals($array, (array) $obj);
+	}
+
 	/**
-	 * @depends testMapAcceptsClosure
+	 * @expectedException LogicException
+	 */
+	public function testMapFailsForInvalidCallback()
+	{
+		$xao = new XArray([1, 2]);
+
+		// ArrayObject::count() is non-static and accepts no parameters
+		// though the syntax for the callable is correct the execution will fail
+		$xao->map(['ArrayObject', 'count']);
+	}
+
+	/**
+	 * @depends testMapAcceptsFunction
 	 */
 	public function testMapReturnsArrayObject()
 	{
 		$xao = new XArray([1, 2, 3]);
-		$obj = $xao->map(function ($value) {
-			return $value;
-		});
+		$obj = $xao->map('test_map');
 		
 		$this->assertInstanceOf($this->classname, $obj);
 		$this->assertNotSame($xao, $obj);
@@ -605,15 +638,36 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException LogicException
+	 * @depends testMapAcceptsFunction
 	 */
-	public function testMapFailsForInvalidCallback()
+	public function testMapDefaultReindexesArray()
 	{
-		$xao = new XArray([1, 2]);
+		$xao      = new XArray(['x' => 28, 'y' => 68, 'z' => 4]);
+		$expected = [28, 68, 4];
 
-		// ArrayObject::count() is non-static and accepts no parameters
-		// though the syntax for the callable is correct the execution will fail
-		$xao->map(['ArrayObject', 'count']);
+		$this->assertEquals($expected, $xao->map('test_map'));
+	}
+
+	/**
+	 * @depends testMapAcceptsFunction
+	 */
+	public function testMapReindexesArray()
+	{
+		$xao      = new XArray(['x' => 28, 'y' => 68, 'z' => 4]);
+		$expected = [28, 68, 4];
+
+		$this->assertEquals($expected, $xao->map('test_map', false));
+	}
+
+	/**
+	 * @depends testMapAcceptsFunction
+	 */
+	public function testMapPreserveKeys()
+	{
+		$array = ['x' => 28, 'y' => 68, 'z' => 4];
+		$xao   = new XArray($array);
+
+		$this->assertEquals($array, $xao->map('test_map', true));
 	}
 
 	### pop()

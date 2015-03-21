@@ -169,10 +169,12 @@ interface ArrayInterface
 	 * 
 	 * @param callable $callback Callback function to run for each element 
 	 *          in each array. Receives the element’s value and key as parameters.
+	 * @param boolean $preserve_keys When set to TRUE keys will be preserved. 
+	 * 			Default is FALSE which will reindex the array numerically.
 	 * @return ArrayObject Returns an array containing all the elements of the 
 	 *          array after applying the callback function to each one. 
 	 */
-	public function map(callable $callback);
+	public function map(callable $callback, $preserve_keys = false);
 	/**
 	 * Merges the elements of the array with one or more arrays together so 
 	 * that the values of one are appended to the end of the previous one. 
