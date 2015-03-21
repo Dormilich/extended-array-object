@@ -64,6 +64,20 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return in_array($needle, $this->getArrayCopy(), $flag);
 	}
 
+	public function filter(callable $callback)
+	{
+		try {
+			set_error_handler([$this, 'errorHandler']);
+			$array = array_filter((array) $this, $callback);
+			restore_error_handler();
+
+			return new static($array);
+		} 
+		catch (\ErrorException $exc) {
+			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
+		}
+	}
+
 	/**
 	 * Exchanges all keys with their associated values in the array.
 	 * 
@@ -73,19 +87,19 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @return ArrayObject Returns the flipped array.
 	 * @throws RuntimeException Failed to flip the array.
 	 */
-    public function flip()
-    {
-    	try {
-    		set_error_handler([$this, 'errorHandler']);
+	public function flip()
+	{
+		try {
+			set_error_handler([$this, 'errorHandler']);
 			$array = array_flip($this->getArrayCopy());
 			restore_error_handler();
 
 			return new static($array);
-
-    	} catch (\ErrorException $exc) {
-    		throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
-    	}
-    }
+		} 
+		catch (\ErrorException $exc) {
+			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
+		}
+	}
 
 	/**
 	 * Join the array’s elements with a string.
@@ -94,11 +108,23 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @return string Returns a string containing a string representation of 
 	 *          all the array elements in the same order, with the glue string 
 	 *          between each element. 
+	 * @throws RuntimeExceeption Non-scalar 
 	 */
-    public function join($glue = '')
-    {
-    	return implode($glue, $this->getArrayCopy());
-    }
+	public function join($glue = '')
+	{
+		try {
+			set_error_handler([$this, 'errorHandler']);
+			$string = implode($glue, $this->getArrayCopy());
+			restore_error_handler();
+
+			return $string;
+		}
+		catch (\ErrorException $exc) {
+			restore_error_handler();
+			// e.g. Notice: aray to string conversion
+			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
+		}
+	}
 
 	/**
 	 * Pops and returns the last value of the array, shortening the array by 
@@ -107,14 +133,14 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @return mixed Returns the last value of the array. If the array is 
 	 * 			empty, NULL will be returned. 
 	 */
-    public function pop()
-    {
-    	$array = $this->getArrayCopy();
-    	$value = array_pop($array);
-    	$this->exchangeArray($array);
+	public function pop()
+	{
+		$array = $this->getArrayCopy();
+		$value = array_pop($array);
+		$this->exchangeArray($array);
 
-    	return $value;
-    }
+		return $value;
+	}
 
 	/**
 	 * Push one or more elements onto the end of the array.
@@ -122,11 +148,11 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @param mixed $value The first value to push onto the end of the array. 
 	 * @return ArrayObject Returns the array.
 	 */
-    public function push($value)
-    {
-    	foreach (func_get_args() as $arg) {
-    		$this->append($arg);
-    	}
-    	return $this;
-    }
+	public function push($value)
+	{
+		foreach (func_get_args() as $arg) {
+			$this->append($arg);
+		}
+		return $this;
+	}
 }

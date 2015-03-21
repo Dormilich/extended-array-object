@@ -351,27 +351,25 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
      */
 	public function testFilterValueCallbackParameter()
 	{
-		$xao      = new XArray([1, 2, 3]);
-		$expected = [2, 3];
+		$xao      = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+		$expected = ['y' => 2, 'z' => 3];
 
 		$obj      = $xao->filter(function ($value) { 
 			return ($value > 1); 
 		});
 
-		$this->assertEquals($expected, $obj->getArrayCopy());
-	}
-
-	public function testFilterFlagAvailable()
-	{
-		$this->assertTrue(defined('ARRAY_FILTER_USE_BOTH'));
+		$this->assertEquals($expected, (array) $obj);
 	}
 
 	/**
-     * @depends testFilterFlagAvailable
      * @depends testFilterAcceptsClosure
      */
 	public function testFilterKeyValueCallbackParameters()
 	{
+		if (!defined('ARRAY_FILTER_USE_BOTH')) {
+			return;
+		}
+
 		$xao      = new XArray([2 => 3, 5 => 1, 7 => 9]);
 		$expected = [2 => 3, 7 => 9];
 
@@ -379,7 +377,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 			return ($value > $key); 
 		});
 
-		$this->assertEquals($expected, $obj->getArrayCopy());
+		$this->assertEquals($expected, (array) $obj);
 	}
 
 	/**
@@ -481,11 +479,14 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertSame('13, 2.87, , foo, 1, ', $xao->join(', '));
 	}
 
+	/**
+	 * @expectedException RuntimeException
+	 */
 	public function testJoinWithNonscalarArray()
 	{
 		$xao = new XArray([1, ['foo'], 7]);
 
-		$this->assertSame('1-Array-7', $xao->join('-'));
+		$xao->join('-');
 	}
 
 	### pop()
