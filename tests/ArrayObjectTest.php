@@ -379,6 +379,27 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($array, (array) $xao);
 	}
 
+	public function testFilterAcceptsStaticCallback()
+	{
+		$array = [1, 2, 3];
+		$xao   = new XArray($array);
+
+		$obj   = $xao->map(['CallbackTestMethods', 'static_filter']);
+
+		$this->assertEquals($array, (array) $obj);
+	}
+
+	public function testFilterAcceptsCallback()
+	{
+		$array = [1, 2, 3];
+		$xao   = new XArray($array);
+		$test  = new CallbackTestMethods;
+
+		$obj   = $xao->map([$test, 'filter']);
+
+		$this->assertEquals($array, (array) $obj);
+	}
+
 	/**
      * @depends testFilterAcceptsClosure
      */
@@ -389,7 +410,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$obj = $xao->filter(function ($value) { return true; });
 
 		$this->assertInstanceOf($this->classname, $obj);
-	#	$this->assertNotSame($xao, $obj);
+		$this->assertNotSame($xao, $obj);
 	}
 
 	/**
@@ -460,6 +481,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$xao = new XArray([1, 2, 3]);
 		
 		$this->assertInstanceOf($this->classname, $xao->flip());
+		$this->assertNotSame($xao, $obj);
 	}
 
 	public function testFlipNumericValues()
@@ -536,8 +558,6 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	### map()
 	#######################################################
 
-	# => no same test on array return !
-
 	public function testMapAcceptsFunction()
 	{
 		$array = [1, 2, 3];
@@ -575,7 +595,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$xao   = new XArray($array);
 		$test  = new CallbackTestMethods;
 
-		$obj   = $xao->map([$test, 'static_map']);
+		$obj   = $xao->map([$test, 'map']);
 
 		$this->assertEquals($array, (array) $obj);
 	}
