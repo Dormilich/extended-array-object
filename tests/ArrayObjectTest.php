@@ -2,6 +2,39 @@
 
 use Dormilich\Core\ArrayObject as XArray;
 
+function test_filter() 
+{ 
+	return true; 
+}
+
+function test_map($value) 
+{ 
+	return $value; 
+}
+
+class CallbackTestMethods
+{
+	public function filter()
+	{
+		return true;
+	}
+
+	public static function static_filter()
+	{
+		return true;
+	}
+
+	public function map($value)
+	{
+		return $value;
+	}
+
+	public static function static_map($value)
+	{
+		return $value;
+	}
+}
+
 class ArrayObjectTest extends PHPUnit_Framework_TestCase
 {
 	private $classname = '\Dormilich\Core\ArrayObject';
@@ -329,8 +362,6 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$array = [1, 2, 3];
 		$xao   = new XArray($array);
 
-		function test_filter() { return true; }
-
 		$xao->filter('test_filter');
 
 		$this->assertEquals($array, (array) $xao);
@@ -511,9 +542,6 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	{
 		$array = [1, 2, 3];
 		$xao   = new XArray($array);
-
-		function test_map($value) { return $value; }
-
 		$obj   = $xao->map('test_map');
 
 		$this->assertEquals($array, (array) $obj);
