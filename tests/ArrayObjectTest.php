@@ -574,7 +574,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$obj      = $xao->keys();
 
 		$this->assertCount(2, $obj);
-		$this->assertEquals($expected, (array) $obj)
+		$this->assertEquals($expected, (array) $obj);
 	}
 
 	public function testKeysFilteredByEqualValue()

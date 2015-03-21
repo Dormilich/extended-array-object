@@ -140,6 +140,19 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	public function keys()
+	{
+		if (!func_num_args()) {
+			$keys = array_keys($this->getArrayCopy());
+		}
+		else {
+			$args = func_get_args();
+			array_unshift($args, $this->getArrayCopy());
+			$keys = call_user_func_array('array_keys', $args);
+		}
+		return new static($keys);
+	}
+
 	/**
 	 * Returns an array containing all the elements of the array after 
 	 * applying the callback function to each one.
