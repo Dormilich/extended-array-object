@@ -452,7 +452,7 @@ interface ArrayInterface
 	 * @param mixed $userdata If the optional userdata parameter is supplied, 
 	 *          it will be passed as the third parameter to the callback. 
 	 * @return ArrayObject Returns the array on success.
-	 * @throws Exception Execution failed.
+	 * @throws RuntimeException Execution failed.
 	 */
 	public function walk (callable $callback, $userdata = NULL);
 }
