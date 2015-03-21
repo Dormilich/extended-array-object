@@ -454,5 +454,5 @@ interface ArrayInterface
 	 * @return ArrayObject Returns the array on success.
 	 * @throws RuntimeException Execution failed.
 	 */
-	public function walk (callable $callback, $userdata = NULL);
+	public function walk(callable $callback, $userdata = NULL);
 }

@@ -207,4 +207,31 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 		return $this;
 	}
+
+	public function walk(callable $callback, $userdata = NULL)
+	{
+		try {
+			set_error_handler([$this, 'errorHandler']);
+			$array = $this->getArrayCopy();
+
+			if ($callback instanceof \Closure) {
+				$callback = $callback->bindTo($this);
+			}
+			if (NULL === $userdata) {
+				$userdata = $array;
+			}
+			if (true !== array_walk($array, $callback, $userdata)) {
+				restore_error_handler();
+				throw new \RuntimeException('Execution of ' . __METHOD__ . ' failed.');
+			}
+			$this->exchangeArray($array);
+			restore_error_handler();
+
+			return $this;
+		} 
+		catch (\ErrorException $exc) {
+			restore_error_handler();
+			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
+		}
+	}
 }
