@@ -226,6 +226,13 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return $this;
 	}
 
+	public function values()
+	{
+		$values = array_values($this->getArrayCopy());
+
+		return new static($values);
+	}
+
 	/**
 	 * Applies the user-defined callback function to each element of the array. 
 	 * 

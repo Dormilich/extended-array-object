@@ -848,7 +848,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	{
 		$expected = [0 => 'bar', 1 => 'y'];
 		$xao      = new XArray(['foo' => 'bar', 'x' => 'y']);
-		$obj      = $xao->keys();
+		$obj      = $xao->values();
 
 		$this->assertCount(2, $obj);
 		$this->assertEquals($expected, (array) $obj);
