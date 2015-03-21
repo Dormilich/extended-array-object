@@ -226,6 +226,15 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return $this;
 	}
 
+	public function shift()
+	{
+		$array = $this->getArrayCopy();
+		$value = array_shift($array);
+		$this->exchangeArray($array);
+
+		return $value;
+	}
+
 	/**
 	 * Returns all the values from the array and indexes the array numerically. 
 	 * 
