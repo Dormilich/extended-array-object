@@ -427,7 +427,6 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-     * @depends testCountableInterfaceExists
      * @depends testFilterAcceptsClosure
      */
 	public function testFilterBindsArrayObjectToClosure()
@@ -435,11 +434,10 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$array = [1, 2, 3];
 		$xao   = new XArray($array);
 
-		$xao->filter(function () {
-			return (bool) $this->count();
+		$obj   = $xao->filter(function () {
+			return ($this instanceof XArray);
 		});
-	// tests maybe needs further assertions
-		$this->assertEquals($array, (array) $xao);
+		$this->assertEquals($array, (array) $obj);
 	}
 
 	/**
@@ -622,18 +620,19 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-     * @depends testCountableInterfaceExists
      * @depends testMapAcceptsClosure
      */
 	public function testMapBindsArrayObjectToClosure()
 	{
 		$xao   = new XArray([1, 2, 3]);
-		$array = [3, 6, 9];
+		$array = [2, 4, 6];
 
 		$obj   = $xao->map(function ($value) {
-			return $value * $this->count();
+			if ($this instanceof XArray) {
+				return $value * 2;
+			}
+			return 1;
 		});
-	// tests maybe needs further assertions
 		$this->assertEquals($array, (array) $obj);
 	}
 
@@ -645,7 +644,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$xao      = new XArray(['x' => 28, 'y' => 68, 'z' => 4]);
 		$expected = [28, 68, 4];
 
-		$this->assertEquals($expected, $xao->map('test_map'));
+		$this->assertEquals($expected, (array) $xao->map('test_map'));
 	}
 
 	/**
@@ -656,7 +655,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$xao      = new XArray(['x' => 28, 'y' => 68, 'z' => 4]);
 		$expected = [28, 68, 4];
 
-		$this->assertEquals($expected, $xao->map('test_map', false));
+		$this->assertEquals($expected, (array) $xao->map('test_map', false));
 	}
 
 	/**
@@ -667,7 +666,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$array = ['x' => 28, 'y' => 68, 'z' => 4];
 		$xao   = new XArray($array);
 
-		$this->assertEquals($array, $xao->map('test_map', true));
+		$this->assertEquals($array, (array) $xao->map('test_map', true));
 	}
 
 	### pop()
