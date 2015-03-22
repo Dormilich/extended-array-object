@@ -80,7 +80,12 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 			if ($callback instanceof \Closure) {
 				$callback = $callback->bindTo($this);
 			}
-			$array = array_filter($this->getArrayCopy(), $callback);
+			if (defined('ARRAY_FILTER_USE_BOTH')) {
+				$array = array_filter($this->getArrayCopy(), $callback, \ARRAY_FILTER_USE_BOTH);
+			}
+			else {
+				$array = array_filter($this->getArrayCopy(), $callback);
+			}
 			restore_error_handler();
 
 			return new static($array);
@@ -244,6 +249,23 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 			$this->append($arg);
 		}
 		return $this;
+	}
+
+	public function rand($num = 1)
+	{
+		$length = filter_var($num, \FILTER_VALIDATE_INT, ['options' => [
+			'min_range' => 1, 
+			'max_range' => $this->count(), 
+		]]);
+		// extra test since TRUE would pass the int validation
+		if (!$length or !is_numeric($num)) {
+			throw new \InvalidArgumentException('Invalid length specifier given.');
+		}
+		$array = $this->getArrayCopy();
+		$keys  = (array) array_rand($array, $length);
+		$array = array_intersect_key($array, array_flip($keys));
+
+		return new static($array);
 	}
 
 	/**
