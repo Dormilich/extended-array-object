@@ -942,7 +942,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException RuntimeException
+	 * @expectedException InvalidArgumentException
 	 */
 	public function testRandWithLargerNumThanCountFails()
 	{
@@ -951,7 +951,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException RuntimeException
+	 * @expectedException InvalidArgumentException
 	 */
 	public function testRandWithZeroNumFails()
 	{
@@ -982,6 +982,18 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$obj = $xao->rand('2');
 
 		$this->assertCount(2, $obj);
+	}
+
+	public function testRandKeysAndValuesExist()
+	{
+		$xao = new XArray(['foo', 'bar']);
+		$obj = $xao->rand();
+
+		$keys = array_keys((array) $obj);
+		$this->assertArrayHasKey($keys[0], $obj);
+
+		$values = array_values((array) $obj);
+		$this->assertContains($values[0], $obj);
 	}
 
 	### shift()
