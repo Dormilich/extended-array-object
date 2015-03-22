@@ -196,8 +196,6 @@ interface ArrayInterface
 	public function push($value);
 	/**
 	 * Picks one or more random entries out of an array, and returns them.
-	 * If {$num} is greater than the array length, the complete array and if 
-	 * it is 0 an empty array will be returned.
 	 * 
 	 * @param integer $num Specifies how many entries should be picked. 
 	 * @return ArrayObject Returns an array of the selected entries.

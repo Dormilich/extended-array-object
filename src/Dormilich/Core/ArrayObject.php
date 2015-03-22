@@ -251,6 +251,15 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return $this;
 	}
 
+	/**
+	 * Picks one or more random entries out of an array, and returns them.
+	 * Num must be a value between 1 and the array length.
+	 * 
+	 * @param integer $num Specifies how many entries should be picked. 
+	 * @return ArrayObject Returns an array of the selected entries.
+	 * @throws InvalidArgumentException Num argument is invalid or outside 
+	 * 			the allowed range.
+	 */
 	public function rand($num = 1)
 	{
 		$length = filter_var($num, \FILTER_VALIDATE_INT, ['options' => [
