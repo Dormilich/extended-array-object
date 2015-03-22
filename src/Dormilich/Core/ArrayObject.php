@@ -277,6 +277,14 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return new static($array);
 	}
 
+	public function reverse($preserve_keys = false)
+	{
+		$flag  = filter_var($preserve_keys, \FILTER_VALIDATE_BOOLEAN);
+		$array = array_reverse($this->getArrayCopy(), $flag);
+
+		return new static($array);
+	}
+
 	/**
 	 * Shifts the first value of the array off and returns it, shortening the 
 	 * array by one element and moving everything down. All numerical array 
