@@ -911,6 +911,79 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertSame(true, $xao[2]);
 	}
 
+	### rand()
+	#######################################################
+
+	public function testRandReturnsArrayObject()
+	{
+		$xao = new XArray([1, 2, 3]);
+		$obj = $xao->rand();
+
+		$this->assertInstanceOf($this->classname, $obj);
+		$this->assertNotSame($xao, $obj);
+	}
+
+	public function testRandArrayLengthValidity()
+	{
+		$xao  = new XArray([1, 2, 3, 4, 5, 6, 7]);
+
+		$this->assertCount(2, $xao->rand(2));
+		$this->assertCount(5, $xao->rand(5));
+	}
+
+	// since it’s random, the test may fail by chance
+	public function testRandSelectionIsRandom()
+	{
+		$xao  = new XArray([1, 2, 3, 4, 5, 6, 7]);
+		$obj1 = $xao->rand(3);
+		$obj2 = $xao->rand(3);
+
+		$this->assertNotEquals($obj1, $obj2);
+	}
+
+	/**
+	 * @expectedException RuntimeException
+	 */
+	public function testRandWithLargerNumThanCountFails()
+	{
+		$xao = new XArray([1, 2, 3]);
+		$obj = $xao->rand(5);
+	}
+
+	/**
+	 * @expectedException RuntimeException
+	 */
+	public function testRandWithZeroNumFails()
+	{
+		$xao = new XArray([1, 2, 3]);
+		$obj = $xao->rand(0);
+	}
+
+	public function invalidNumProvider()
+	{
+		return [
+			[null], [true], [false], [''], ['foo'], [74.46], [-5], [[]], 
+		];
+	}
+
+	/**
+	 * @dataProvider invalidNumProvider
+	 * @expectedException InvalidArgumentException
+	 */
+	public function testRandWithInvalidNumFails($num)
+	{
+		$xao = new XArray([1, 2, 3]);
+		$obj = $xao->rand($num);
+	}
+
+	public function testRandWithStringNum()
+	{
+		$xao = new XArray([1, 2, 3]);
+		$obj = $xao->rand('2');
+
+		$this->assertCount(2, $obj);
+	}
+
 	### shift()
 	#######################################################
 
