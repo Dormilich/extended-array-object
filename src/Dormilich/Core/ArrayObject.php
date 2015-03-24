@@ -331,6 +331,12 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return $this;
 	}
 
+	/**
+	 * Shuffles (randomizes the order of the elements in) the array. 
+	 * 
+	 * @return ArrayObject Returns the array.
+	 * @throws RuntimeException Shuffling failed.
+	 */
 	public function shuffle()
 	{
 		$array = $this->getArrayCopy();
