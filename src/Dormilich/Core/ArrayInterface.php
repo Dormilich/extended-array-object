@@ -231,7 +231,7 @@ interface ArrayInterface
 	 * 
 	 * @param mixed $input The array from which elements will be extracted. 
 	 * @return ArrayObject Returns an array on success.
-	 * @throws Exception An error occurred.
+	 * @throws RuntimeException An error occurred.
 	 */
 	public function replace($input);
 	/**
