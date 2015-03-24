@@ -1120,7 +1120,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$xao = new XArray([1, 2, 3]);
 		$count_1 = count($xao);
 		$xao->shuffle();
-		$count_2 = count($obj);
+		$count_2 = count($xao);
 
 		$this->assertSame($count_1, $count_2);
 

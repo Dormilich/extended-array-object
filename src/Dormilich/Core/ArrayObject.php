@@ -331,6 +331,17 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return $this;
 	}
 
+	public function shuffle()
+	{
+		$array = $this->getArrayCopy();
+		if (true !== shuffle($array)) {
+			throw new \RuntimeException('Failed to shuffle the array.');
+		}
+		$this->exchangeArray($array);
+
+		return $this;
+	}
+
 	/**
 	 * Returns all the values from the array and indexes the array numerically. 
 	 * 
