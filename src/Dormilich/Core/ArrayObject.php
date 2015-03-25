@@ -277,6 +277,22 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return new static($array);
 	}
 
+	public function reduce(callable $callback, $initial = NULL)
+	{
+		if ($this->count() === 0) {
+			return $initial;
+		}
+		$array = $this->getArrayCopy();
+		// assuming that NULL won’t be passed as initial value
+		if (is_null($initial)) {
+			$initial = array_shift($array);
+		}
+		if ($callback instanceof \Closure) {
+			$callback = $callback->bindTo($this);
+		}
+		return array_reduce($array, $callback, $initial);
+	}
+
 	/**
 	 * Return an array with elements in reverse order.
 	 * 
