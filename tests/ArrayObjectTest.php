@@ -1237,6 +1237,13 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertFalse($xao->search('7', true));
 	}
 
+	public function testSearchStringLookupIsCaseSensitive()
+	{
+		$xao = new XArray(['foo', 'bar']);
+		
+		$this->assertFalse($xao->search('Foo'));
+	}
+
 	### shift()
 	#######################################################
 
