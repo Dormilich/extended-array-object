@@ -323,6 +323,11 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return new static($array);
 	}
 
+	public function search($search_value, $strict = false)
+	{
+		return array_search($search_value, $this->getArrayCopy(), $strict);
+	}
+
 	/**
 	 * Shifts the first value of the array off and returns it, shortening the 
 	 * array by one element and moving everything down. All numerical array 
