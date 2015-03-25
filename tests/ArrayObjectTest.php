@@ -1376,6 +1376,15 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, (array) $obj);
 	}
 
+	/**
+	 * @expectedException LogicException
+	 */
+	public function testUniqueFailsOnConversionProblems()
+	{
+		$xao = new XArray(['foo', ['bar'], 'bar']);
+		$obj = $xao->unique();
+	}
+
 	// I couldn’t find an example, where it made a difference
 	# public function testUniqueSortVariants(){}
 
