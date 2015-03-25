@@ -43,7 +43,17 @@ interface ArrayInterface
 	 * Compares the array against one or more other arrays and returns the 
 	 * elements in the array that are not present in any of the other arrays. 
 	 * 
-	 * @param mixed $input First array to compare against.
+	 * If input is not an array it will be converted to an array. 
+	 * 
+	 * If mode is set to USE_KEY the method acts identical to kdiff(). 
+	 * If mode is set to USE_KEY|USE_VALUE the method only removes elements 
+	 * with matching key and value. In this mode you can also supply two 
+	 * compare functions, the first being applied to the values, the second 
+	 * applied to the keys. It is recommended, though, to use udiff() instead.
+	 * 
+	 * @param mixed $input (multiple) First array to compare against.
+	 * @param callable $callback (optional) A function that compares the 
+	 * 			array values.
 	 * @param integer $mode Determines whether the comparison should be made 
 	 * 			on the array values, the array keys or on both using the 
 	 * 			ArrayInterface::USE_VALUE and ArrayInterface::USE_KEY constants.
@@ -52,19 +62,31 @@ interface ArrayInterface
 	 */
 	public function diff($input, $mode = ArrayInterface::USE_VALUE);
 	/**
+	 * Compares the array against one or more other arrays and returns the 
+	 * elements in the array which keys are not present in any of the other 
+	 * arrays. 
+	 * 
+	 * @param mixed $input (multiple) First array to compare against.
+	 * @param callable $callback (optional) A function that compares the 
+	 * 			array keys.
+	 * @return ArrayObject Returns an array containing all the entries from 
+	 * 			the array that are not present in any of the other arrays. 
+	 */
+	public function kdiff($input);
+	/**
 	 * Computes the difference of arrays by using callback function(s) for 
-	 * comparison. This is unlike diff() which uses an internal function for 
-	 * comparing the elements. 
+	 * comparison. 
 	 * 
 	 * When using either USE_VALUE or USE_KEY only one compare function must 
 	 * be provided. If USE_VALUE|USE_KEY is used the first compare function 
 	 * compares the array values, the second the array keys. If the internal 
 	 * function should be used for comparison, set the appropriate callback 
-	 * parameter to NULL.
+	 * parameter to NULL. If providing two functions (resp. NULL) the mode 
+	 * flag can be omitted.
 	 * 
-	 * @param mixed $input The first array to compare against.
-	 * @param callable $val_compare_func 
-	 * @param callable $key_compare_func 
+	 * @param mixed $input (multiple) The first array to compare against.
+	 * @param callable $val_compare_func Function to compare the array values.
+	 * @param callable $key_compare_func Function to compare the array keys.
 	 * @param integer $mode Determines whether the comparison should be made 
 	 * 			on the array values, the array keys or on both using the 
 	 * 			ArrayInterface::USE_VALUE and ArrayInterface::USE_KEY constants.
