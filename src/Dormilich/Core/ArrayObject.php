@@ -396,6 +396,21 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return $this;
 	}
 
+	public function unique($sort_flags = \SORT_STRING)
+	{
+		try {
+			set_error_handler([$this, 'errorHandler']);
+			$array = array_unique($this->getArrayCopy(), $sort_flags);
+			restore_error_handler();
+
+			return new static($array);
+		} 
+		catch (\ErrorException $exc) {
+			restore_error_handler();
+			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
+		}
+	}
+
 	/**
 	 * Returns all the values from the array and indexes the array numerically. 
 	 * 
