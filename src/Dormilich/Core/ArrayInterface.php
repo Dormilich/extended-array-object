@@ -209,7 +209,7 @@ interface ArrayInterface
 	 *          mixed callback ( mixed $carry , $mixed $item )
 	 *          > carry Holds the return value of the previous iteration; in 
 	 *                  the case of the first iteration it instead holds the 
-	 *                  value of initial. 
+	 *                  value of the first element. 
 	 *          > item  Holds the value of the current iteration.  
 	 * @param mixed $initial It will be used at the beginning of the process, 
 	 *          or as a final result in case the array is empty. 
