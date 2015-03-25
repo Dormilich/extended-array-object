@@ -1,6 +1,7 @@
 <?php
 
-use Dormilich\Core\ArrayObject as XArray;
+use Dormilich\Core\ArrayObject    as XArray;
+use Dormilich\Core\ArrayInterface as XAInterface;
 
 function test_filter() 
 { 
@@ -15,6 +16,20 @@ function test_map($value)
 function test_reduce($carry, $value)
 {
 	return $carry;
+}
+
+function length_compare_func($a, $b)
+{
+	$la = strlen((string) $a);
+	$lb = strlen((string) $b);
+
+	if ($la === $lb) {
+		return 0;
+	} elseif ($la > $lb) {
+		return 1;
+	} else {
+		return -1;
+	}
 }
 
 class CallbackTestMethods
@@ -368,6 +383,177 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertSame(false, $xao->contains('foo', false));
 		$this->assertSame(false, $xao->contains('foo'));
 	}
+
+	### diff()
+	#######################################################
+
+	public function testDiffReturnsArrayObject()
+	{
+		$xao = new XArray([1, 2, 3]);
+		$obj = $xao->diff([2, 3]);
+
+		$this->assertInstanceOf($this->classname, $obj);
+		$this->assertNotSame($xao, $obj);
+	}
+
+	public function testDiffWithDefaultOptions()
+	{
+		$xao = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
+		$obj = $xao->diff([2, 3]);
+
+		$this->assertEquals([0 => 1, 'foo' => 'bar', 'x' => 'y', 2 => 4], (array) $obj);
+	}
+
+	public function testDiffWithMultipleArrays()
+	{
+		$xao = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
+		$obj = $xao->diff([1, 3, 5], ['x', 'y']);
+
+		$this->assertEquals([1 => 2, 'foo' => 'bar', 2 => 4], (array) $obj);
+	}
+
+	public function testDiffWithArrayObject()
+	{
+		$xao1 = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
+		$xao2 = new XArray([2, 3]);
+		$obj  = $xao1->diff($xao2);
+
+		$this->assertEquals([0 => 1, 'foo' => 'bar', 'x' => 'y', 2 => 4], (array) $obj);
+	}
+
+	public function testDiffWithNonArray()
+	{
+		$xao = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
+		$obj = $xao->diff(2, 'bar');
+
+		$this->assertEquals([0 => 1, 'x' => 'y', 2 => 4], (array) $obj);
+	}
+
+	public function testDiffAsKeyDiff()
+	{
+		$xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+		$obj = $xao->diff(['x' => 4, 'z' => 5], [1, 3], XAInterface::USE_KEY);
+
+		$this->assertEquals(['y' => 2], (array) $obj);
+	}
+
+	public function testDiffAsAssocDiff()
+	{
+		$source   = ["a" => "green", "b" => "brown", "c" => "blue", "red"];
+		$compare  = ["a" => "green", "yellow", "red"];
+		$expected = ["b" => "brown", "c" => "blue", "red"];
+
+		$xao = new XArray($source);
+		$obj = $xao->diff($compare, XAInterface::USE_KEY|XAInterface::USE_VALUE);
+
+		$this->assertEquals($expected, (array) $obj);
+	}
+
+	public function testDiffWithCallback()
+	{
+		$xao = new XArray(['foo', 'bar', 'ab', 'x', 'f-g-h']);
+		$obj = $xao->diff(['abc'], 'length_compare_func');
+
+		$this->assertEquals(['ab', 'x', 'f-g-h'], (array) $obj);
+	}
+
+	### kdiff()
+	#######################################################
+
+	public function testKDiffReturnsArrayObject()
+	{
+		$xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+		$obj = $xao->kdiff(['x' => 4, 'z' => 5]);
+
+		$this->assertInstanceOf($this->classname, $obj);
+		$this->assertNotSame($xao, $obj);
+	}
+
+	public function testKDiffWithArray()
+	{
+		$xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+		$obj = $xao->kdiff(['x' => 4, 'z' => 5]);
+
+		$this->assertEquals(['y' => 2], (array) $obj);
+	}
+
+	public function testKDiffWithMultipleArrays()
+	{
+		$xao = new XArray(['x' => 1, 4, 'y' => 2, 'z' => 3, 5]);
+		$obj = $xao->kdiff(['x' => 4, 3], ['z' => 5]);
+
+		$this->assertEquals(['y' => 2, 1 => 5], (array) $obj);
+	}
+
+	public function testKDiffWithNonArray()
+	{
+		$xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+		$obj = $xao->kdiff('a', 'z');
+
+		$this->assertEquals(['x' => 1, 'y' => 2], (array) $obj);
+	}
+
+	/**
+	 * @expectedException RuntimeException
+	 */
+	public function testKDiffWithInvalidNonArray()
+	{
+		$xao = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
+		$obj = $xao->kdiff(new \stdClass);
+	}
+
+	public function testKDiffWithArrayObject()
+	{
+		$xao1 = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+		$xao2 = new XArray(['x' => 4, 'z' => 5]);
+		$obj  = $xao1->kdiff($xao2);
+
+		$this->assertEquals(['y' => 2], (array) $obj);
+	}
+
+	public function testKDiffWithCallback()
+	{
+		$xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+		$obj = $xao->kdiff(['x' => 4], 'length_compare_func');
+
+		$this->assertEquals(['ab' => 2], (array) $obj);
+	}
+
+	### udiff()
+	#######################################################
+
+	public function testUDiffReturnsArrayObject()
+	{
+		$xao = new XArray([1, 2, 3]);
+		// it does not _need_ a callback to work
+		$obj = $xao->udiff([2, 3]);
+
+		$this->assertInstanceOf($this->classname, $obj);
+		$this->assertNotSame($xao, $obj);
+	}
+
+	public function testUDiffValueCompare()
+	{
+		$xao = new XArray(['foo', 'bar', 'ab', 'xyxy']);
+		$obj = $xao->udiff(['abc'], 'length_compare_func', XAInterface::USE_VALUE);
+
+		$this->assertEquals([2 => 'ab', 3 => 'xyxy'], (array) $obj);
+
+		$obj = $xao->udiff(['abc'], 'length_compare_func');
+
+		$this->assertEquals([2 => 'ab', 3 => 'xyxy'], (array) $obj);
+	}
+
+	public function testUDiffKeyCompare()
+	{
+		$xao = new XArray(['foo' => 1, 'bar' => 2, 'ab' => 3, 'xyxy' => 4]);
+		$obj = $xao->udiff(['abc'], 'length_compare_func', XAInterface::USE_VALUE);
+
+		$this->assertEquals(['ab' => 3, 'xyxy' => 4], (array) $obj);
+	}
+
+	public function testUDiffKeyAndValueCompare()
+	{}
 
 	### filter()
 	#######################################################
