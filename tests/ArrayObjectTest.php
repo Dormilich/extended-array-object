@@ -12,6 +12,11 @@ function test_map($value)
 	return $value; 
 }
 
+function test_reduce($carry, $value)
+{
+	return $carry;
+}
+
 class CallbackTestMethods
 {
 	public function filter()
@@ -32,6 +37,16 @@ class CallbackTestMethods
 	public static function static_map($value)
 	{
 		return $value;
+	}
+
+	public function reduce($carry, $value)
+	{
+		return $carry;
+	}
+
+	public static function static_reduce($carry, $value)
+	{
+		return $carry;
 	}
 }
 
@@ -994,6 +1009,145 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 
 		$values = array_values((array) $obj);
 		$this->assertContains($values[0], $obj);
+	}
+
+	### reduce()
+	#######################################################
+
+	public function testReduceAcceptsFunction()
+	{
+		$array = [1, 2, 3];
+		$xao   = new XArray($array);
+		$null  = $xao->reduce('test_reduce');
+
+		$this->assertNull($null);
+	}
+
+	public function testReduceAcceptsClosure()
+	{
+		$array = [1, 2, 3];
+		$xao   = new XArray($array);
+
+		$null  = $xao->reduce(function ($carry, $value) {
+			return $carry;
+		});
+
+		$this->assertNull($null);
+	}
+
+	public function testReduceAcceptsStaticCallback()
+	{
+		$array = [1, 2, 3];
+		$xao   = new XArray($array);
+
+		$null  = $xao->reduce(['CallbackTestMethods', 'static_reduce']);
+
+		$this->assertNull($null);
+	}
+
+	public function testReduceAcceptsCallback()
+	{
+		$array = [1, 2, 3];
+		$xao   = new XArray($array);
+		$test  = new CallbackTestMethods;
+
+		$null  = $xao->reduce([$test, 'reduce']);
+
+		$this->assertNull($null);
+	}
+
+	/**
+     * @depends testReduceAcceptsFunction
+     */
+	public function testReduceReturnsInitialValueOnEmptyArray()
+	{
+		$xao    = new XArray;
+		$return = $xao->reduce('test_reduce', 'foo');
+
+		$this->assertSame('foo', $return);
+	}
+
+	/**
+     * @depends testReduceAcceptsFunction
+     */
+	public function testReduceReturnsFirstValueIfNoInitialGiven()
+	{
+		$xao    = new XArray([1]);
+		$return = $xao->reduce('test_reduce');
+
+		$this->assertSame(1, $return);
+	}
+
+	/**
+     * @depends testReduceAcceptsFunction
+     */
+	public function testReduceReturnsDefaultInitialValueIfNoneGivenOnEmptyArray()
+	{
+		$xao    = new XArray;
+		$return = $xao->reduce('test_reduce');
+
+		$this->assertNull($return);
+	}
+
+	/**
+     * @depends testReduceAcceptsClosure
+     */
+	public function testReduceSuccess()
+	{
+		$xao = new XArray([1, 2, 3, 4]);
+		// !!! possible NULL => 0 conversion !!!
+		// see testReduceSkipsInitialValueIfNoneGiven()
+		$sum = $xao->reduce(function ($carry, $value) {
+			return $carry += $value;
+		});
+
+		$this->assertSame(10, $sum);
+	}
+
+	/**
+     * @depends testReduceAcceptsClosure
+     */
+	public function testReduceWalksFromStartToEnd()
+	{
+		$xao = new XArray([1, 2, 3]);
+		$str = $xao->reduce(function ($carry, $value) {
+			return $carry .= $value;
+		});
+
+		$this->assertSame('123', $str);
+	}
+
+	/**
+     * @depends testReduceAcceptsClosure
+     */
+	public function testReduceSkipsInitialValueIfNoneGiven()
+	{
+		$xao     = new XArray([1, 2, 3]);
+		// this would return 0 if the default initial value of NULL gets paased
+		$product = $xao->reduce(function ($carry, $value) {
+			return $carry *= $value;
+		});
+
+		$this->assertSame(6, $sum);
+	}
+
+	/**
+     * @depends testReduceAcceptsClosure
+     */
+	public function testReduceBindsArrayObjectToClosure()
+	{
+		try {
+			$xao = new XArray([1, 2, 3]);
+			$xao->reduce(function ($carry, $value) {
+				if (! $this instanceof XArray) {
+					throw new \Exception('$this is not an instance of ArrayObject.');
+				}
+			});
+			$this->assertTrue(true);
+		}
+		catch (\Exception $exc) {
+			$this->assertTrue(false, $exc->getMessage());
+		}
 	}
 
 	### reverse()
