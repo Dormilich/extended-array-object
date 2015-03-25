@@ -1377,7 +1377,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException LogicException
+	 * @expectedException RuntimeException
 	 */
 	public function testUniqueFailsOnConversionProblems()
 	{

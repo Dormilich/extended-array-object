@@ -396,6 +396,14 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return $this;
 	}
 
+	/**
+	 * returns a new array without duplicate values. 
+	 * 
+	 * @param integer $sort_flags The optional second parameter sort_flags 
+	 *          may be used to modify the sorting behavior.
+	 * @return ArrayObject Returns the filtered array. 
+	 * @throws RuntimeExceeption Forced string conversion of a non-scalar value.
+	 */
 	public function unique($sort_flags = \SORT_STRING)
 	{
 		try {
@@ -407,7 +415,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		} 
 		catch (\ErrorException $exc) {
 			restore_error_handler();
-			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
+			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
 		}
 	}
 
