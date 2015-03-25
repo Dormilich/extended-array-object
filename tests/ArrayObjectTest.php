@@ -1016,8 +1016,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 
 	public function testReduceAcceptsFunction()
 	{
-		$array = [1, 2, 3];
-		$xao   = new XArray($array);
+		$xao   = new XArray;
 		$null  = $xao->reduce('test_reduce');
 
 		$this->assertNull($null);
@@ -1025,9 +1024,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 
 	public function testReduceAcceptsClosure()
 	{
-		$array = [1, 2, 3];
-		$xao   = new XArray($array);
-
+		$xao   = new XArray;
 		$null  = $xao->reduce(function ($carry, $value) {
 			return $carry;
 		});
@@ -1037,9 +1034,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 
 	public function testReduceAcceptsStaticCallback()
 	{
-		$array = [1, 2, 3];
-		$xao   = new XArray($array);
-
+		$xao   = new XArray;
 		$null  = $xao->reduce(['CallbackTestMethods', 'static_reduce']);
 
 		$this->assertNull($null);
@@ -1047,8 +1042,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 
 	public function testReduceAcceptsCallback()
 	{
-		$array = [1, 2, 3];
-		$xao   = new XArray($array);
+		$xao   = new XArray;
 		$test  = new CallbackTestMethods;
 
 		$null  = $xao->reduce([$test, 'reduce']);
@@ -1128,7 +1122,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 			return $carry *= $value;
 		});
 
-		$this->assertSame(6, $sum);
+		$this->assertSame(6, $product);
 	}
 
 	/**
@@ -1282,10 +1276,11 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 
 	public function testShuffleSuccess()
 	{
-		$xao = new XArray([1, 2, 3]);
+		$expected = range(1, 20);
+		$xao = new XArray($expected);
 		$xao->shuffle();
 
-		$this->assertNotEquals([1, 2, 3], (array) $xao);
+		$this->assertNotEquals($expected, (array) $xao);
 	}
 
 	public function testShuffleNotChangesArrayElements()
