@@ -589,7 +589,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 
 	### adiff()
 	#######################################################
-
+/*
 	public function testADiffReturnsArrayObject()
 	{
 		$xao = new XArray([1, 2, 3]);
@@ -611,8 +611,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals($expected, (array) $obj);
 	}
-
-
+//*/
 	### filter()
 	#######################################################
 
