@@ -63,6 +63,16 @@ class CallbackTestMethods
 	{
 		return $carry;
 	}
+
+	public function length_compare($a, $b)
+	{
+		return length_compare_func($a, $b);
+	}
+
+	public static function static_length_compare($a, $b)
+	{
+		return length_compare_func($a, $b);
+	}
 }
 
 class ArrayObjectTest extends PHPUnit_Framework_TestCase
@@ -429,10 +439,53 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals([0 => 1, 'x' => 'y', 2 => 4], (array) $obj);
 	}
 
+	public function testDiffAcceptsFunction()
+	{
+		$xao = new XArray(['foo', 'bar', 'ab', 'x', 'f-g-h']);
+		$obj = $xao->diff(['abc'], 'length_compare_func');
+
+		$this->assertEquals(['ab', 'x', 'f-g-h'], (array) $obj);
+	}
+
+	public function testDiffAcceptsClosure()
+	{
+		$xao = new XArray(['foo', 'bar', 'ab', 'x', 'f-g-h']);
+		$obj = $xao->diff(['abc'], function ($a, $b) {
+			return length_compare_func($a, $b);
+		});
+
+		$this->assertEquals(['ab', 'x', 'f-g-h'], (array) $obj);
+	}
+
+	public function testDiffAcceptsStaticCallback()
+	{
+		$xao = new XArray(['foo', 'bar', 'ab', 'x', 'f-g-h']);
+		$obj = $xao->diff(['abc'], ['CallbackTestMethods', 'static_length_compare']);
+
+		$this->assertEquals(['ab', 'x', 'f-g-h'], (array) $obj);
+	}
+
+	public function testDiffAcceptsCallback()
+	{
+		$xao  = new XArray(['foo', 'bar', 'ab', 'x', 'f-g-h']);
+		$test = new CallbackTestMethods;
+		$obj  = $xao->diff(['abc'], [$test, 'length_compare']);
+
+		$this->assertEquals(['ab', 'x', 'f-g-h'], (array) $obj);
+	}
+
 	public function testDiffAsKeyDiff()
 	{
 		$xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
-		$obj = $xao->diff(['x' => 4, 'z' => 5], [1, 3], XAInterface::USE_KEY);
+		$obj = $xao->diff(['x' => 4, 3], [1, 'z' => 5], XAInterface::USE_KEY);
+
+		$this->assertEquals(['y' => 2], (array) $obj);
+	}
+
+	public function testDiffAsKeyDiffWithNonArray()
+	{
+		$xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+		$obj = $xao->diff('x', 'z', XAInterface::USE_KEY);
 
 		$this->assertEquals(['y' => 2], (array) $obj);
 	}
@@ -447,14 +500,6 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$obj = $xao->diff($compare, XAInterface::USE_KEY|XAInterface::USE_VALUE);
 
 		$this->assertEquals($expected, (array) $obj);
-	}
-
-	public function testDiffWithCallback()
-	{
-		$xao = new XArray(['foo', 'bar', 'ab', 'x', 'f-g-h']);
-		$obj = $xao->diff(['abc'], 'length_compare_func');
-
-		$this->assertEquals(['ab', 'x', 'f-g-h'], (array) $obj);
 	}
 
 	### kdiff()
@@ -511,10 +556,37 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(['y' => 2], (array) $obj);
 	}
 
-	public function testKDiffWithCallback()
+	public function testKDiffAcceptsFunction()
 	{
 		$xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
-		$obj = $xao->kdiff(['x' => 4], 'length_compare_func');
+		$obj = $xao->diff(['x' => 4], 'length_compare_func');
+
+		$this->assertEquals(['ab' => 2], (array) $obj);
+	}
+
+	public function testKDiffAcceptsClosure()
+	{
+		$xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+		$obj = $xao->diff(['x' => 4], function ($a, $b) {
+			return length_compare_func($a, $b);
+		});
+
+		$this->assertEquals(['ab' => 2], (array) $obj);
+	}
+
+	public function testKDiffAcceptsStaticCallback()
+	{
+		$xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+		$obj = $xao->diff(['x' => 4], ['CallbackTestMethods', 'static_length_compare']);
+
+		$this->assertEquals(['ab' => 2], (array) $obj);
+	}
+
+	public function testKDiffAcceptsCallback()
+	{
+		$xao  = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+		$test = new CallbackTestMethods;
+		$obj  = $xao->diff(['x' => 4], [$test, 'length_compare']);
 
 		$this->assertEquals(['ab' => 2], (array) $obj);
 	}
