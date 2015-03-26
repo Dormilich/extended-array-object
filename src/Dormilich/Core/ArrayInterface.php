@@ -9,10 +9,12 @@ interface ArrayInterface
 	 * @var integer Compare using the array values.
 	 */
 	const USE_VALUE = 1;
+
 	/**
 	 * @var integer Compare using the array keys.
 	 */
 	const USE_KEY   = 2;
+
 	/**
 	 * Returns an array with all keys from array lowercased or uppercased. 
 	 * Numbered indices are left as is. 
@@ -21,6 +23,7 @@ interface ArrayInterface
 	 * @return ArrayObject Returns an array with its keys lower or uppercased.
 	 */
 	public function changeKeyCase($case = \CASE_LOWER);
+
 	/**
 	 * Checks if a value exists in the array using loose comparison unless 
 	 * strict is set.
@@ -31,6 +34,7 @@ interface ArrayInterface
 	 * @return boolean Returns TRUE if needle is found in the array, FALSE otherwise. 
 	 */
 	public function contains($needle, $strict = false);
+
 	/**
 	 * Returns an array using the values of the array as keys and their 
 	 * frequency in the array as values. 
@@ -39,61 +43,54 @@ interface ArrayInterface
 	 *          as keys and their count as value. 
 	 */
 	public function countValues();
+
 	/**
 	 * Compares the array against one or more other arrays and returns the 
-	 * elements in the array that are not present in any of the other arrays. 
+	 * elements in the array whose values are not present in any of the other 
+	 * arrays. 
 	 * 
 	 * If input is not an array it will be converted to an array. 
-	 * 
-	 * If mode is set to USE_KEY the method acts identical to kdiff(). 
-	 * If mode is set to USE_KEY|USE_VALUE the method only removes elements 
-	 * with matching key and value. In this mode you can also supply two 
-	 * compare functions, the first being applied to the values, the second 
-	 * applied to the keys. It is recommended, though, to use udiff() instead.
 	 * 
 	 * @param mixed $input (multiple) First array to compare against.
 	 * @param callable $callback (optional) A function that compares the 
 	 * 			array values.
-	 * @param integer $mode Determines whether the comparison should be made 
-	 * 			on the array values, the array keys or on both using the 
-	 * 			ArrayInterface::USE_VALUE and ArrayInterface::USE_KEY constants.
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are not present in any of the other arrays. 
 	 */
-	public function diff($input, $mode = ArrayInterface::USE_VALUE);
+	public function diff($input);
+
 	/**
 	 * Compares the array against one or more other arrays and returns the 
-	 * elements in the array which keys are not present in any of the other 
+	 * elements in the array whose keys are not present in any of the other 
 	 * arrays. 
+	 * 
+	 * If input is not an array, it will be converted to array keys.
 	 * 
 	 * @param mixed $input (multiple) First array to compare against.
 	 * @param callable $callback (optional) A function that compares the 
 	 * 			array keys.
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are not present in any of the other arrays. 
+	 * @throws RuntimeException Input cannot be converted to array keys.
 	 */
 	public function kdiff($input);
+
 	/**
-	 * Computes the difference of arrays by using callback function(s) for 
-	 * comparison. 
-	 * 
-	 * When using either USE_VALUE or USE_KEY only one compare function must 
-	 * be provided. If USE_VALUE|USE_KEY is used the first compare function 
-	 * compares the array values, the second the array keys. If the internal 
-	 * function should be used for comparison, set the appropriate callback 
-	 * parameter to NULL. If providing two functions (resp. NULL) the mode 
-	 * flag can be omitted.
+	 * Compares the array against one or more other arrays and returns the 
+	 * elements that are not present in any of the other arrays using the keys 
+	 * and values for comparison.
 	 * 
 	 * @param mixed $input (multiple) The first array to compare against.
-	 * @param callable $val_compare_func Function to compare the array values.
-	 * @param callable $key_compare_func Function to compare the array keys.
-	 * @param integer $mode Determines whether the comparison should be made 
-	 * 			on the array values, the array keys or on both using the 
-	 * 			ArrayInterface::USE_VALUE and ArrayInterface::USE_KEY constants.
+	 * @param callable|null $value_compare_func (optional) Function to compare 
+	 * 			the array values.
+	 * @param callable|null $key_compare_func (optional) Function to compare 
+	 * 			the array keys.
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are not present in any of the other arrays. 
+	 * @throws RuntimeException Input is not an array or ArrayObject.
 	 */
-	public function udiff($input, $compare_func, $mode = ArrayInterface::USE_VALUE);
+	public function adiff($input);
+
 	/**
 	 * Iterates over each value in the array passing them to the callback 
 	 * function. If the callback function returns true, the current value from 
@@ -103,6 +100,7 @@ interface ArrayInterface
 	 * @return ArrayObject Returns the filtered array. 
 	 */
 	public function filter(callable $callback);
+
 	/**
 	 * Exchanges all keys with their associated values in the array.
 	 * 
@@ -118,6 +116,7 @@ interface ArrayInterface
 	 * @throws RuntimeException Failed to flip the array.
 	 */
 	public function flip();
+
 	/**
 	 * Returns an array containing all the values of the array that are 
 	 * present in all the arguments. Note that keys are preserved. 
@@ -130,6 +129,7 @@ interface ArrayInterface
 	 * 			the array that are present in all of the other arrays. 
 	 */
 	public function intersect($input, $mode = ArrayInterface::USE_VALUE);
+
 	/**
 	 * Computes the intersection of arrays by using callback function(s) for 
 	 * comparison. 
@@ -150,6 +150,7 @@ interface ArrayInterface
 	 * 			the array that are present in all of the other arrays. 
 	 */
 	public function uintersect($input, $compare_func, $mode = ArrayInterface::USE_VALUE);
+
 	/**
 	 * Join the array’s elements with a string.
 	 * 
@@ -159,6 +160,7 @@ interface ArrayInterface
 	 *          between each element. 
 	 */
 	public function join($glue = '');
+
 	/**
 	 * Return all the keys or a subset of the keys of the array.
 	 * 
@@ -169,6 +171,7 @@ interface ArrayInterface
 	 * @return ArrayObject Returns an array of all the (specified) keys in the array.  
 	 */
 	public function keys();
+
 	/**
 	 * Returns an array containing all the elements of the array after 
 	 * applying the callback function to each one.
@@ -184,6 +187,7 @@ interface ArrayInterface
 	 *          array after applying the callback function to each one. 
 	 */
 	public function map(callable $callback, $preserve_keys = false);
+
 	/**
 	 * Merges the elements of the array with one or more arrays together so 
 	 * that the values of one are appended to the end of the previous one. 
@@ -201,6 +205,7 @@ interface ArrayInterface
 	 * @return ArrayObject Returns the resulting array. 
 	 */
 	public function merge($input);
+
 	/**
 	 * Pops and returns the last value of the array, shortening the array by 
 	 * one element. 
@@ -209,6 +214,7 @@ interface ArrayInterface
 	 * 			empty, NULL will be returned. 
 	 */
 	public function pop();
+
 	/**
 	 * Push one or more elements onto the end of the array.
 	 * 
@@ -216,6 +222,7 @@ interface ArrayInterface
 	 * @return ArrayObject Returns the array.
 	 */
 	public function push($value);
+
 	/**
 	 * Picks one or more random entries out of an array, and returns them.
 	 * 
@@ -223,6 +230,7 @@ interface ArrayInterface
 	 * @return ArrayObject Returns an array of the selected entries.
 	 */
 	public function rand($num = 1);
+
 	/**
 	 * Applies iteratively the callback function to the elements of the array, 
 	 * so as to reduce the array to a single value. 
@@ -238,6 +246,7 @@ interface ArrayInterface
 	 * @return mixed Returns the resulting value. 
 	 */
 	public function reduce(callable $callback, $initial = NULL);
+
 	/**
 	 * Replaces the values of the array with values having the same keys in 
 	 * each of the following arrays. If a key from the first array exists in 
@@ -256,6 +265,7 @@ interface ArrayInterface
 	 * @throws RuntimeException An error occurred.
 	 */
 	public function replace($input);
+
 	/**
 	 * Return an array with elements in reverse order.
 	 * 
@@ -265,6 +275,7 @@ interface ArrayInterface
 	 * @return ArrayObject Returns the reversed array. 
 	 */
 	public function reverse($preserve_keys = false);
+
 	/**
 	 * Searches the array for a given value and returns the corresponding key 
 	 * if successful.
@@ -279,6 +290,7 @@ interface ArrayInterface
 	 * 			array, FALSE otherwise. 
 	 */
 	public function search($search_value, $strict = false);
+
 	/**
 	 * Shifts the first value of the array off and returns it, shortening the 
 	 * array by one element and moving everything down. All numerical array 
@@ -288,12 +300,14 @@ interface ArrayInterface
 	 * @return mixed Returns the shifted value, or NULL if the array is empty.
 	 */
 	public function shift();
+
 	/**
 	 * Shuffles (randomizes the order of the elements in) the array. 
 	 * 
 	 * @return ArrayObject Returns the array.
 	 */
 	public function shuffle();
+
 	/**
 	 * Returns the sequence of elements from the array array as specified by 
 	 * the {offset} and {length} parameters. 
@@ -314,6 +328,7 @@ interface ArrayInterface
 	 * @return ArrayObject Returns the slice. 
 	 */
 	public function slice ($offset, $length = NULL, $preserve_keys = false);
+
 	/**
 	 * This method sorts the array. Elements will be arranged from lowest to 
 	 * highest when this function has completed. 
@@ -341,6 +356,7 @@ interface ArrayInterface
 	 * @throws Exception Sorting failed.
 	 */
 	public function sort($sort_flags = \SORT_REGULAR, $mode = ArrayInterface::USE_VALUE, $preserve_keys = false);
+
 	/**
 	 * This method sorts the array. Elements will be arranged from highest to 
 	 * lowest (reverse order) when this function has completed. 
@@ -368,6 +384,7 @@ interface ArrayInterface
 	 * @throws Exception Sorting failed.
 	 */
 	public function rsort($sort_flags = \SORT_REGULAR, $mode = ArrayInterface::USE_VALUE, $preserve_keys = false);
+
 	/**
 	 * This method sorts the array using a user-supplied comparison function. 
 	 * If the array you wish to sort needs to be sorted by some non-trivial 
@@ -388,6 +405,7 @@ interface ArrayInterface
 	 * @throws Exception Sorting failed.
 	 */
 	public function usort(callable $callback, $mode = ArrayInterface::USE_VALUE, $preserve_keys = false);
+
 	/**
 	 * Removes the elements designated by offset and length from the input 
 	 * array, and replaces them with the elements of the replacement array, 
@@ -413,6 +431,7 @@ interface ArrayInterface
 	 * @return ArrayObject Returns the array consisting of the extracted elements. 
 	 */
 	public function splice($offset);
+
 	/**
 	 * returns a new array without duplicate values. 
 	 * 
@@ -430,6 +449,7 @@ interface ArrayInterface
 	 * @return ArrayObject Returns the filtered array. 
 	 */
 	public function unique($sort_flags = \SORT_STRING);
+
 	/**
 	 * Prepends passed elements to the front of the array. Note that the list 
 	 * of elements is prepended as a whole, so that the prepended elements stay 
@@ -440,12 +460,14 @@ interface ArrayInterface
 	 * @return ArrayObject Returns the array.
 	 */
 	public function unshift($value);
+
 	/**
 	 * Returns all the values from the array and indexes the array numerically. 
 	 * 
 	 * @return ArrayObject The array of the values. 
 	 */
 	public function values();
+
 	/**
 	 * Applies the user-defined callback function to each element of the array. 
 	 * 
