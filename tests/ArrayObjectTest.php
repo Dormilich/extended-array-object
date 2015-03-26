@@ -396,7 +396,31 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 
 	### diff()
 	#######################################################
+/*
+	mapping table for array functions to methods:
 
+	+==============+=====+=======+============+=============+=============+
+	| PHP          | key | value |    diff    |    kdiff    |    adiff    |
+	+==============+=====+=======+============+=============+=============+
+	| diff         |  -  |   x   | ()         |     ---     |     ---     |
+	+--------------+-----+-------+------------+-------------+-------------+
+	| udiff        |  -  |   u   | (fn)       |     ---     |     ---     |
+	+--------------+-----+-------+------------+-------------+-------------+
+	| diff_key     |  x  |   -   |     --     | ()          |     ---     |
+	+--------------+-----+-------+------------+-------------+-------------+
+	| diff_ukey    |  u  |   -   |     --     | (fn)        |     ---     |
+	+--------------+-----+-------+------------+-------------+-------------+
+	| diff_assoc   |  x  |   x   |     --     |     ---     | ()          |
+	+--------------+-----+-------+------------+-------------+-------------+
+	| diff_uassoc  |  u  |   x   |     --     |     ---     | (null, fn)  |
+	|              |     |       |            |             | (fn, KEY)   |
+	+--------------+-----+-------+------------+-------------+-------------+
+	| udiff_assoc  |  x  |   u   |     --     |     ---     | (fn, null)  |
+	|              |     |       |            |             | (fn, VALUE) |
+	+--------------+-----+-------+------------+-------------+-------------+
+	| udiff_uassoc |  u  |   u   |     --     |     ---     | (fn, fn)    |
+	+--------------+-----+-------+------------+-------------+-------------+
+//*/
 	public function testDiffReturnsArrayObject()
 	{
 		$xao = new XArray([1, 2, 3]);
@@ -406,7 +430,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertNotSame($xao, $obj);
 	}
 
-	public function testDiffWithDefaultOptions()
+	public function testDiffWithArray()
 	{
 		$xao = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
 		$obj = $xao->diff([2, 3]);
@@ -472,34 +496,6 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$obj  = $xao->diff(['abc'], [$test, 'length_compare']);
 
 		$this->assertEquals(['ab', 'x', 'f-g-h'], (array) $obj);
-	}
-
-	public function testDiffAsKeyDiff()
-	{
-		$xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
-		$obj = $xao->diff(['x' => 4, 3], [1, 'z' => 5], XAInterface::USE_KEY);
-
-		$this->assertEquals(['y' => 2], (array) $obj);
-	}
-
-	public function testDiffAsKeyDiffWithNonArray()
-	{
-		$xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
-		$obj = $xao->diff('x', 'z', XAInterface::USE_KEY);
-
-		$this->assertEquals(['y' => 2], (array) $obj);
-	}
-
-	public function testDiffAsAssocDiff()
-	{
-		$source   = ["a" => "green", "b" => "brown", "c" => "blue", "red"];
-		$compare  = ["a" => "green", "yellow", "red"];
-		$expected = ["b" => "brown", "c" => "blue", "red"];
-
-		$xao = new XArray($source);
-		$obj = $xao->diff($compare, XAInterface::USE_KEY|XAInterface::USE_VALUE);
-
-		$this->assertEquals($expected, (array) $obj);
 	}
 
 	### kdiff()
@@ -591,41 +587,31 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(['ab' => 2], (array) $obj);
 	}
 
-	### udiff()
+	### adiff()
 	#######################################################
 
-	public function testUDiffReturnsArrayObject()
+	public function testADiffReturnsArrayObject()
 	{
 		$xao = new XArray([1, 2, 3]);
 		// it does not _need_ a callback to work
-		$obj = $xao->udiff([2, 3]);
+		$obj = $xao->adiff([2, 3]);
 
 		$this->assertInstanceOf($this->classname, $obj);
 		$this->assertNotSame($xao, $obj);
 	}
 
-	public function testUDiffValueCompare()
+	public function testADiffWithArray()
 	{
-		$xao = new XArray(['foo', 'bar', 'ab', 'xyxy']);
-		$obj = $xao->udiff(['abc'], 'length_compare_func', XAInterface::USE_VALUE);
+		$source   = ["a" => "green", "b" => "brown", "c" => "blue", "red"];
+		$compare  = ["a" => "green", "yellow", "red"];
+		$expected = ["b" => "brown", "c" => "blue", "red"];
 
-		$this->assertEquals([2 => 'ab', 3 => 'xyxy'], (array) $obj);
+		$xao = new XArray($source);
+		$obj = $xao->adiff($compare);
 
-		$obj = $xao->udiff(['abc'], 'length_compare_func');
-
-		$this->assertEquals([2 => 'ab', 3 => 'xyxy'], (array) $obj);
+		$this->assertEquals($expected, (array) $obj);
 	}
 
-	public function testUDiffKeyCompare()
-	{
-		$xao = new XArray(['foo' => 1, 'bar' => 2, 'ab' => 3, 'xyxy' => 4]);
-		$obj = $xao->udiff(['abc'], 'length_compare_func', XAInterface::USE_VALUE);
-
-		$this->assertEquals(['ab' => 3, 'xyxy' => 4], (array) $obj);
-	}
-
-	public function testUDiffKeyAndValueCompare()
-	{}
 
 	### filter()
 	#######################################################
