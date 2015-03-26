@@ -64,6 +64,21 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return in_array($needle, $this->getArrayCopy(), $flag);
 	}
 
+	/**
+	 * Compares the array against one or more other arrays and returns the 
+	 * elements in the array whose values are not present in any of the other 
+	 * arrays. 
+	 * 
+	 * If input is not an array it will be converted to an array. 
+	 * 
+	 * @param mixed $input (multiple) First array to compare against.
+	 * @param callable $callback (optional) A function that compares the 
+	 * 			array values.
+	 * @return ArrayObject Returns an array containing all the entries from 
+	 * 			the array that are not present in any of the other arrays. 
+	 * @throws RuntimeExceeption Missing comparison input.
+	 * @throws RuntimeExceeption Forced array conversion of a non-converable value.
+	 */
 	public function diff($input)
 	{
 		try {
@@ -106,6 +121,21 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	/**
+	 * Compares the array against one or more other arrays and returns the 
+	 * elements in the array whose keys are not present in any of the other 
+	 * arrays. 
+	 * 
+	 * If input is not an array, it will be converted to array keys.
+	 * 
+	 * @param mixed $input (multiple) First array to compare against.
+	 * @param callable $callback (optional) A function that compares the 
+	 * 			array keys.
+	 * @return ArrayObject Returns an array containing all the entries from 
+	 * 			the array that are not present in any of the other arrays. 
+	 * @throws RuntimeExceeption Missing comparison input.
+	 * @throws RuntimeException Input cannot be converted to array keys.
+	 */
 	public function kdiff($input)
 	{
 		try {
