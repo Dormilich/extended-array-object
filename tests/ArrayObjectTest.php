@@ -463,6 +463,15 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals([0 => 1, 'x' => 'y', 2 => 4], (array) $obj);
 	}
 
+	/**
+	 * @expectedException RuntimeException
+	 */
+	public function testDiffWithoutArrayFails()
+	{
+		$xao = new XArray([1, 2, 3]);
+		$obj = $xao->diff('length_compare_func');
+	}
+
 	public function testDiffAcceptsFunction()
 	{
 		$source = [
@@ -598,6 +607,15 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$obj  = $xao1->kdiff($xao2);
 
 		$this->assertEquals(['y' => 2], (array) $obj);
+	}
+
+	/**
+	 * @expectedException RuntimeException
+	 */
+	public function testKDiffWithoutArrayFails()
+	{
+		$xao = new XArray([1, 2, 3]);
+		$obj = $xao->kdiff('length_compare_func');
 	}
 
 	public function testKDiffAcceptsFunction()
@@ -785,8 +803,9 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	public function testFlipReturnsArrayObject()
 	{
 		$xao = new XArray([1, 2, 3]);
+		$obj = $xao->flip();
 		
-		$this->assertInstanceOf($this->classname, $xao->flip());
+		$this->assertInstanceOf($this->classname, $obj);
 		$this->assertNotSame($xao, $obj);
 	}
 

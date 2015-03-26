@@ -79,6 +79,10 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 				}
 			}
 
+			if (count($args) === 0) {
+				throw new \RuntimeException('Nothing to compare against given.');
+			}
+
 			$arg_list = array_map(function ($arg) {
 				return (array) $arg;
 			}, $args);
