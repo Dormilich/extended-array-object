@@ -163,18 +163,28 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 				if ($arg instanceof \Iterator) {
 					return iterator_to_array($arg);
 				}
+				if (is_int($arg)) {
+					return $arg;
+				}
 				return (string) $arg;
 			}, $args);
 			// extract the array arguments
 			$arg_list = array_filter($converted, 'is_array');
 			// extract the strings
 			$strings  = array_filter($converted, 'is_string');
+			// extract the integers
+			$integers = array_filter($converted, 'is_int');
 			// prepend source array
 			array_unshift($arg_list, $this->getArrayCopy());
 			// flip and append strings
 			if (!empty($strings)) {
 				$arg_list[] = array_flip($strings);
 			}
+			// flip and append integers
+			if (!empty($integers)) {
+				$arg_list[] = array_flip($integers);
+			}
+
 			if ($callback) {
 				$arg_list[] = $callback;
 				$array = call_user_func_array('array_diff_ukey', $arg_list);
