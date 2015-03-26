@@ -64,6 +64,100 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return in_array($needle, $this->getArrayCopy(), $flag);
 	}
 
+	public function diff($input)
+	{
+		try {
+			set_error_handler([$this, 'errorHandler']);
+
+			$args     = func_get_args();
+			$callback = null;
+
+			if (is_callable(end($args))) {
+				$callback = array_pop($args);
+				if ($callback instanceof \Closure) {
+					$callback = $callback->bindTo($this);
+				}
+			}
+
+			$arg_list = array_map(function ($arg) {
+				return (array) $arg;
+			}, $args);
+
+			array_unshift($arg_list, $this->getArrayCopy());
+
+			if ($callback) {
+				$arg_list[] = $callback;
+				$array = call_user_func_array('array_udiff', $arg_list);
+			}
+			else {
+				$array = call_user_func_array('array_diff', $arg_list);
+			}
+			restore_error_handler();
+
+			return new static($array);
+		}
+		catch (\ErrorException $exc) {
+			restore_error_handler();
+			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
+		}
+	}
+
+	public function kdiff($input)
+	{
+		try {
+			set_error_handler([$this, 'errorHandler']);
+
+			$args     = func_get_args();
+			$callback = null;
+
+			if (is_callable(end($args))) {
+				$callback = array_pop($args);
+				if ($callback instanceof \Closure) {
+					$callback = $callback->bindTo($this);
+				}
+			}
+
+			if (count($args) === 0) {
+				throw new \RuntimeException('Nothing to compare against given.');
+			}
+
+			// convert args into arrays or strings
+			$converted = array_map(function ($arg) {
+				if (is_array($arg) or ($arg instanceof \ArrayObject)) {
+					return (array) $arg;
+				}
+				if ($arg instanceof \Iterator) {
+					return iterator_to_array($arg);
+				}
+				return (string) $arg;
+			}, $args);
+			// extract the array arguments
+			$arg_list = array_filter($converted, 'is_array');
+			// extract the strings
+			$strings  = array_filter($converted, 'is_string');
+			// prepend source array
+			array_unshift($arg_list, $this->getArrayCopy());
+			// flip and append strings
+			if (!empty($strings)) {
+				$arg_list[] = array_flip($strings);
+			}
+			if ($callback) {
+				$arg_list[] = $callback;
+				$array = call_user_func_array('array_diff_ukey', $arg_list);
+			}
+			else {
+				$array = call_user_func_array('array_diff_key', $arg_list);
+			}
+			restore_error_handler();
+
+			return new static($array);
+		}
+		catch (\ErrorException $exc) {
+			restore_error_handler();
+			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
+		}
+	}
+
 	/**
 	 * Iterates over each value in the array passing them to the callback 
 	 * function. If the callback function returns true, the current value from 
