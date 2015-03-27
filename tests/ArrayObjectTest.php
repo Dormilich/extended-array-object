@@ -891,6 +891,96 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$obj   = $xao->flip();
 	}
 
+	### intersect()
+	#######################################################
+
+	public function testIntersectReturnsArrayObject()
+	{
+		$xao = new XArray([1, 2, 3]);
+		$obj = $xao->intersect([2, 3]);
+
+		$this->assertInstanceOf($this->classname, $obj);
+		$this->assertNotSame($xao, $obj);
+	}
+
+	public function testIntersectWithArray()
+	{
+		$xao = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
+		$obj = $xao->intersect([2, 3, 'a' => 'y']);
+
+		$this->assertEquals([1 => 2, 'a' => 'y'], (array) $obj);
+	}
+
+	public function testIntersectWithMultipleArrays()
+	{
+		$xao = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
+		$obj = $xao->intersect([1, 2, 3, 4, 5, 'x', 'y'], [2, 4, 'bar']);
+
+		$this->assertEquals([1 => 2, 2 => 4], (array) $obj);
+	}
+
+	public function testIntersectWithArrayObject()
+	{
+		$xao1 = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
+		$xao2 = new XArray([1, 2, 3, 4, 5, 'x', 'y']);
+		$obj  = $xao1->intersect($xao2);
+
+		$this->assertEquals([1, 2, 'x' => 'y', 2 => 4], (array) $obj);
+	}
+
+	public function testIntersectWithNonArray()
+	{
+		$xao = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
+		$obj = $xao->intersect('bar', 1, 2, 3);
+
+		$this->assertEquals([1, 2, 'foo' => 'bar'], (array) $obj);
+	}
+
+	/**
+	 * @expectedException RuntimeException
+	 */
+	public function testIntersectWithoutArrayFails()
+	{
+		$xao = new XArray([1, 2, 3]);
+		$obj = $xao->intersect('length_compare_func');
+	}
+
+	public function testIntersectAcceptsFunction()
+	{
+		$xao = new XArray([1, 22, 'foo' => 'bar', 'x' => 'y', 4]);
+		$obj = $xao->intersect(['xxx', 18], 'length_compare_func');
+
+		$this->assertEquals([1 => 22, 'foo' => 'bar'], (array) $obj);
+	}
+
+	public function testIntersectAcceptsClosure()
+	{
+		$xao = new XArray([1, 22, 'foo' => 'bar', 'x' => 'y', 4]);
+		$obj = $xao->intersect(['xxx', 18], function ($a, $b) {
+			return length_compare_func($a, $b);
+		});
+
+		$this->assertEquals([1 => 22, 'foo' => 'bar'], (array) $obj);
+	}
+
+	public function testIntersectAcceptsStaticCallback()
+	{
+		$xao = new XArray([1, 22, 'foo' => 'bar', 'x' => 'y', 4]);
+		$obj = $xao->intersect(['xxx', 18], ['CallbackTestMethods', 'static_length_compare']);
+
+		$this->assertEquals([1 => 22, 'foo' => 'bar'], (array) $obj);
+	}
+
+	public function testIntersectAcceptsCallback()
+	{
+		$xao = new XArray([1, 22, 'foo' => 'bar', 'x' => 'y', 4]);
+		$test = new CallbackTestMethods;
+		$obj  = $xao->intersect(['xxx', 18], [$test, 'length_compare']);
+
+		$this->assertEquals([1 => 22, 'foo' => 'bar'], (array) $obj);
+	}
+
+
 	### join()
 	#######################################################
 
