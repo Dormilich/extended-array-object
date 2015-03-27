@@ -1137,7 +1137,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 
 	public function testAIntersectWithKeyCallback()
 	{
-		$xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+		$xao = new XArray(['x' => 1, 'ab' => 22, 'z' => 3]);
 
 		$obj = $xao->aintersect(['ab' => 2, 'z' => 1], null, 'length_compare_func');
 		$this->assertEquals(['x' => 1], (array) $obj);
