@@ -983,6 +983,107 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals([1 => 22, 'foo' => 'bar'], (array) $obj);
 	}
 
+	### kintersect()
+	#######################################################
+
+	public function testKIntersectReturnsArrayObject()
+	{
+		$xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+		$obj = $xao->kintersect(['x' => 4, 'z' => 5]);
+
+		$this->assertInstanceOf($this->classname, $obj);
+		$this->assertNotSame($xao, $obj);
+	}
+
+	public function testKIntersectWithArray()
+	{
+		$xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+		$obj = $xao->kintersect(['x' => 4, 'z' => 5]);
+
+		$this->assertEquals(['x' => 1, 'z' => 3], (array) $obj);
+	}
+
+	public function testKIntersectWithMultipleArrays()
+	{
+		$xao = new XArray(['x' => 1, 4, 'y' => 2, 'z' => 3, 5]);
+		$obj = $xao->kintersect(['z' => 4, 3], ['z' => 5]);
+
+		$this->assertEquals(['z' => 3], (array) $obj);
+	}
+
+	public function testKIntersectWithNonArray()
+	{
+		$xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+
+		$obj = $xao->kintersect('a', 'z');
+		$this->assertEquals([], (array) $obj);
+
+		$obj = $xao->kintersect('z', ['z' => 'a']);
+		$this->assertEquals(['z' => 3], (array) $obj);
+	}
+
+	/**
+	 * @expectedException RuntimeException
+	 */
+	public function testKIntersectWithInvalidNonArray()
+	{
+		$xao = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
+		$obj = $xao->kintersect(new \stdClass);
+	}
+
+	public function testKIntersectWithArrayObject()
+	{
+		$xao1 = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+		$xao2 = new XArray(['x' => 4, 'z' => 5]);
+		$obj  = $xao1->kintersect($xao2);
+
+		$this->assertEquals(['x' => 1, 'z' => 3], (array) $obj);
+	}
+
+	/**
+	 * @expectedException RuntimeException
+	 */
+	public function testKIntersectWithoutArrayFails()
+	{
+		$xao = new XArray([1, 2, 3]);
+		$obj = $xao->kintersect('length_compare_func');
+	}
+
+	public function testKIntersectAcceptsFunction()
+	{
+		$xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+		$obj = $xao->kintersect(['x' => 4], 'length_compare_func');
+
+		$this->assertEquals(['x' => 1, 'z' => 3], (array) $obj);
+	}
+
+	public function testKIntersectAcceptsClosure()
+	{
+		$xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+		$obj = $xao->kintersect(['x' => 4], function ($a, $b) {
+			return length_compare_func($a, $b);
+		});
+
+		$this->assertEquals(['x' => 1, 'z' => 3], (array) $obj);
+	}
+
+	public function testKIntersectAcceptsStaticCallback()
+	{
+		$xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+		$obj = $xao->kintersect(['x' => 4], ['CallbackTestMethods', 'static_length_compare']);
+
+		$this->assertEquals(['x' => 1, 'z' => 3], (array) $obj);
+	}
+
+	public function testKIntersectAcceptsCallback()
+	{
+		$xao  = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+		$test = new CallbackTestMethods;
+		$obj  = $xao->kintersect(['x' => 4], [$test, 'length_compare']);
+
+		$this->assertEquals(['x' => 1, 'z' => 3], (array) $obj);
+	}
+
 
 	### join()
 	#######################################################
