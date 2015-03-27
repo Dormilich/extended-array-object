@@ -87,7 +87,7 @@ interface ArrayInterface
 	 * 			the array keys.
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are not present in any of the other arrays. 
-	 * @throws RuntimeException Input is not an array or ArrayObject.
+	 * @throws RuntimeException Input cannot be converted to an array.
 	 */
 	public function adiff($input);
 

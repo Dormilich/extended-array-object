@@ -158,14 +158,28 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return $callback;
 	}
 
+	/**
+	 * If a valid flag is given, pop it off the argument’s list and return it.
+	 * 
+	 * @param array &$args A reference to the (method’s) arguments array.
+	 * @return integer|false The flag, FALSE otherwise.
+	 */
 	protected function getFlagArgument(array &$args)
 	{
 		$flag = end($args);
-		
-		if (is_int($flag) and $flag > 0 and $flag < 4) {
-			return array_pop($args);
-		} 
-		return false;
+
+		// need to prepend this check since switch() only does a loose check
+		if (!is_int($flag)) {
+			return false;
+		}
+		switch ($flag) {
+			case ArrayInterface::COMPARE_KEY: 	// fall through
+			case ArrayInterface::COMPARE_VALUE: // fall through
+			case ArrayInterface::COMPARE_KEY|ArrayInterface::COMPARE_VALUE:
+				return array_pop($args);
+			default:
+				return false;
+		}
 	}
 
 	/**
@@ -251,36 +265,69 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	/**
+	 * Executes an array_*_*assoc() function based on the compare callback 
+	 * candidates and/or mode flag.
+	 * 
+	 * @param string $type Either diff or intersect.
+	 * @param array $args The array arguments to pass to the chosen array_* 
+	 *          function.
+	 * @param mixed $value_compare A callable (user defined compare function) 
+	 *          or NULL (internal compare function) or FALSE (not a compare 
+	 *          function) to use to compare the values.
+	 * @param mixed $key_compare A callable (user defined compare function) 
+	 *          or NULL (internal compare function) or FALSE (not a compare 
+	 *          function) to use to compare the keys. If only this is a valid 
+	 *          callback it compares the keys or values depending on the value 
+	 *          of the flag.
+	 * @param mixed $flag Determines whether key_compare should be used on 
+	 *          the keys or values.
+	 * @return array Result of the array_*_*assoc() function.
+	 */
 	private function interdiffAssoc($type, array $args, $value_compare, $key_compare, $flag = null)
 	{
 		if ($value_compare and $key_compare) {
-			$fn = 'array_u%s_uassoc';
+			$fn     = 'array_u%s_uassoc';
 			$args[] = $value_compare;
 			$args[] = $key_compare;
 		}
 		elseif (is_null($value_compare) and $key_compare) {
-			$fn = 'array_%s_uassoc';
+			$fn     = 'array_%s_uassoc';
 			$args[] = $key_compare;
 		}
 		elseif ($value_compare and is_null($key_compare)) {
-			$fn = 'array_u%s_assoc';
+			$fn     = 'array_u%s_assoc';
 			$args[] = $value_compare;
 		}
 		elseif (!$value_compare and $key_compare and $flag === ArrayInterface::COMPARE_VALUE) {
-			$fn = 'array_u%s_assoc';
+			$fn     = 'array_u%s_assoc';
 			$args[] = $key_compare;
 		}
 		elseif (!$value_compare and $key_compare and $flag === ArrayInterface::COMPARE_KEY) {
-			$fn = 'array_%s_uassoc';
+			$fn     = 'array_%s_uassoc';
 			$args[] = $key_compare;
 		}
 		else {
-			$fn = 'array_%s_assoc';
+			$fn     = 'array_%s_assoc';
 		}
 
 		return call_user_func_array(sprintf($fn, $type), $args);
 	}
 
+	/**
+	 * Compares the array against one or more other arrays and returns the 
+	 * elements that are not present in any of the other arrays using the keys 
+	 * and values for comparison.
+	 * 
+	 * @param mixed $input (multiple) The first array to compare against.
+	 * @param callable|null $value_compare_func (optional) Function to compare 
+	 * 			the array values.
+	 * @param callable|null $key_compare_func (optional) Function to compare 
+	 * 			the array keys.
+	 * @return ArrayObject Returns an array containing all the entries from 
+	 * 			the array that are not present in any of the other arrays. 
+	 * @throws RuntimeException Input cannot be converted to an array.
+	 */
 	public function adiff($input)
 	{
 		try {
