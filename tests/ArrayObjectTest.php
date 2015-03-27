@@ -1304,11 +1304,11 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	// since it’s random, the test may fail by chance
 	public function testRandSelectionIsRandom()
 	{
-		$xao  = new XArray([1, 2, 3, 4, 5, 6, 7]);
-		$obj1 = $xao->rand(3);
-		$obj2 = $xao->rand(3);
+		$xao  = new XArray(range(1, 20));
+		$obj1 = $xao->rand(10);
+		$obj2 = $xao->rand(10);
 
-		$this->assertNotEquals($obj1, $obj2);
+		$this->assertNotEquals($obj1, $obj2, 'This test might have failed by probability.');
 	}
 
 	/**
