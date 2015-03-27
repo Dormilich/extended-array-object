@@ -141,12 +141,12 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * and return it. If it is also a Closure bind the ArrayObject instance.
 	 * 
 	 * @param array $args A reference to the (method’s) arguments array.
-	 * @return callable|null The callback or NULL if not a callback.
+	 * @return callable|false The callback or FALSE if not a callback.
 	 */
 	protected function getCallbackArgument(array &$args)
 	{
 		if (!is_callable(end($args))) {
-			return null;
+			return false;
 		}
 
 		$callback = array_pop($args);
@@ -156,6 +156,16 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 
 		return $callback;
+	}
+
+	protected function getFlagArgument(array &$args)
+	{
+		$flag = end($args);
+		
+		if (is_int($flag) and $flag > 0 and $flag < 4) {
+			return array_pop($args);
+		} 
+		return false;
 	}
 
 	/**
@@ -231,6 +241,72 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 			else {
 				$array = call_user_func_array('array_diff_key', $arg_list);
 			}
+			restore_error_handler();
+
+			return new static($array);
+		}
+		catch (\ErrorException $exc) {
+			restore_error_handler();
+			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
+		}
+	}
+
+	private function interdiffAssoc($type, array $args, $value_compare, $key_compare, $flag = null)
+	{
+		if ($value_compare and $key_compare) {
+			$fn = 'array_u%s_uassoc';
+			$args[] = $value_compare;
+			$args[] = $key_compare;
+		}
+		elseif (is_null($value_compare) and $key_compare) {
+			$fn = 'array_%s_uassoc';
+			$args[] = $key_compare;
+		}
+		elseif ($value_compare and is_null($key_compare)) {
+			$fn = 'array_u%s_assoc';
+			$args[] = $value_compare;
+		}
+		elseif (!$value_compare and $key_compare and $flag === ArrayInterface::COMPARE_VALUE) {
+			$fn = 'array_u%s_assoc';
+			$args[] = $key_compare;
+		}
+		elseif (!$value_compare and $key_compare and $flag === ArrayInterface::COMPARE_KEY) {
+			$fn = 'array_%s_uassoc';
+			$args[] = $key_compare;
+		}
+		else {
+			$fn = 'array_%s_assoc';
+		}
+
+		return call_user_func_array(sprintf($fn, $type), $args);
+	}
+
+	public function adiff($input)
+	{
+		try {
+			set_error_handler([$this, 'errorHandler']);
+
+			$args = func_get_args();
+			$flag = $this->getFlagArgument($args);
+
+			if (!is_null(end($args))) {
+				$callback1 = $this->getCallbackArgument($args);
+			}
+			else {
+				$callback1 = array_pop($args);
+
+			}
+
+			if (!is_null(end($args))) {
+				$callback2 = $this->getCallbackArgument($args);
+			}
+			else {
+				$callback2 = array_pop($args);
+			}
+
+			$arg_list = $this->getInterdiffArgumentList($args);
+			$array    = $this->interdiffAssoc('diff', $arg_list, $callback2, $callback1, $flag);
+
 			restore_error_handler();
 
 			return new static($array);
