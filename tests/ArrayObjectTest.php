@@ -1086,6 +1086,74 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(['x' => 1], (array) $obj);
 	}
 
+	### aintersect()
+	#######################################################
+
+	public function testAIntersectReturnsArrayObject()
+	{
+		$xao = new XArray([1, 2, 3]);
+		// it does not _need_ a callback to work
+		$obj = $xao->aintersect([2, 3]);
+
+		$this->assertInstanceOf($this->classname, $obj);
+		$this->assertNotSame($xao, $obj);
+	}
+
+	public function testAIntersectWithArray()
+	{
+		$xao = new XArray(['x', 'ab', 'z']);
+		$obj = $xao->aintersect(['x', 'z']);
+
+		$this->assertEquals(['x'], (array) $obj);
+	}
+
+	public function testAIntersectWithArrayObject()
+	{
+		$xao1 = new XArray(['x', 'ab', 'z']);
+		$xao2 = new XArray(['x', 'z']);
+		$obj  = $xao1->aintersect($xao2);
+
+		$this->assertEquals(['x'], (array) $obj);
+	}
+
+	public function testAIntersectWithMultipleArrays()
+	{
+		$xao = new XArray(['x', 'ab', 'z']);
+		$obj = $xao->aintersect(['x', 'z'], ['x', 'y', 'z']);
+
+		$this->assertEquals(['x'], (array) $obj);
+	}
+
+	public function testAIntersectWithValueCallback()
+	{
+		$xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+
+		$obj = $xao->aintersect(['ab' => 22, 'z' => 'a'], 'length_compare_func', null);
+		$this->assertEquals(['z' => 3], (array) $obj);
+
+		$obj = $xao->aintersect(['ab' => 22, 'z' => 'a'], 'length_compare_func', XAInterface::COMPARE_VALUE);
+		$this->assertEquals(['z' => 3], (array) $obj);
+	}
+
+	public function testAIntersectWithKeyCallback()
+	{
+		$xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+
+		$obj = $xao->aintersect(['ab' => 2, 'z' => 1], null, 'length_compare_func');
+		$this->assertEquals(['x' => 1], (array) $obj);
+
+		$obj = $xao->aintersect(['ab' => 2, 'z' => 1], 'length_compare_func', XAInterface::COMPARE_KEY);
+		$this->assertEquals(['x' => 1], (array) $obj);
+	}
+
+	public function testAIntersectWithKeyValueCallback()
+	{
+		$xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+
+		$obj = $xao->aintersect(['xy' => 5, 'z' => 1], 'length_compare_func', 'length_compare_func');
+		$this->assertEquals(['x' => 1, 'ab' => 2], (array) $obj);
+	}
+
 	### join()
 	#######################################################
 
