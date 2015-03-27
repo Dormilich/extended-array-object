@@ -118,19 +118,17 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}, $args);
 		// extract the array arguments
 		$arg_list = array_filter($converted, 'is_array');
+		// prepend source array
+		array_unshift($arg_list, $this->getArrayCopy());
 		// extract the strings
 		$strings  = array_filter($converted, 'is_string');
 		// extract the integers
 		$integers = array_filter($converted, 'is_int');
-		// prepend source array
-		array_unshift($arg_list, $this->getArrayCopy());
-		// flip and append strings
-		if (!empty($strings)) {
-			$arg_list[] = array_flip($strings);
-		}
-		// flip and append integers
-		if (!empty($integers)) {
-			$arg_list[] = array_flip($integers);
+		// flip and merge strings/integers
+		$combined = array_merge($strings, $integers);
+		// flip and append 
+		if (!empty($combined)) {
+			$arg_list[] = array_flip($combined);
 		}
 
 		return $arg_list;
@@ -435,6 +433,32 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 			}
 			else {
 				$array = call_user_func_array('array_intersect', $arg_list);
+			}
+			restore_error_handler();
+
+			return new static($array);
+		}
+		catch (\ErrorException $exc) {
+			restore_error_handler();
+			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
+		}
+	}
+
+	public function kintersect($input)
+	{
+		try {
+			set_error_handler([$this, 'errorHandler']);
+
+			$args     = func_get_args();
+			$callback = $this->getCallbackArgument($args);
+			$arg_list = $this->getKInterdiffArgumentList($args);
+
+			if ($callback) {
+				$arg_list[] = $callback;
+				$array = call_user_func_array('array_intersect_ukey', $arg_list);
+			}
+			else {
+				$array = call_user_func_array('array_intersect_key', $arg_list);
 			}
 			restore_error_handler();
 
