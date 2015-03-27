@@ -908,7 +908,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$xao = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
 		$obj = $xao->intersect([2, 3, 'a' => 'y']);
 
-		$this->assertEquals([1 => 2, 'a' => 'y'], (array) $obj);
+		$this->assertEquals([1 => 2, 'x' => 'y'], (array) $obj);
 	}
 
 	public function testIntersectWithMultipleArrays()
@@ -931,9 +931,12 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	public function testIntersectWithNonArray()
 	{
 		$xao = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
-		$obj = $xao->intersect('bar', 1, 2, 3);
 
-		$this->assertEquals([1, 2, 'foo' => 'bar'], (array) $obj);
+		$obj = $xao->intersect('bar', 1, 2, 3);
+		$this->assertEquals([], (array) $obj);
+
+		$obj = $xao->intersect('bar', [1, 'bar']);
+		$this->assertEquals(['foo' => 'bar'], (array) $obj);
 	}
 
 	/**

@@ -420,6 +420,32 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	public function intersect($input)
+	{
+		try {
+			set_error_handler([$this, 'errorHandler']);
+
+			$args     = func_get_args();
+			$callback = $this->getCallbackArgument($args);
+			$arg_list = $this->getInterdiffArgumentList($args);
+
+			if ($callback) {
+				$arg_list[] = $callback;
+				$array = call_user_func_array('array_uintersect', $arg_list);
+			}
+			else {
+				$array = call_user_func_array('array_intersect', $arg_list);
+			}
+			restore_error_handler();
+
+			return new static($array);
+		}
+		catch (\ErrorException $exc) {
+			restore_error_handler();
+			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
+		}
+	}
+
 	/**
 	 * Join the array’s elements with a string.
 	 * 
