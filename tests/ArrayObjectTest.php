@@ -707,10 +707,10 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
 
 		$obj = $xao->adiff(['ab' => 2, 'z' => 1], null, 'length_compare_func');
-		$this->assertEquals(['x' => 1], (array) $obj);
+		$this->assertEquals(['z' => 3], (array) $obj);
 
 		$obj = $xao->adiff(['ab' => 2, 'z' => 1], 'length_compare_func', XAInterface::COMPARE_KEY);
-		$this->assertEquals(['x' => 1], (array) $obj);
+		$this->assertEquals(['z' => 3], (array) $obj);
 	}
 
 	public function testADiffWithKeyValueCallback()
