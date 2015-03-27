@@ -282,7 +282,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 *          the keys or values.
 	 * @return array Result of the array_*_*assoc() function.
 	 */
-	private function interdiffAssoc($type, array $args, $value_compare, $key_compare, $flag = null)
+	private function interdiffAssocExecute($type, array $args, $value_compare, $key_compare, $flag = null)
 	{
 		if ($value_compare and $key_compare) {
 			$fn     = 'array_u%s_uassoc';
@@ -312,6 +312,30 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return call_user_func_array(sprintf($fn, $type), $args);
 	}
 
+	private function interdiffAssocCall($type, array $args)
+	{
+		$flag = $this->getFlagArgument($args);
+
+		if (!is_null(end($args))) {
+			$callback1 = $this->getCallbackArgument($args);
+		}
+		else {
+			$callback1 = array_pop($args);
+
+		}
+
+		if (!is_null(end($args))) {
+			$callback2 = $this->getCallbackArgument($args);
+		}
+		else {
+			$callback2 = array_pop($args);
+		}
+
+		$arg_list = $this->getInterdiffArgumentList($args);
+
+		return $this->interdiffAssocExecute($type, $arg_list, $callback2, $callback1, $flag);
+	}
+
 	/**
 	 * Compares the array against one or more other arrays and returns the 
 	 * elements that are not present in any of the other arrays using the keys 
@@ -330,28 +354,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
-
-			$args = func_get_args();
-			$flag = $this->getFlagArgument($args);
-
-			if (!is_null(end($args))) {
-				$callback1 = $this->getCallbackArgument($args);
-			}
-			else {
-				$callback1 = array_pop($args);
-
-			}
-
-			if (!is_null(end($args))) {
-				$callback2 = $this->getCallbackArgument($args);
-			}
-			else {
-				$callback2 = array_pop($args);
-			}
-
-			$arg_list = $this->getInterdiffArgumentList($args);
-			$array    = $this->interdiffAssoc('diff', $arg_list, $callback2, $callback1, $flag);
-
+			$array = $this->interdiffAssocCall('diff', func_get_args());
 			restore_error_handler();
 
 			return new static($array);
@@ -469,32 +472,12 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
 		}
 	}
+
 	public function aintersect($input)
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
-
-			$args = func_get_args();
-			$flag = $this->getFlagArgument($args);
-
-			if (!is_null(end($args))) {
-				$callback1 = $this->getCallbackArgument($args);
-			}
-			else {
-				$callback1 = array_pop($args);
-
-			}
-
-			if (!is_null(end($args))) {
-				$callback2 = $this->getCallbackArgument($args);
-			}
-			else {
-				$callback2 = array_pop($args);
-			}
-
-			$arg_list = $this->getInterdiffArgumentList($args);
-			$array    = $this->interdiffAssoc('intersect', $arg_list, $callback2, $callback1, $flag);
-
+			$array = $this->interdiffAssocCall('intersect', func_get_args());
 			restore_error_handler();
 
 			return new static($array);
