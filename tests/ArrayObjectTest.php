@@ -655,7 +655,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 
 	### adiff()
 	#######################################################
-/*
+
 	public function testADiffReturnsArrayObject()
 	{
 		$xao = new XArray([1, 2, 3]);
@@ -668,16 +668,61 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 
 	public function testADiffWithArray()
 	{
-		$source   = ["a" => "green", "b" => "brown", "c" => "blue", "red"];
-		$compare  = ["a" => "green", "yellow", "red"];
-		$expected = ["b" => "brown", "c" => "blue", "red"];
+		$xao = new XArray(['x', 'ab', 'z']);
+		$obj = $xao->adiff(['x', 'z']);
 
-		$xao = new XArray($source);
-		$obj = $xao->adiff($compare);
-
-		$this->assertEquals($expected, (array) $obj);
+		$this->assertEquals([1 => 'ab', 2 => 'z'], (array) $obj);
 	}
-//*/
+
+	public function testADiffWithArrayObject()
+	{
+		$xao1 = new XArray(['x', 'ab', 'z']);
+		$xao2 = new XArray(['x', 'z']);
+		$obj  = $xao1->adiff($xao2);
+
+		$this->assertEquals([1 => 'ab', 2 => 'z'], (array) $obj);
+	}
+
+	public function testADiffWithMultipleArrays()
+	{
+		$xao = new XArray(['x', 'ab', 'z']);
+		$obj = $xao->adiff(['x', 'z'], ['x', 'y', 'z']);
+
+		$this->assertEquals([1 => 'ab'], (array) $obj);
+	}
+
+	public function testADiffWithValueCallback()
+	{
+		$xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+
+		$obj = $xao->adiff(['ab' => 22, 'z' => 'a'], 'length_compare_func', null);
+		$this->assertEquals(['x' => 1, 'ab' => 2], (array) $obj);
+
+		$obj = $xao->adiff(['ab' => 22, 'z' => 'a'], 'length_compare_func', XAInterface::USE_VALUE);
+		$this->assertEquals(['x' => 1, 'ab' => 2], (array) $obj);
+	}
+
+	public function testADiffWithKeyCallback()
+	{
+		$xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+
+		$obj = $xao->adiff(['ab' => 2, 'z' => 1], null, 'length_compare_func');
+		$this->assertEquals(['x' => 1], (array) $obj);
+
+		$obj = $xao->adiff(['ab' => 2, 'z' => 1], 'length_compare_func', XAInterface::USE_KEY);
+		$this->assertEquals(['x' => 1], (array) $obj);
+	}
+
+	public function testADiffWithKeyValueCallback()
+	{
+		$xao = new XArray(['x' => 1, 'ab' => 22, 'z' => 3]);
+
+		$obj = $xao->adiff(['ab' => 2, 'z' => 1], 'length_compare_func', 'length_compare_func');
+		$this->assertEquals(['ab' => 22], (array) $obj);
+	}
+
+	// test some more invalid parameter combinations
+
 	### filter()
 	#######################################################
 
