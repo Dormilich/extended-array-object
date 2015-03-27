@@ -192,8 +192,8 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * 			array values.
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are not present in any of the other arrays. 
-	 * @throws RuntimeExceeption Missing comparison input.
-	 * @throws RuntimeExceeption Forced array conversion of a non-convertable 
+	 * @throws RuntimeException Missing comparison input.
+	 * @throws RuntimeException Forced array conversion of a non-convertable 
 	 * 			value.
 	 */
 	public function diff($input)
@@ -227,14 +227,15 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * elements in the array whose keys are not present in any of the other 
 	 * arrays. 
 	 * 
-	 * If input is not an array, it will be converted to array keys.
+	 * If input is not an array, it will be converted to array keys. Multiple 
+	 * scalar values are combined into a single input array before flipping.
 	 * 
 	 * @param mixed $input (multiple) First array to compare against.
 	 * @param callable $callback (optional) A function that compares the 
 	 * 			array keys.
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are not present in any of the other arrays. 
-	 * @throws RuntimeExceeption Missing comparison input.
+	 * @throws RuntimeException Missing comparison input.
 	 * @throws RuntimeException Input cannot be converted to array keys.
 	 */
 	public function kdiff($input)
@@ -312,6 +313,14 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return call_user_func_array(sprintf($fn, $type), $args);
 	}
 
+	/**
+	 * Prepare the array_*_*assoc() arguments from the method’s call parameters 
+	 * and pass them to the executing method.
+	 * 
+	 * @param string $type Either diff or intersect
+	 * @param array $args The method’s arguments array.
+	 * @return array The result array of the function execution.
+	 */
 	private function interdiffAssocCall($type, array $args)
 	{
 		$flag = $this->getFlagArgument($args);
@@ -346,6 +355,10 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * 			the array values.
 	 * @param callable|null $key_compare_func (optional) Function to compare 
 	 * 			the array keys.
+	 * @param integer $mode (conditional) If only one callback is given, this 
+	 * 			flag determines whether it should be used for value or key 
+	 * 			comparison. Can be either of ArrayInterface::COMPARE_VALUE or 
+	 * 			ArrayInterface::COMPARE_KEY.
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are not present in any of the other arrays. 
 	 * @throws RuntimeException Input cannot be converted to an array.
@@ -421,6 +434,24 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	/**
+	 * Returns an array containing all the values of the array that are 
+	 * present in all the arguments. Note that keys are preserved. 
+	 * 
+	 * If input is not an array it will be converted to an array. 
+	 * 
+	 * Note: There can only as many array elements in the result as the 
+	 * shortest array’s length, even if the callback would allow more.
+	 * 
+	 * @param mixed $input (multiple) First array to compare against.
+	 * @param callable $callback (optional) A function that compares the 
+	 * 			array values.
+	 * @return ArrayObject Returns an array containing all the entries from 
+	 * 			the array that are present in all of the other arrays. 
+	 * @throws RuntimeException Missing comparison input.
+	 * @throws RuntimeException Forced array conversion of a non-convertable 
+	 * 			value.
+	 */
 	public function intersect($input)
 	{
 		try {
@@ -447,6 +478,22 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	/**
+	 * Compares the array against one or more other arrays and returns the 
+	 * elements in the array whose keys are present in all of the other 
+	 * arrays. 
+	 * 
+	 * If input is not an array, it will be converted to array keys. Multiple 
+	 * scalar values are combined into a single input array before flipping.
+	 * 
+	 * @param mixed $input (multiple) First array to compare against.
+	 * @param callable $callback (optional) A function that compares the 
+	 * 			array keys.
+	 * @return ArrayObject Returns an array containing all the entries from 
+	 * 			the array that are present in all of the other arrays. 
+	 * @throws RuntimeException Missing comparison input.
+	 * @throws RuntimeException Input cannot be converted to array keys.
+	 */
 	public function kintersect($input)
 	{
 		try {
@@ -473,6 +520,24 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	/**
+	 * Compares the array against one or more other arrays and returns the 
+	 * elements that are present in all of the other arrays using the keys 
+	 * and values for comparison.
+	 * 
+	 * @param mixed $input (multiple) The first array to compare against.
+	 * @param callable|null $value_compare_func (optional) Function to compare 
+	 * 			the array values.
+	 * @param callable|null $key_compare_func (optional) Function to compare 
+	 * 			the array keys.
+	 * @param integer $mode (conditional) If only one callback is given, this 
+	 * 			flag determines whether it should be used for value or key 
+	 * 			comparison. Can be either of ArrayInterface::COMPARE_VALUE or 
+	 * 			ArrayInterface::COMPARE_KEY.
+	 * @return ArrayObject Returns an array containing all the entries from 
+	 * 			the array that are present in all of the other arrays. 
+	 * @throws RuntimeException Input cannot be converted to an array.
+	 */
 	public function aintersect($input)
 	{
 		try {
