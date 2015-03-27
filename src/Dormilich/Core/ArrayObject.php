@@ -145,13 +145,14 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 */
 	protected function getCallbackArgument(array &$args)
 	{
-		$callback = null;
+		if (!is_callable(end($args))) {
+			return null;
+		}
 
-		if (is_callable(end($args))) {
-			$callback = array_pop($args);
-			if ($callback instanceof \Closure) {
-				$callback = $callback->bindTo($this);
-			}
+		$callback = array_pop($args);
+
+		if ($callback instanceof \Closure) {
+			return $callback->bindTo($this);
 		}
 
 		return $callback;
