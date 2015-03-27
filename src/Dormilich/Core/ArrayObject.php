@@ -65,6 +65,99 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	}
 
 	/**
+	 * Convert all elements in the argument list into arrays and prepend 
+	 * the array of this instance.
+	 * 
+	 * @param array $args The argument list.
+	 * @return array The converted argument list.
+	 * @throws RuntimeException Argument list is empty.
+	 */
+	protected function getInterdiffArgumentList(array $args)
+	{
+		if (count($args) === 0) {
+			throw new \RuntimeException('Nothing to compare against given.');
+		}
+
+		$arg_list = array_map(function ($arg) {
+			return (array) $arg;
+		}, $args);
+
+		array_unshift($arg_list, $this->getArrayCopy());
+
+		return $arg_list;
+	}
+
+	/**
+	 * Convert all elements in the argument list into arrays. Integer values 
+	 * are mapped to integer keys, arrays, ArrayObjects, and Iterators are 
+	 * converted to arrays. Any other input element is converted to string 
+	 * and turned into a string key.
+	 * 
+	 * @param array $args The argument list.
+	 * @return array The converted argument list.
+	 * @throws RuntimeException Argument list is empty.
+	 */
+	protected function getKInterdiffArgumentList(array $args)
+	{
+		if (count($args) === 0) {
+			throw new \RuntimeException('Nothing to compare against given.');
+		}
+
+		// convert args into arrays or strings or integers
+		$converted = array_map(function ($arg) {
+			if (is_array($arg) or ($arg instanceof \ArrayObject)) {
+				return (array) $arg;
+			}
+			if ($arg instanceof \Iterator) {
+				return iterator_to_array($arg);
+			}
+			if (is_int($arg)) {
+				return $arg;
+			}
+			return (string) $arg;
+		}, $args);
+		// extract the array arguments
+		$arg_list = array_filter($converted, 'is_array');
+		// extract the strings
+		$strings  = array_filter($converted, 'is_string');
+		// extract the integers
+		$integers = array_filter($converted, 'is_int');
+		// prepend source array
+		array_unshift($arg_list, $this->getArrayCopy());
+		// flip and append strings
+		if (!empty($strings)) {
+			$arg_list[] = array_flip($strings);
+		}
+		// flip and append integers
+		if (!empty($integers)) {
+			$arg_list[] = array_flip($integers);
+		}
+
+		return $arg_list;
+	}
+
+	/**
+	 * If the last argument is a callback, remove it from the argument array 
+	 * and return it. If it is also a Closure bind the ArrayObject instance.
+	 * 
+	 * @param array $args A reference to the (method’s) arguments array.
+	 * @return callable|null The callback or NULL if not a callback.
+	 */
+	protected function getCallbackArgument(array &$args)
+	{
+		$callback = null;
+
+		if (is_callable(end($args))) {
+			$callback = array_pop($args);
+			if ($callback instanceof \Closure) {
+				$callback = $callback->bindTo($this);
+			}
+		}
+
+		return $callback;
+	}
+
+	/**
 	 * Compares the array against one or more other arrays and returns the 
 	 * elements in the array whose values are not present in any of the other 
 	 * arrays. 
@@ -77,7 +170,8 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are not present in any of the other arrays. 
 	 * @throws RuntimeExceeption Missing comparison input.
-	 * @throws RuntimeExceeption Forced array conversion of a non-converable value.
+	 * @throws RuntimeExceeption Forced array conversion of a non-convertable 
+	 * 			value.
 	 */
 	public function diff($input)
 	{
@@ -85,24 +179,8 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 			set_error_handler([$this, 'errorHandler']);
 
 			$args     = func_get_args();
-			$callback = null;
-
-			if (is_callable(end($args))) {
-				$callback = array_pop($args);
-				if ($callback instanceof \Closure) {
-					$callback = $callback->bindTo($this);
-				}
-			}
-
-			if (count($args) === 0) {
-				throw new \RuntimeException('Nothing to compare against given.');
-			}
-
-			$arg_list = array_map(function ($arg) {
-				return (array) $arg;
-			}, $args);
-
-			array_unshift($arg_list, $this->getArrayCopy());
+			$callback = $this->getCallbackArgument($args);
+			$arg_list = $this->getInterdiffArgumentList($args);
 
 			if ($callback) {
 				$arg_list[] = $callback;
@@ -142,48 +220,8 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 			set_error_handler([$this, 'errorHandler']);
 
 			$args     = func_get_args();
-			$callback = null;
-
-			if (is_callable(end($args))) {
-				$callback = array_pop($args);
-				if ($callback instanceof \Closure) {
-					$callback = $callback->bindTo($this);
-				}
-			}
-
-			if (count($args) === 0) {
-				throw new \RuntimeException('Nothing to compare against given.');
-			}
-
-			// convert args into arrays or strings
-			$converted = array_map(function ($arg) {
-				if (is_array($arg) or ($arg instanceof \ArrayObject)) {
-					return (array) $arg;
-				}
-				if ($arg instanceof \Iterator) {
-					return iterator_to_array($arg);
-				}
-				if (is_int($arg)) {
-					return $arg;
-				}
-				return (string) $arg;
-			}, $args);
-			// extract the array arguments
-			$arg_list = array_filter($converted, 'is_array');
-			// extract the strings
-			$strings  = array_filter($converted, 'is_string');
-			// extract the integers
-			$integers = array_filter($converted, 'is_int');
-			// prepend source array
-			array_unshift($arg_list, $this->getArrayCopy());
-			// flip and append strings
-			if (!empty($strings)) {
-				$arg_list[] = array_flip($strings);
-			}
-			// flip and append integers
-			if (!empty($integers)) {
-				$arg_list[] = array_flip($integers);
-			}
+			$callback = $this->getCallbackArgument($args);
+			$arg_list = $this->getKInterdiffArgumentList($args);
 
 			if ($callback) {
 				$arg_list[] = $callback;
