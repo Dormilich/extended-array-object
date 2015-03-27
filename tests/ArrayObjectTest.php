@@ -698,7 +698,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$obj = $xao->adiff(['ab' => 22, 'z' => 'a'], 'length_compare_func', null);
 		$this->assertEquals(['x' => 1, 'ab' => 2], (array) $obj);
 
-		$obj = $xao->adiff(['ab' => 22, 'z' => 'a'], 'length_compare_func', XAInterface::USE_VALUE);
+		$obj = $xao->adiff(['ab' => 22, 'z' => 'a'], 'length_compare_func', XAInterface::COMPARE_VALUE);
 		$this->assertEquals(['x' => 1, 'ab' => 2], (array) $obj);
 	}
 
@@ -709,7 +709,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$obj = $xao->adiff(['ab' => 2, 'z' => 1], null, 'length_compare_func');
 		$this->assertEquals(['x' => 1], (array) $obj);
 
-		$obj = $xao->adiff(['ab' => 2, 'z' => 1], 'length_compare_func', XAInterface::USE_KEY);
+		$obj = $xao->adiff(['ab' => 2, 'z' => 1], 'length_compare_func', XAInterface::COMPARE_KEY);
 		$this->assertEquals(['x' => 1], (array) $obj);
 	}
 

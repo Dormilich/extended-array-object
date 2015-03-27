@@ -8,12 +8,12 @@ interface ArrayInterface
 	/**
 	 * @var integer Compare using the array values.
 	 */
-	const USE_VALUE = 1;
+	const COMPARE_VALUE = 1;
 
 	/**
 	 * @var integer Compare using the array keys.
 	 */
-	const USE_KEY   = 2;
+	const COMPARE_KEY   = 2;
 
 	/**
 	 * Returns an array with all keys from array lowercased or uppercased. 
@@ -124,18 +124,18 @@ interface ArrayInterface
 	 * @param mixed $input First array to compare against.
 	 * @param integer $mode Determines whether the comparison should be made 
 	 * 			on the array values, the array keys or on both using the 
-	 * 			ArrayInterface::USE_VALUE and ArrayInterface::USE_KEY constants.
+	 * 			ArrayInterface::COMPARE_VALUE and ArrayInterface::COMPARE_KEY constants.
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are present in all of the other arrays. 
 	 */
-	public function intersect($input, $mode = ArrayInterface::USE_VALUE);
+	public function intersect($input, $mode = ArrayInterface::COMPARE_VALUE);
 
 	/**
 	 * Computes the intersection of arrays by using callback function(s) for 
 	 * comparison. 
 	 * 
-	 * When using either USE_VALUE or USE_KEY only one compare function must 
-	 * be provided. If USE_VALUE|USE_KEY is used the first compare function 
+	 * When using either COMPARE_VALUE or COMPARE_KEY only one compare function must 
+	 * be provided. If COMPARE_VALUE|COMPARE_KEY is used the first compare function 
 	 * compares the array values, the second the array keys. If the internal 
 	 * function should be used for comparison, set the appropriate callback 
 	 * parameter to NULL.
@@ -145,11 +145,11 @@ interface ArrayInterface
 	 * @param callable $key_compare_func 
 	 * @param integer $mode Determines whether the comparison should be made 
 	 * 			on the array values, the array keys or on both using the 
-	 * 			ArrayInterface::USE_VALUE and ArrayInterface::USE_KEY constants.
+	 * 			ArrayInterface::COMPARE_VALUE and ArrayInterface::COMPARE_KEY constants.
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are present in all of the other arrays. 
 	 */
-	public function uintersect($input, $compare_func, $mode = ArrayInterface::USE_VALUE);
+	public function uintersect($input, $compare_func, $mode = ArrayInterface::COMPARE_VALUE);
 
 	/**
 	 * Join the array’s elements with a string.
@@ -347,7 +347,7 @@ interface ArrayInterface
 	 *                  or SORT_NATURAL to sort strings case-insensitively 
 	 * @param integer $mode Determines whether the comparison should be made 
 	 * 			on the array values or the array keys using the 
-	 * 			ArrayInterface::USE_VALUE and ArrayInterface::USE_KEY constants.
+	 * 			ArrayInterface::COMPARE_VALUE and ArrayInterface::COMPARE_KEY constants.
 	 * @param boolean $preserve_keys If this parameter is set to TRUE the array 
 	 * 			indices maintain their correlation with the array elements they 
 	 * 			are associated with. This is used mainly when sorting associative 
@@ -355,7 +355,7 @@ interface ArrayInterface
 	 * @return ArrayObject Returns the array on success.
 	 * @throws Exception Sorting failed.
 	 */
-	public function sort($sort_flags = \SORT_REGULAR, $mode = ArrayInterface::USE_VALUE, $preserve_keys = false);
+	public function sort($sort_flags = \SORT_REGULAR, $mode = ArrayInterface::COMPARE_VALUE, $preserve_keys = false);
 
 	/**
 	 * This method sorts the array. Elements will be arranged from highest to 
@@ -375,7 +375,7 @@ interface ArrayInterface
 	 *                  or SORT_NATURAL to sort strings case-insensitively 
 	 * @param integer $mode Determines whether the comparison should be made 
 	 * 			on the array values or the array keys using the 
-	 * 			ArrayInterface::USE_VALUE and ArrayInterface::USE_KEY constants.
+	 * 			ArrayInterface::COMPARE_VALUE and ArrayInterface::COMPARE_KEY constants.
 	 * @param boolean $preserve_keys If this parameter is set to TRUE the array 
 	 * 			indices maintain their correlation with the array elements they 
 	 * 			are associated with. This is used mainly when sorting associative 
@@ -383,7 +383,7 @@ interface ArrayInterface
 	 * @return ArrayObject Returns the array on success.
 	 * @throws Exception Sorting failed.
 	 */
-	public function rsort($sort_flags = \SORT_REGULAR, $mode = ArrayInterface::USE_VALUE, $preserve_keys = false);
+	public function rsort($sort_flags = \SORT_REGULAR, $mode = ArrayInterface::COMPARE_VALUE, $preserve_keys = false);
 
 	/**
 	 * This method sorts the array using a user-supplied comparison function. 
@@ -396,7 +396,7 @@ interface ArrayInterface
 	 * 			than the second. 
 	 * @param integer $mode Determines whether the comparison should be made 
 	 * 			on the array values or the array keys using the 
-	 * 			ArrayInterface::USE_VALUE and ArrayInterface::USE_KEY constants.
+	 * 			ArrayInterface::COMPARE_VALUE and ArrayInterface::COMPARE_KEY constants.
 	 * @param boolean $preserve_keys If this parameter is set to TRUE the array 
 	 * 			indices maintain their correlation with the array elements they 
 	 * 			are associated with. This is used mainly when sorting associative 
@@ -404,7 +404,7 @@ interface ArrayInterface
 	 * @return ArrayObject Returns the array on success.
 	 * @throws Exception Sorting failed.
 	 */
-	public function usort(callable $callback, $mode = ArrayInterface::USE_VALUE, $preserve_keys = false);
+	public function usort(callable $callback, $mode = ArrayInterface::COMPARE_VALUE, $preserve_keys = false);
 
 	/**
 	 * Removes the elements designated by offset and length from the input 
