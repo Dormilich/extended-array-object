@@ -1016,9 +1016,6 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
 
 		$obj = $xao->kintersect('a', 'z');
-		$this->assertEquals([], (array) $obj);
-
-		$obj = $xao->kintersect('z', ['z' => 'a']);
 		$this->assertEquals(['z' => 3], (array) $obj);
 	}
 
@@ -1049,41 +1046,45 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$obj = $xao->kintersect('length_compare_func');
 	}
 
+	// NOTE on array_intersect_ukey() and array_uintersect():
+	// the result cannot have more members than the length of 
+	// the shortest comparison array even if the comparison 
+	// callback would allow for more
+
 	public function testKIntersectAcceptsFunction()
 	{
 		$xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
-		$obj = $xao->kintersect(['x' => 4], 'length_compare_func');
+		$obj = $xao->kintersect(['a' => 4], 'length_compare_func');
 
-		$this->assertEquals(['x' => 1, 'z' => 3], (array) $obj);
+		$this->assertEquals(['x' => 1], (array) $obj);
 	}
 
 	public function testKIntersectAcceptsClosure()
 	{
 		$xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
-		$obj = $xao->kintersect(['x' => 4], function ($a, $b) {
+		$obj = $xao->kintersect(['a' => 4], function ($a, $b) {
 			return length_compare_func($a, $b);
 		});
 
-		$this->assertEquals(['x' => 1, 'z' => 3], (array) $obj);
+		$this->assertEquals(['x' => 1], (array) $obj);
 	}
 
 	public function testKIntersectAcceptsStaticCallback()
 	{
 		$xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
-		$obj = $xao->kintersect(['x' => 4], ['CallbackTestMethods', 'static_length_compare']);
+		$obj = $xao->kintersect(['a' => 4], ['CallbackTestMethods', 'static_length_compare']);
 
-		$this->assertEquals(['x' => 1, 'z' => 3], (array) $obj);
+		$this->assertEquals(['x' => 1], (array) $obj);
 	}
 
 	public function testKIntersectAcceptsCallback()
 	{
 		$xao  = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
 		$test = new CallbackTestMethods;
-		$obj  = $xao->kintersect(['x' => 4], [$test, 'length_compare']);
+		$obj  = $xao->kintersect(['a' => 4], [$test, 'length_compare']);
 
-		$this->assertEquals(['x' => 1, 'z' => 3], (array) $obj);
+		$this->assertEquals(['x' => 1], (array) $obj);
 	}
-
 
 	### join()
 	#######################################################
