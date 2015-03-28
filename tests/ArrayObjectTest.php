@@ -856,7 +856,8 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(['a' => 5], (array) $obj);
     }
-
+/*
+	// not sure if that’s a good idea to support ...
     public function testXKDiffWithNonArray()
     {
         $xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
@@ -864,7 +865,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(['a' => 0], (array) $obj);
     }
-
+*/
     /**
      * @expectedException RuntimeException
      */
