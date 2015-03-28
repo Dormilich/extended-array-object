@@ -49,6 +49,26 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	}
 
 	/**
+	 * Merges the elements of the array with one or more arrays together so 
+	 * that the values of one are appended to the end of the previous one. 
+	 * For elements with the same string key, the later value overwrites the 
+	 * previous one. Numeric keys are reindexed in the resulting array.
+	 * 
+	 * @param mixed $input First array to merge. 
+	 * @return ArrayObject Returns the resulting array. 
+	 */
+	public function concat($input)
+	{
+		$args  = array_map(function ($item) {
+			return (array) $item;
+		}, func_get_args());
+		array_unshift($args, $this->getArrayCopy());
+		$array = call_user_func_array('array_merge', $args);
+
+		return new static($array);
+	}
+
+	/**
 	 * Checks if a value exists in the array using loose comparison unless 
 	 * strict is set.
 	 * 
@@ -632,26 +652,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 			restore_error_handler();
 			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
 		}
-	}
-
-	/**
-	 * Merges the elements of the array with one or more arrays together so 
-	 * that the values of one are appended to the end of the previous one. 
-	 * For elements with the same string key, the later value overwrites the 
-	 * previous one. Numeric keys are reindexed in the resulting array.
-	 * 
-	 * @param mixed $input First array to merge. 
-	 * @return ArrayObject Returns the resulting array. 
-	 */
-	public function merge($input)
-	{
-		$args  = array_map(function ($item) {
-			return (array) $item;
-		}, func_get_args());
-		array_unshift($args, $this->getArrayCopy());
-		$array = call_user_func_array('array_merge', $args);
-
-		return new static($array);
 	}
 
 	/**
