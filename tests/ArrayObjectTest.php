@@ -1448,6 +1448,79 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($array, (array) $xao->map('test_map', true));
 	}
 
+    ### merge()
+    #######################################################
+
+    public function testMergeReturnsArrayObject()
+    {
+        $xao = new XArray;
+        $obj = $xao->merge([]);
+
+        $this->assertInstanceOf($this->classname, $obj);
+        $this->assertNotSame($xao, $obj);
+    }
+
+    public function testMergeNumericArrayWithSingleArray()
+    {
+        $xao = new XArray([1, 2, 3]);
+        $obj = $xao->merge(['x', 'y']);
+
+        $this->assertEquals(['x', 'y', 3], (array) $obj);
+    }
+
+    public function testMergeNumericArrayWithMultipleArrays()
+    {
+        $xao = new XArray([1, 2, 3]);
+        $obj = $xao->merge(['x', 'y'], ['z']);
+
+        $this->assertEquals(['z', 'y', 3], (array) $obj);
+    }
+
+    public function testMergeNumericArrayWithArrayObject()
+    {
+        $xao1 = new XArray([1, 2, 3]);
+        $xao2 = new XArray(['a', 'z']);
+        $obj  = $xao1->merge($xao2);
+
+        $this->assertEquals(['a', 'z', 3], (array) $obj);
+    }
+
+    public function testMergeAssocArrayWithSingleArray()
+    {
+        $expected = ['x' => 1, 'y' => 2, 'z' => 2, 'a' => 1];
+        $xao      = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+        $obj      = $xao->merge(['a' => 1, 'z' => 2]);
+
+        $this->assertEquals($expected, (array) $obj);
+    }
+
+    public function testMergeAssocArrayWithMultipleArrays()
+    {
+        $expected = ['x' => 5, 'y' => 2, 'z' => 4, 'a' => 1];
+        $xao      = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+        $obj      = $xao->merge(['a' => 1, 'z' => 2], ['x' => 5, 'z' => 4]);
+
+        $this->assertEquals($expected, (array) $obj);
+    }
+
+    public function testMergeAssocArrayWithArrayObject()
+    {
+        $expected = ['x' => 1, 'y' => 2, 'z' => 2, 'a' => 1];
+        $xao1     = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+        $xao2     = new XArray(['a' => 1, 'z' => 2]);
+        $obj      = $xao1->merge($xao2);
+
+        $this->assertEquals($expected, (array) $obj);
+    }
+
+    public function testMergeWithScalarValues()
+    {
+        $xao = new XArray([1, 2, 3]);
+        $obj = $xao->merge('a', 'z');
+
+        $this->assertEquals(['a', 'z', 3], (array) $obj);
+    }
+
 	### pop()
 	#######################################################
 
