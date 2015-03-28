@@ -1872,6 +1872,14 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['a' => 0, 'b' => 2, 'c' => 12], (array) $obj);
     }
 
+    public function testReplaceWithSimilarKeys()
+    {
+    	$xao = new XArray([1, 2, 3]);
+    	$obj = $xao->replace(['1' => 'foo']);
+    	// string numbers (int) are automatically converted to integers
+    	$this->assertEquals([1, 'foo', 3], (array) $obj);
+    }
+
 	### reverse()
 	###########################################################################
 

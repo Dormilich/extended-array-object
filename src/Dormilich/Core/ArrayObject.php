@@ -10,17 +10,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		throw new \ErrorException($msg, 0, $code, $file, $line);
 	}
 
-	public static function strictCompare($value1, $value2)
-	{
-		if ($value1 === $value2) {
-			return 0;
-		}
-		if ($cmp = strcmp((string) $value1, (string) $value2)) {
-			return $cmp;
-		}
-		return 1;
-	}
-
 	/**
 	 * Specify data which should be serialized to JSON. Serializes the object 
 	 * to a value that can be serialized natively by json_encode().
@@ -790,7 +779,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 
 			$source   = $this->getArrayCopy();
 			$arg_list = array_map(function ($arg) use ($source) {
-				return array_intersect_ukey((array) $arg, $source, [__CLASS__, 'strictCompare']);
+				return array_intersect_key((array) $arg, $source);
 			}, func_get_args());
 			$arg_list = array_filter($arg_list, 'count');
 
