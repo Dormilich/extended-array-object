@@ -10,6 +10,17 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		throw new \ErrorException($msg, 0, $code, $file, $line);
 	}
 
+	public static function strictCompare($value1, $value2)
+	{
+		if ($value1 === $value2) {
+			return 0;
+		}
+		if ($cmp = strcmp((string) $value1, (string) $value2)) {
+			return $cmp;
+		}
+		return 1;
+	}
+
 	/**
 	 * Specify data which should be serialized to JSON. Serializes the object 
 	 * to a value that can be serialized natively by json_encode().
@@ -770,6 +781,31 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 			$callback = $callback->bindTo($this);
 		}
 		return array_reduce($array, $callback, $initial);
+	}
+
+	public function replace($input)
+	{
+		try {
+			set_error_handler([$this, 'errorHandler']);
+
+			$source   = $this->getArrayCopy();
+			$arg_list = array_map(function ($arg) use ($source) {
+				return array_intersect_ukey((array) $arg, $source, [__CLASS__, 'strictCompare']);
+			}, func_get_args());
+			$arg_list = array_filter($arg_list, 'count');
+
+			array_unshift($arg_list, $source);
+
+			$array = call_user_func_array('array_replace', $arg_list);
+
+			restore_error_handler();
+
+			return new static($array);
+		} 
+		catch (\ErrorException $exc) {
+			restore_error_handler();
+			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
+		}
 	}
 
 	/**
