@@ -269,7 +269,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### changeKeyCase()
-	#######################################################
+	###########################################################################
 
 	public function testChangeKeyCaseToUpper()
 	{
@@ -350,7 +350,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### concat()
-	#######################################################
+	###########################################################################
 
 	public function testConcatReturnsArrayObject()
 	{
@@ -427,7 +427,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### contains()
-	#######################################################
+	###########################################################################
 
 	public function testContainsEqualWithExistingValue()
 	{
@@ -472,7 +472,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### diff()
-	#######################################################
+	###########################################################################
 /*
 	mapping table for array functions to methods:
 
@@ -633,7 +633,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### kdiff()
-	#######################################################
+	###########################################################################
 
 	public function testKDiffReturnsArrayObject()
 	{
@@ -731,7 +731,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### adiff()
-	#######################################################
+	###########################################################################
 
 	public function testADiffReturnsArrayObject()
 	{
@@ -801,7 +801,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	// test some more invalid parameter combinations
 
 	### filter()
-	#######################################################
+	###########################################################################
 
 	public function testFilterAcceptsFunction()
 	{
@@ -920,7 +920,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### flip()
-	#######################################################
+	###########################################################################
 
 	public function testFlipReturnsArrayObject()
 	{
@@ -969,7 +969,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### intersect()
-	#######################################################
+	###########################################################################
 
 	public function testIntersectReturnsArrayObject()
 	{
@@ -1061,7 +1061,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### kintersect()
-	#######################################################
+	###########################################################################
 
 	public function testKIntersectReturnsArrayObject()
 	{
@@ -1164,7 +1164,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### aintersect()
-	#######################################################
+	###########################################################################
 
 	public function testAIntersectReturnsArrayObject()
 	{
@@ -1232,7 +1232,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### join()
-	#######################################################
+	###########################################################################
 
 	public function testJoinReturnsString()
 	{
@@ -1266,7 +1266,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### keys()
-	#######################################################
+	###########################################################################
 
 	public function testKeysReturnsArrayObject()
 	{
@@ -1315,7 +1315,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### map()
-	#######################################################
+	###########################################################################
 
 	public function testMapAcceptsFunction()
 	{
@@ -1449,7 +1449,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
     ### merge()
-    #######################################################
+    ###########################################################################
 
     public function testMergeReturnsArrayObject()
     {
@@ -1514,7 +1514,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
     }
 
 	### pop()
-	#######################################################
+	###########################################################################
 
 	public function testPopOnNumericArray()
 	{
@@ -1545,7 +1545,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### push()
-	#######################################################
+	###########################################################################
 
 	public function testPushReturnsSameInstance()
 	{
@@ -1610,7 +1610,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### rand()
-	#######################################################
+	###########################################################################
 
 	public function testRandReturnsArrayObject()
 	{
@@ -1695,7 +1695,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### reduce()
-	#######################################################
+	###########################################################################
 
 	public function testReduceAcceptsFunction()
 	{
@@ -1828,7 +1828,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### reverse()
-	#######################################################
+	###########################################################################
 
 	public function testReverseReturnsArrayObject()
 	{
@@ -1867,7 +1867,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### search()
-	#######################################################
+	###########################################################################
 
 	public function testSearchOnNumericArray()
 	{
@@ -1928,7 +1928,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### shift()
-	#######################################################
+	###########################################################################
 
 	public function testShiftOnNumericArray()
 	{
@@ -1959,7 +1959,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### unshift()
-	#######################################################
+	###########################################################################
 
 	public function testUnshiftReturnsArrayObject()
 	{
@@ -1997,7 +1997,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### shuffle()
-	#######################################################
+	###########################################################################
 
 	public function testShuffleReturnsArrayObject()
 	{
@@ -2039,7 +2039,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### unique()
-	#######################################################
+	###########################################################################
 
 	public function testUniqueReturnsArrayObject()
 	{
@@ -2072,7 +2072,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	# public function testUniqueSortVariants(){}
 
 	### values()
-	#######################################################
+	###########################################################################
 
 	public function testValuesReturnsArrayObject()
 	{
@@ -2094,7 +2094,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	### walk()
-	#######################################################
+	###########################################################################
 
 	public function testWalkAcceptsFunction()
 	{
