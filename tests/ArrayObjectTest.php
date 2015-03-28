@@ -1513,14 +1513,6 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, (array) $obj);
     }
 
-    public function testMergeWithScalarValues()
-    {
-        $xao = new XArray([1, 2, 3]);
-        $obj = $xao->merge('a', 'z');
-
-        $this->assertEquals(['a', 'z', 3], (array) $obj);
-    }
-
 	### pop()
 	#######################################################
 
