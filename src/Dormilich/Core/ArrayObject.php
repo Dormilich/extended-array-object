@@ -92,7 +92,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @return array The converted argument list.
 	 * @throws RuntimeException Argument list is empty.
 	 */
-	protected function getInterdiffArgumentList(array $args)
+	protected function getArrayArgumentList(array $args)
 	{
 		if (count($args) === 0) {
 			throw new \RuntimeException('Nothing to compare against given.');
@@ -117,7 +117,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @return array The converted argument list.
 	 * @throws RuntimeException Argument list is empty.
 	 */
-	protected function getKInterdiffArgumentList(array $args)
+	protected function getArrayKeyArgumentList(array $args)
 	{
 		if (count($args) === 0) {
 			throw new \RuntimeException('Nothing to compare against given.');
@@ -223,7 +223,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 
 			$args     = func_get_args();
 			$callback = $this->getCallbackArgument($args);
-			$arg_list = $this->getInterdiffArgumentList($args);
+			$arg_list = $this->getArrayArgumentList($args);
 
 			if ($callback) {
 				$arg_list[] = $callback;
@@ -265,7 +265,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 
 			$args     = func_get_args();
 			$callback = $this->getCallbackArgument($args);
-			$arg_list = $this->getKInterdiffArgumentList($args);
+			$arg_list = $this->getArrayKeyArgumentList($args);
 
 			if ($callback) {
 				$arg_list[] = $callback;
@@ -360,7 +360,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 			$callback2 = array_pop($args);
 		}
 
-		$arg_list = $this->getInterdiffArgumentList($args);
+		$arg_list = $this->getArrayArgumentList($args);
 
 		return $this->interdiffAssocExecute($type, $arg_list, $callback2, $callback1, $flag);
 	}
@@ -479,7 +479,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 
 			$args     = func_get_args();
 			$callback = $this->getCallbackArgument($args);
-			$arg_list = $this->getInterdiffArgumentList($args);
+			$arg_list = $this->getArrayArgumentList($args);
 
 			if ($callback) {
 				$arg_list[] = $callback;
@@ -521,7 +521,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 
 			$args     = func_get_args();
 			$callback = $this->getCallbackArgument($args);
-			$arg_list = $this->getKInterdiffArgumentList($args);
+			$arg_list = $this->getArrayKeyArgumentList($args);
 
 			if ($callback) {
 				$arg_list[] = $callback;
@@ -659,7 +659,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		try {
 			set_error_handler([$this, 'errorHandler']);
 
-			$args  = $this->getInterdiffArgumentList(func_get_args());
+			$args  = $this->getArrayArgumentList(func_get_args());
 			$array = call_user_func_array('array_replace', $args);
 
 			restore_error_handler();
