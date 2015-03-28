@@ -837,6 +837,69 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
         $this->assertEquals([1 => 'bb'], (array) $obj);
     }
 
+    ### xkdiff()
+    ###########################################################################
+
+    public function testXKDiffReturnsArrayObject()
+    {
+        $xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+        $obj = $xao->xkdiff(['x' => 4, 'z' => 5]);
+
+        $this->assertInstanceOf($this->classname, $obj);
+        $this->assertNotSame($xao, $obj);
+    }
+
+    public function testXKDiffWithArray()
+    {
+        $xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+        $obj = $xao->xkdiff(['x' => 4, 'a' => 5]);
+
+        $this->assertEquals(['a' => 5], (array) $obj);
+    }
+
+    public function testXKDiffWithNonArray()
+    {
+        $xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+        $obj = $xao->xkdiff('a', 'z');
+
+        $this->assertEquals(['a' => 0], (array) $obj);
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testXKDiffWithInvalidNonArray()
+    {
+        $xao = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
+        $obj = $xao->xkdiff(new \stdClass);
+    }
+
+    public function testXKDiffWithArrayObject()
+    {
+        $xao1 = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+        $xao2 = new XArray(['a' => 4, 'z' => 5]);
+        $obj  = $xao1->xkdiff($xao2);
+
+        $this->assertEquals(['a' => 4], (array) $obj);
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testXKDiffWithoutArrayFails()
+    {
+        $xao = new XArray([1, 2, 3]);
+        $obj = $xao->xkdiff('length_compare_func');
+    }
+
+    public function testXKDiffAcceptsFunction()
+    {
+        $xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+        $obj = $xao->xkdiff(['ab' => 4, 'foo', 'bar'], 'length_compare_func');
+
+        $this->assertEquals(['ab' => 2], (array) $obj);
+    }
+
 	### filter()
 	###########################################################################
 
