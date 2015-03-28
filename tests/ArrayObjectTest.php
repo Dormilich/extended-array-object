@@ -865,15 +865,15 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(['a' => 0], (array) $obj);
     }
-*/
     /**
      * @expectedException RuntimeException
-     */
+     *
     public function testXKDiffWithInvalidNonArray()
     {
         $xao = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
         $obj = $xao->xkdiff(new \stdClass);
     }
+*/
 
     public function testXKDiffWithArrayObject()
     {
@@ -898,7 +898,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
         $xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
         $obj = $xao->xkdiff(['ab' => 4, 'foo', 'bar'], 'length_compare_func');
 
-        $this->assertEquals(['ab' => 2], (array) $obj);
+        $this->assertEquals(['ab' => 4], (array) $obj);
     }
 
 	### filter()

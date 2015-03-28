@@ -304,6 +304,18 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	public function xkdiff($input, callable $callback = null)
+	{
+		if (is_callable($input)) {
+			throw new \RuntimeException('Nothing to compare from given.');
+		}
+		if (! $input instanceof static) {
+			$input = new static((array) $input);
+		}
+
+		return $input->kdiff($this, $callback);
+	}
+
 	/**
 	 * Executes an array_*_*assoc() function based on the compare callback 
 	 * candidates and/or mode flag.
