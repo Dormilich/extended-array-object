@@ -25,6 +25,24 @@ interface ArrayInterface
 	public function changeKeyCase($case = \CASE_LOWER);
 
 	/**
+	 * Merges the elements of the array with one or more arrays together so 
+	 * that the values of one are appended to the end of the previous one. 
+	 * It returns the resulting array. 
+	 * 
+	 * If the input arrays have the same string keys, then the later value for 
+	 * that key will overwrite the previous one. If, however, the arrays 
+	 * contain numeric keys, the later value will not overwrite the original 
+	 * value, but will be appended. 
+	 * 
+	 * Values in the input array with numeric keys will be renumbered with 
+	 * incrementing keys starting from zero in the result array.
+	 * 
+	 * @param mixed $input First array to merge. 
+	 * @return ArrayObject Returns the resulting array. 
+	 */
+	public function concat($input);
+
+	/**
 	 * Checks if a value exists in the array using loose comparison unless 
 	 * strict is set.
 	 * 
@@ -200,20 +218,18 @@ interface ArrayInterface
 	public function map(callable $callback, $preserve_keys = false);
 
 	/**
-	 * Merges the elements of the array with one or more arrays together so 
-	 * that the values of one are appended to the end of the previous one. 
-	 * It returns the resulting array. 
+	 * Replaces the values of the array with values having the same keys in 
+	 * each of the following arrays. If a key from the first array exists in 
+	 * the second array, its value will be replaced by the value from the 
+	 * second array. If the key exists in the second array, and not the first, 
+	 * it will be created in the first array. If a key only exists in the first 
+	 * array, it will be left as is. If several arrays are passed for replacement, 
+	 * they will be processed in order, the later arrays overwriting the previous 
+	 * values. 
 	 * 
-	 * If the input arrays have the same string keys, then the later value for 
-	 * that key will overwrite the previous one. If, however, the arrays 
-	 * contain numeric keys, the later value will not overwrite the original 
-	 * value, but will be appended. 
-	 * 
-	 * Values in the input array with numeric keys will be renumbered with 
-	 * incrementing keys starting from zero in the result array.
-	 * 
-	 * @param mixed $input First array to merge. 
-	 * @return ArrayObject Returns the resulting array. 
+	 * @param mixed $input The first array from which elements will be extracted. 
+	 * @return ArrayObject Returns an array on success.
+	 * @throws RuntimeException An error occurred.
 	 */
 	public function merge($input);
 
@@ -262,14 +278,9 @@ interface ArrayInterface
 	 * Replaces the values of the array with values having the same keys in 
 	 * each of the following arrays. If a key from the first array exists in 
 	 * the second array, its value will be replaced by the value from the 
-	 * second array. If the key exists in the second array, and not the first, 
-	 * it will be created in the first array. If a key only exists in the first 
-	 * array, it will be left as is. If several arrays are passed for replacement, 
-	 * they will be processed in order, the later arrays overwriting the previous 
-	 * values. 
-	 * 
-	 * Note: replace() is not recursive: it will replace values in the first 
-	 * array by whatever type is in the second array. 
+	 * second array. If a key only exists in the first array, it will be left 
+	 * as is. If several arrays are passed for replacement, they will be 
+	 * processed in order, the later arrays overwriting the previous values. 
 	 * 
 	 * @param mixed $input The array from which elements will be extracted. 
 	 * @return ArrayObject Returns an array on success.
