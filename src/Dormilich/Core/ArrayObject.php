@@ -242,6 +242,15 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	public function xdiff($input, callable $callback = null)
+	{
+		if (! $input instanceof static) {
+			$input = new static((array) $input);
+		}
+
+		return $input->diff($this, $callback);
+	}
+
 	/**
 	 * Compares the array against one or more other arrays and returns the 
 	 * elements in the array whose keys are not present in any of the other 
