@@ -817,7 +817,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
         $xao = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
         $obj = $xao->xdiff([2, 3, 'y']);
 
-        $this->assertEquals([2, 2 => 'y'], (array) $obj);
+        $this->assertEquals([1 => 3], (array) $obj);
     }
 
     public function testXDiffWithArrayObject()
@@ -826,7 +826,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
         $xao2 = new XArray([2, 3, 'y']);
         $obj  = $xao1->xdiff($xao2);
 
-        $this->assertEquals([2, 2 => 'y'], (array) $obj);
+        $this->assertEquals([1 => 3], (array) $obj);
     }
 
     public function testXDiffWithFunction()
@@ -834,7 +834,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
         $xao = new XArray([1, 2, 333]);
         $obj = $xao->xdiff(['a', 'bb'], 'length_compare_func');
 
-        $this->assertEquals(['a'], (array) $obj);
+        $this->assertEquals([1 => 'bb'], (array) $obj);
     }
 
 	### filter()
