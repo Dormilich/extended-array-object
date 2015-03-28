@@ -109,6 +109,47 @@ interface ArrayInterface
 	public function adiff($input);
 
 	/**
+	 * Compares the input against the array object and returns the elements 
+	 * in the input whose values are not present in the array object. This is 
+	 * the reverse method to ArrayObject::diff().
+	 * 
+	 * @param mixed $input An array that is comared against the array object. 
+	 * @param callable $callback (optional) A function that compares the 
+	 * 			array values.
+	 * @return ArrayObject The diff between input and array object.
+	 * @throws RuntimeException Input cannot be converted to array.
+	 */
+	public function xdiff($input, callable $callback = null);
+
+	/**
+	 * Compares the input against the array object and returns the elements 
+	 * in the input whose keys are not present in the array object. This is 
+	 * the reverse method to ArrayObject::kdiff().
+	 * 
+	 * @param mixed $input An array that is comared against the array object. 
+	 * @param callable $callback (optional) A function that compares the 
+	 * 			array keys.
+	 * @return ArrayObject The key diff between input and array object.
+	 * @throws RuntimeException Input cannot be converted to array.
+	 */
+	public function xkdiff($input, callable $callback = null);
+
+	/**
+	 * Compares the input against the array object and returns the elements 
+	 * in the input whose values are not present in the array object. This is 
+	 * the reverse method to ArrayObject::diff().
+	 * 
+	 * @param mixed $input An array that is comared against the array object. 
+	 * @param callable|null $value_compare_func (optional) Function to compare 
+	 * 			the array values.
+	 * @param callable|null $key_compare_func (optional) Function to compare 
+	 * 			the array keys.
+	 * @return ArrayObject The diff between input and array object.
+	 * @throws RuntimeException Input cannot be converted to array.
+	 */
+	public function xadiff($input);
+
+	/**
 	 * Iterates over each value in the array passing them to the callback 
 	 * function. If the callback function returns true, the current value from 
 	 * the array is returned into the result array. Array keys are preserved. 

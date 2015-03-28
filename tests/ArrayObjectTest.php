@@ -800,6 +800,43 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 
 	// test some more invalid parameter combinations
 
+    ### xdiff()
+    ###########################################################################
+
+    public function testXDiffReturnsArrayObject()
+    {
+        $xao = new XArray([1, 2, 3]);
+        $obj = $xao->xdiff([2, 3]);
+
+        $this->assertInstanceOf($this->classname, $obj);
+        $this->assertNotSame($xao, $obj);
+    }
+
+    public function testXDiffWithArray()
+    {
+        $xao = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
+        $obj = $xao->xdiff([2, 3, 'y']);
+
+        $this->assertEquals([2, 2 => 'y'], (array) $obj);
+    }
+
+    public function testXDiffWithArrayObject()
+    {
+        $xao1 = new XArray([1, 2, 'foo' => 'bar', 'x' => 'y', 4]);
+        $xao2 = new XArray([2, 3, 'y']);
+        $obj  = $xao1->xdiff($xao2);
+
+        $this->assertEquals([2, 2 => 'y'], (array) $obj);
+    }
+
+    public function testXDiffWithFunction()
+    {
+        $xao = new XArray([1, 2, 333]);
+        $obj = $xao->xdiff(['a', 'bb'], 'length_compare_func');
+
+        $this->assertEquals(['a'], (array) $obj);
+    }
+
 	### filter()
 	###########################################################################
 
