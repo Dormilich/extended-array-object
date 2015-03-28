@@ -654,6 +654,24 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	public function merge($input)
+	{
+		try {
+			set_error_handler([$this, 'errorHandler']);
+
+			$args  = $this->getInterdiffArgumentList(func_get_args());
+			$array = call_user_func_array('array_replace', $args);
+
+			restore_error_handler();
+
+			return new static($array);
+		} 
+		catch (\ErrorException $exc) {
+			restore_error_handler();
+			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
+		}
+	}
+
 	/**
 	 * Pops and returns the last value of the array, shortening the array by 
 	 * one element. 
