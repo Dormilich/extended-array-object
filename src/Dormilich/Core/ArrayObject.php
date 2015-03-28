@@ -304,6 +304,17 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	/**
+	 * Compares the input against the array object and returns the elements 
+	 * in the input whose keys are not present in the array object. This is 
+	 * the reverse method to ArrayObject::kdiff().
+	 * 
+	 * @param mixed $input An array that is comared against the array object. 
+	 * @param callable $callback (optional) A function that compares the 
+	 * 			array keys.
+	 * @return ArrayObject The key diff between input and array object.
+	 * @throws RuntimeException Input cannot be converted to array.
+	 */
 	public function xkdiff($input, callable $callback = null)
 	{
 		if (is_callable($input)) {
