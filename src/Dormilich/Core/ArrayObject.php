@@ -654,6 +654,20 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	/**
+	 * Replaces the values of the array with values having the same keys in 
+	 * each of the following arrays. If a key from the first array exists in 
+	 * the second array, its value will be replaced by the value from the 
+	 * second array. If the key exists in the second array, and not the first, 
+	 * it will be created in the first array. If a key only exists in the first 
+	 * array, it will be left as is. If several arrays are passed for replacement, 
+	 * they will be processed in order, the later arrays overwriting the previous 
+	 * values. 
+	 * 
+	 * @param mixed $input The first array from which elements will be extracted. 
+	 * @return ArrayObject Returns an array on success.
+	 * @throws RuntimeException An error occurred.
+	 */
 	public function merge($input)
 	{
 		try {
