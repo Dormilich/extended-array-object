@@ -242,6 +242,17 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	/**
+	 * Compares the input against the array object and returns the elements 
+	 * in the input whose values are not present in the array object. This is 
+	 * the reverse method to ArrayObject::diff().
+	 * 
+	 * @param mixed $input An array that is comared against the array object. 
+	 * @param callable $callback (optional) A function that compares the 
+	 * 			array values.
+	 * @return ArrayObject The diff between input and array object.
+	 * @throws RuntimeException Input cannot be converted to array.
+	 */
 	public function xdiff($input, callable $callback = null)
 	{
 		if (! $input instanceof static) {
