@@ -222,6 +222,47 @@ interface ArrayInterface
 	public function aintersect($input);
 
 	/**
+	 * Compares the input against the array object and returns the elements 
+	 * in the input whose values are present in the array object. This is the 
+	 * reverse method to ArrayObject::intersect().
+	 * 
+	 * @param mixed $input An array that is comared against the array object. 
+	 * @param callable $callback (optional) A function that compares the 
+	 * 			array values.
+	 * @return ArrayObject The intersect between input and array object.
+	 * @throws RuntimeException Input cannot be converted to array.
+	 */
+	public function xintersect($input, callable $callback = null);
+
+	/**
+	 * Compares the input against the array object and returns the elements 
+	 * in the input whose keys are present in the array object. This is the 
+	 * reverse method to ArrayObject::kintersect().
+	 * 
+	 * @param mixed $input An array that is comared against the array object. 
+	 * @param callable $callback (optional) A function that compares the 
+	 * 			array keys.
+	 * @return ArrayObject The key intersect between input and array object.
+	 * @throws RuntimeException Input cannot be converted to array.
+	 */
+	public function xkintersect($input, callable $callback = null);
+
+	/**
+	 * Compares the input against the array object and returns the elements 
+	 * in the input whose keys and values are present in the array object. 
+	 * This is the reverse method to ArrayObject::aintersect().
+	 * 
+	 * @param mixed $input An array that is comared against the array object. 
+	 * @param callable|null $value_compare_func (optional) Function to compare 
+	 * 			the array values.
+	 * @param callable|null $key_compare_func (optional) Function to compare 
+	 * 			the array keys.
+	 * @return ArrayObject The intersect between input and array object.
+	 * @throws RuntimeException Input cannot be converted to array.
+	 */
+	public function xaintersect($input);
+
+	/**
 	 * Join the array’s elements with a string.
 	 * 
 	 * @param string $glue Defaults to an empty string. 
