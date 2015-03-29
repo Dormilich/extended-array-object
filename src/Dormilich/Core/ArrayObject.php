@@ -167,13 +167,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 			return false;
 		}
 
-		$callback = array_pop($args);
-
-		if ($callback instanceof \Closure) {
-			return $callback->bindTo($this);
-		}
-
-		return $callback;
+		return array_pop($args);
 	}
 
 	/**
@@ -481,9 +475,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
-			if ($callback instanceof \Closure) {
-				$callback = $callback->bindTo($this);
-			}
 			if (defined('ARRAY_FILTER_USE_BOTH')) {
 				$array = array_filter($this->getArrayCopy(), $callback, \ARRAY_FILTER_USE_BOTH);
 			}
@@ -705,10 +696,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 
 			$values = $this->getArrayCopy();
 			$keys   = array_keys($values);
-
-			if ($callback instanceof \Closure) {
-				$callback = $callback->bindTo($this);
-			}
 			$result = array_map($callback, $values, $keys);
 
 			if ($preserve_keys) {
@@ -836,9 +823,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		if (is_null($initial)) {
 			$initial = array_shift($array);
 		}
-		if ($callback instanceof \Closure) {
-			$callback = $callback->bindTo($this);
-		}
+
 		return array_reduce($array, $callback, $initial);
 	}
 
@@ -1026,9 +1011,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 			set_error_handler([$this, 'errorHandler']);
 			$array = $this->getArrayCopy();
 
-			if ($callback instanceof \Closure) {
-				$callback = $callback->bindTo($this);
-			}
 			if (NULL === $userdata) {
 				$userdata = $array;
 			}

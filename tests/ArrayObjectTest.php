@@ -1054,20 +1054,6 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-     * @depends testFilterAcceptsClosure
-     */
-	public function testFilterBindsArrayObjectToClosure()
-	{
-		$array = [1, 2, 3];
-		$xao   = new XArray($array);
-
-		$obj   = $xao->filter(function () {
-			return ($this instanceof XArray);
-		});
-		$this->assertEquals($array, (array) $obj);
-	}
-
-	/**
 	 * @expectedException LogicException
 	 */
 	public function testFilterFailsForInvalidCallback()
@@ -1559,23 +1545,6 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-     * @depends testMapAcceptsClosure
-     */
-	public function testMapBindsArrayObjectToClosure()
-	{
-		$xao   = new XArray([1, 2, 3]);
-		$array = [2, 4, 6];
-
-		$obj   = $xao->map(function ($value) {
-			if ($this instanceof XArray) {
-				return $value * 2;
-			}
-			return 1;
-		});
-		$this->assertEquals($array, (array) $obj);
-	}
-
-	/**
 	 * @depends testMapAcceptsFunction
 	 */
 	public function testMapDefaultReindexesArray()
@@ -1968,25 +1937,6 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertSame(6, $product);
 	}
 
-	/**
-     * @depends testReduceAcceptsClosure
-     */
-	public function testReduceBindsArrayObjectToClosure()
-	{
-		try {
-			$xao = new XArray([1, 2, 3]);
-			$xao->reduce(function ($carry, $value) {
-				if (! $this instanceof XArray) {
-					throw new \Exception('$this is not an instance of ArrayObject.');
-				}
-			});
-			$this->assertTrue(true);
-		}
-		catch (\Exception $exc) {
-			$this->assertTrue(false, $exc->getMessage());
-		}
-	}
-
     ### replace()
     ###########################################################################
 
@@ -2352,25 +2302,6 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
 		// ArrayObject::count() is non-static and accepts no parameters
 		// though the syntax for the callable is correct the execution will fail
 		$xao->map(['ArrayObject', 'count']);
-	}
-
-	/**
-     * @depends testWalkAcceptsClosure
-     */
-	public function testWalkBindsArrayObjectToClosure()
-	{
-		try {
-			$xao = new XArray([1, 2, 3]);
-			$xao->walk(function () {
-				if (! $this instanceof XArray) {
-					throw new \Exception('$this is not an instance of ArrayObject.');
-				}
-			});
-			$this->assertTrue(true);
-		}
-		catch (\Exception $exc) {
-			$this->assertTrue(false, $exc->getMessage());
-		}
 	}
 
 	/**
