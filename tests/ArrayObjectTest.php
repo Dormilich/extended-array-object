@@ -901,6 +901,65 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['ab' => 4], (array) $obj);
     }
 
+    ### xadiff()
+    ###########################################################################
+
+    public function testXADiffReturnsArrayObject()
+    {
+        $xao = new XArray([1, 2, 3]);
+        $obj = $xao->xadiff([2, 3]);
+
+        $this->assertInstanceOf($this->classname, $obj);
+        $this->assertNotSame($xao, $obj);
+    }
+
+    public function testXADiffWithArray()
+    {
+        $xao = new XArray(['x', 'ab', 'z']);
+        $obj = $xao->xadiff(['x', 'y']);
+
+        $this->assertEquals([1 => 'y'], (array) $obj);
+    }
+
+    public function testXADiffWithArrayObject()
+    {
+        $xao1 = new XArray(['x', 'ab', 'z']);
+        $xao2 = new XArray(['x', 'y']);
+        $obj  = $xao1->xadiff($xao2);
+
+        $this->assertEquals([1 => 'y'], (array) $obj);
+    }
+
+    public function testXADiffWithValueCallback()
+    {
+        $xao = new XArray(['ab' => 22, 'z' => 'a']);
+
+        $obj = $xao->xadiff(['x' => 1, 'ab' => 2, 'z' => 3], 'length_compare_func', null);
+        $this->assertEquals(['x' => 1, 'ab' => 2], (array) $obj);
+
+        $obj = $xao->xadiff(['x' => 1, 'ab' => 2, 'z' => 3], 'length_compare_func', XAInterface::COMPARE_VALUE);
+        $this->assertEquals(['x' => 1, 'ab' => 2], (array) $obj);
+    }
+
+    public function testXADiffWithKeyCallback()
+    {
+        $xao = new XArray(['ab' => 2, 'z' => 1]);
+
+        $obj = $xao->xadiff(['x' => 1, 'ab' => 2, 'z' => 3], null, 'length_compare_func');
+        $this->assertEquals(['z' => 3], (array) $obj);
+
+        $obj = $xao->xadiff(['x' => 1, 'ab' => 2, 'z' => 3], 'length_compare_func', XAInterface::COMPARE_KEY);
+        $this->assertEquals(['z' => 3], (array) $obj);
+    }
+
+    public function testXADiffWithKeyValueCallback()
+    {
+        $xao = new XArray(['ab' => 2, 'z' => 1]);
+
+        $obj = $xao->xadiff(['x' => 1, 'ab' => 22, 'z' => 3], 'length_compare_func', 'length_compare_func');
+        $this->assertEquals(['ab' => 22], (array) $obj);
+    }
+
 	### filter()
 	###########################################################################
 
