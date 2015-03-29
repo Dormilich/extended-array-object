@@ -248,11 +248,13 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 */
 	public function xdiff($input, callable $callback = null)
 	{
-		if (! $input instanceof static) {
-			$input = new static((array) $input);
+		if (is_null($callback) and is_callable($input)) {
+			throw new \RuntimeException('Nothing to compare from given.');
 		}
+		$obj  = clone $this;
+		$self = $obj->exchangeArray((array) $input);
 
-		return $input->diff($this, $callback);
+		return $obj->diff($self, $callback);
 	}
 
 	/**
@@ -310,14 +312,13 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 */
 	public function xkdiff($input, callable $callback = null)
 	{
-		if (is_callable($input)) {
+		if (is_null($callback) and is_callable($input)) {
 			throw new \RuntimeException('Nothing to compare from given.');
 		}
-		if (! $input instanceof static) {
-			$input = new static((array) $input);
-		}
+		$obj  = clone $this;
+		$self = $obj->exchangeArray((array) $input);
 
-		return $input->kdiff($this, $callback);
+		return $obj->kdiff($self, $callback);
 	}
 
 	/**
@@ -449,17 +450,14 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 */
 	public function xadiff($input)
 	{
-		if (is_callable($input)) {
+		if (func_num_args() === 1 and is_callable($input)) {
 			throw new \RuntimeException('Nothing to compare from given.');
 		}
-		if (! $input instanceof static) {
-			$input = new static((array) $input);
-		}
+		$obj     = clone $this;
 		$args    = func_get_args();
-		// exchange caller and callee
-		$args[0] = $this->getArrayCopy();
+		$args[0] = $obj->exchangeArray((array) $input);
 
-		return call_user_func_array([$input, 'adiff'], $args);
+		return call_user_func_array([$obj, 'adiff'], $args);
 	}
 
 	/**
