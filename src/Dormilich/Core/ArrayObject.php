@@ -441,6 +441,21 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	public function xadiff($input)
+	{
+		if (is_callable($input)) {
+			throw new \RuntimeException('Nothing to compare from given.');
+		}
+		if (! $input instanceof static) {
+			$input = new static((array) $input);
+		}
+		$args    = func_get_args();
+		// exchange caller and callee
+		$args[0] = $this->getArrayCopy();
+
+		return call_user_func_array([$input, 'adiff'], $args);
+	}
+
 	/**
 	 * Iterates over each value in the array passing them to the callback 
 	 * function. If the callback function returns true, the current value from 
