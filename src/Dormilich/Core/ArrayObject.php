@@ -446,13 +446,9 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @param callable|null $key_compare_func (optional) Function to compare 
 	 * 			the array keys.
 	 * @return ArrayObject The diff between input and array object.
-	 * @throws RuntimeException Missing comparison input.
 	 */
 	public function xadiff($input)
 	{
-		if (func_num_args() === 1 and is_callable($input)) {
-			throw new \RuntimeException('Nothing to compare from given.');
-		}
 		$obj     = clone $this;
 		$args    = func_get_args();
 		$args[0] = $obj->exchangeArray((array) $input);
