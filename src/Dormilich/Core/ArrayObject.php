@@ -251,7 +251,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @param callable $callback (optional) A function that compares the 
 	 * 			array values.
 	 * @return ArrayObject The diff between input and array object.
-	 * @throws RuntimeException Input cannot be converted to array.
 	 */
 	public function xdiff($input, callable $callback = null)
 	{
@@ -313,7 +312,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @param callable $callback (optional) A function that compares the 
 	 * 			array keys.
 	 * @return ArrayObject The key diff between input and array object.
-	 * @throws RuntimeException Input cannot be converted to array.
+	 * @throws RuntimeException Missing comparison input.
 	 */
 	public function xkdiff($input, callable $callback = null)
 	{
@@ -441,6 +440,19 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	/**
+	 * Compares the input against the array object and returns the elements 
+	 * in the input whose keys and values are not present in the array object. 
+	 * This is the reverse method to ArrayObject::adiff().
+	 * 
+	 * @param mixed $input An array that is comared against the array object. 
+	 * @param callable|null $value_compare_func (optional) Function to compare 
+	 * 			the array values.
+	 * @param callable|null $key_compare_func (optional) Function to compare 
+	 * 			the array keys.
+	 * @return ArrayObject The diff between input and array object.
+	 * @throws RuntimeException Missing comparison input.
+	 */
 	public function xadiff($input)
 	{
 		if (is_callable($input)) {

@@ -136,8 +136,8 @@ interface ArrayInterface
 
 	/**
 	 * Compares the input against the array object and returns the elements 
-	 * in the input whose values are not present in the array object. This is 
-	 * the reverse method to ArrayObject::diff().
+	 * in the input whose keys and values are not present in the array object. 
+	 * This is the reverse method to ArrayObject::adiff().
 	 * 
 	 * @param mixed $input An array that is comared against the array object. 
 	 * @param callable|null $value_compare_func (optional) Function to compare 
