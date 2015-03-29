@@ -449,11 +449,14 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 */
 	public function xadiff($input)
 	{
-		$obj     = clone $this;
-		$args    = func_get_args();
-		$args[0] = $obj->exchangeArray((array) $input);
+		$obj  = clone $this;
+		$args = func_get_args();
+		array_shift($args);
+		$last = array_slice($args, -2);
+		$self = $obj->exchangeArray((array) $input);
+		array_unshift($last, $self);
 
-		return call_user_func_array([$obj, 'adiff'], $args);
+		return call_user_func_array([$obj, 'adiff'], $last);
 	}
 
 	/**
