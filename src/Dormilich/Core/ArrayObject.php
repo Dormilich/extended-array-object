@@ -23,68 +23,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	}
 
 	/**
-	 * Returns an array with all keys from the array lowercased or uppercased. 
-	 * Numbered indices are left as is. 
-	 * 
-	 * If the case parameter is invalid then its default value (CASE_LOWER) 
-	 * will be used instead.
-	 * 
-	 * @param integer $case Either CASE_UPPER or CASE_LOWER (default).
-	 * @return ArrayObject Returns an array with its keys lower or uppercased.
-	 */
-	public function changeKeyCase($case = \CASE_LOWER)
-	{
-		$flag = filter_var($case, \FILTER_VALIDATE_INT, [
-			'options' => [
-				'min_range' => 0, 
-				'max_range' => 1, 
-				'default'   => \CASE_LOWER, 
-			], 
-		]);
-
-		// does not return FALSE if an array is provided
-		$array = array_change_key_case($this->getArrayCopy(), $flag);
-
-		return new static($array);
-	}
-
-	/**
-	 * Merges the elements of the array with one or more arrays together so 
-	 * that the values of one are appended to the end of the previous one. 
-	 * For elements with the same string key, the later value overwrites the 
-	 * previous one. Numeric keys are reindexed in the resulting array.
-	 * 
-	 * @param mixed $input First array to merge. 
-	 * @return ArrayObject Returns the resulting array. 
-	 */
-	public function concat($input)
-	{
-		$args  = array_map(function ($item) {
-			return (array) $item;
-		}, func_get_args());
-		array_unshift($args, $this->getArrayCopy());
-		$array = call_user_func_array('array_merge', $args);
-
-		return new static($array);
-	}
-
-	/**
-	 * Checks if a value exists in the array using loose comparison unless 
-	 * strict is set.
-	 * 
-	 * @param mixed $needle The searched value.
-	 * @param bool $strict If the parameter strict is set to TRUE then contains() 
-	 *          will also check the types of the needle in the array.
-	 * @return boolean Returns TRUE if needle is found in the array, FALSE otherwise. 
-	 */
-	public function contains($needle, $strict = false)
-	{
-		$flag  = filter_var($strict, \FILTER_VALIDATE_BOOLEAN);
-
-		return in_array($needle, $this->getArrayCopy(), $flag);
-	}
-
-	/**
 	 * Convert all elements in the argument list into arrays and prepend 
 	 * the array of this instance.
 	 * 
@@ -192,6 +130,149 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 			default:
 				return false;
 		}
+	}
+
+	/**
+	 * Executes an array_*_*assoc() function based on the compare callback 
+	 * candidates and/or mode flag.
+	 * 
+	 * @param string $type Either diff or intersect.
+	 * @param array $args The array arguments to pass to the chosen array_* 
+	 *          function.
+	 * @param mixed $value_compare A callable (user defined compare function) 
+	 *          or NULL (internal compare function) or FALSE (not a compare 
+	 *          function) to use to compare the values.
+	 * @param mixed $key_compare A callable (user defined compare function) 
+	 *          or NULL (internal compare function) or FALSE (not a compare 
+	 *          function) to use to compare the keys. If only this is a valid 
+	 *          callback it compares the keys or values depending on the value 
+	 *          of the flag.
+	 * @param mixed $flag Determines whether key_compare should be used on 
+	 *          the keys or values.
+	 * @return array Result of the array_*_*assoc() function.
+	 */
+	private function interdiffAssocExecute($type, array $args, $value_compare, $key_compare, $flag = null)
+	{
+		if ($value_compare and $key_compare) {
+			$fn     = 'array_u%s_uassoc';
+			$args[] = $value_compare;
+			$args[] = $key_compare;
+		}
+		elseif (is_null($value_compare) and $key_compare) {
+			$fn     = 'array_%s_uassoc';
+			$args[] = $key_compare;
+		}
+		elseif ($value_compare and is_null($key_compare)) {
+			$fn     = 'array_u%s_assoc';
+			$args[] = $value_compare;
+		}
+		elseif (!$value_compare and $key_compare and $flag === ArrayInterface::COMPARE_VALUE) {
+			$fn     = 'array_u%s_assoc';
+			$args[] = $key_compare;
+		}
+		elseif (!$value_compare and $key_compare and $flag === ArrayInterface::COMPARE_KEY) {
+			$fn     = 'array_%s_uassoc';
+			$args[] = $key_compare;
+		}
+		else {
+			$fn     = 'array_%s_assoc';
+		}
+
+		return call_user_func_array(sprintf($fn, $type), $args);
+	}
+
+	/**
+	 * Prepare the array_*_*assoc() arguments from the method’s call parameters 
+	 * and pass them to the executing method.
+	 * 
+	 * @param string $type Either diff or intersect
+	 * @param array $args The method’s arguments array.
+	 * @return array The result array of the function execution.
+	 */
+	private function interdiffAssocCall($type, array $args)
+	{
+		$flag = $this->getFlagArgument($args);
+
+		if (!is_null(end($args))) {
+			$callback1 = $this->getCallbackArgument($args);
+		}
+		else {
+			$callback1 = array_pop($args);
+
+		}
+
+		if (!is_null(end($args))) {
+			$callback2 = $this->getCallbackArgument($args);
+		}
+		else {
+			$callback2 = array_pop($args);
+		}
+
+		$arg_list = $this->getArrayArgumentList($args);
+
+		return $this->interdiffAssocExecute($type, $arg_list, $callback2, $callback1, $flag);
+	}
+
+	/**
+	 * Returns an array with all keys from the array lowercased or uppercased. 
+	 * Numbered indices are left as is. 
+	 * 
+	 * If the case parameter is invalid then its default value (CASE_LOWER) 
+	 * will be used instead.
+	 * 
+	 * @param integer $case Either CASE_UPPER or CASE_LOWER (default).
+	 * @return ArrayObject Returns an array with its keys lower or uppercased.
+	 */
+	public function changeKeyCase($case = \CASE_LOWER)
+	{
+		$flag = filter_var($case, \FILTER_VALIDATE_INT, [
+			'options' => [
+				'min_range' => 0, 
+				'max_range' => 1, 
+				'default'   => \CASE_LOWER, 
+			], 
+		]);
+
+		// does not return FALSE if an array is provided
+		$array = array_change_key_case($this->getArrayCopy(), $flag);
+
+		return new static($array);
+	}
+
+	/**
+	 * Merges the elements of the array with one or more arrays together so 
+	 * that the values of one are appended to the end of the previous one. 
+	 * For elements with the same string key, the later value overwrites the 
+	 * previous one. Numeric keys are reindexed in the resulting array.
+	 * 
+	 * @param mixed $input First array to merge. 
+	 * @return ArrayObject Returns the resulting array. 
+	 */
+	public function concat($input)
+	{
+		$args  = array_map(function ($item) {
+			return (array) $item;
+		}, func_get_args());
+		array_unshift($args, $this->getArrayCopy());
+		$array = call_user_func_array('array_merge', $args);
+
+		return new static($array);
+	}
+
+	/**
+	 * Checks if a value exists in the array using loose comparison unless 
+	 * strict is set.
+	 * 
+	 * @param mixed $needle The searched value.
+	 * @param bool $strict If the parameter strict is set to TRUE then contains() 
+	 *          will also check the types of the needle in the array.
+	 * @return boolean Returns TRUE if needle is found in the array, FALSE otherwise. 
+	 */
+	public function contains($needle, $strict = false)
+	{
+		$flag  = filter_var($strict, \FILTER_VALIDATE_BOOLEAN);
+
+		return in_array($needle, $this->getArrayCopy(), $flag);
 	}
 
 	/**
@@ -319,87 +400,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		$self = $obj->exchangeArray((array) $input);
 
 		return $obj->kdiff($self, $callback);
-	}
-
-	/**
-	 * Executes an array_*_*assoc() function based on the compare callback 
-	 * candidates and/or mode flag.
-	 * 
-	 * @param string $type Either diff or intersect.
-	 * @param array $args The array arguments to pass to the chosen array_* 
-	 *          function.
-	 * @param mixed $value_compare A callable (user defined compare function) 
-	 *          or NULL (internal compare function) or FALSE (not a compare 
-	 *          function) to use to compare the values.
-	 * @param mixed $key_compare A callable (user defined compare function) 
-	 *          or NULL (internal compare function) or FALSE (not a compare 
-	 *          function) to use to compare the keys. If only this is a valid 
-	 *          callback it compares the keys or values depending on the value 
-	 *          of the flag.
-	 * @param mixed $flag Determines whether key_compare should be used on 
-	 *          the keys or values.
-	 * @return array Result of the array_*_*assoc() function.
-	 */
-	private function interdiffAssocExecute($type, array $args, $value_compare, $key_compare, $flag = null)
-	{
-		if ($value_compare and $key_compare) {
-			$fn     = 'array_u%s_uassoc';
-			$args[] = $value_compare;
-			$args[] = $key_compare;
-		}
-		elseif (is_null($value_compare) and $key_compare) {
-			$fn     = 'array_%s_uassoc';
-			$args[] = $key_compare;
-		}
-		elseif ($value_compare and is_null($key_compare)) {
-			$fn     = 'array_u%s_assoc';
-			$args[] = $value_compare;
-		}
-		elseif (!$value_compare and $key_compare and $flag === ArrayInterface::COMPARE_VALUE) {
-			$fn     = 'array_u%s_assoc';
-			$args[] = $key_compare;
-		}
-		elseif (!$value_compare and $key_compare and $flag === ArrayInterface::COMPARE_KEY) {
-			$fn     = 'array_%s_uassoc';
-			$args[] = $key_compare;
-		}
-		else {
-			$fn     = 'array_%s_assoc';
-		}
-
-		return call_user_func_array(sprintf($fn, $type), $args);
-	}
-
-	/**
-	 * Prepare the array_*_*assoc() arguments from the method’s call parameters 
-	 * and pass them to the executing method.
-	 * 
-	 * @param string $type Either diff or intersect
-	 * @param array $args The method’s arguments array.
-	 * @return array The result array of the function execution.
-	 */
-	private function interdiffAssocCall($type, array $args)
-	{
-		$flag = $this->getFlagArgument($args);
-
-		if (!is_null(end($args))) {
-			$callback1 = $this->getCallbackArgument($args);
-		}
-		else {
-			$callback1 = array_pop($args);
-
-		}
-
-		if (!is_null(end($args))) {
-			$callback2 = $this->getCallbackArgument($args);
-		}
-		else {
-			$callback2 = array_pop($args);
-		}
-
-		$arg_list = $this->getArrayArgumentList($args);
-
-		return $this->interdiffAssocExecute($type, $arg_list, $callback2, $callback1, $flag);
 	}
 
 	/**
