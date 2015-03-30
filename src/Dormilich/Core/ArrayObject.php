@@ -220,6 +220,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * If the case parameter is invalid then its default value (CASE_LOWER) 
 	 * will be used instead.
 	 * 
+	 * @see http://php.net/manual/en/function.array-change-key-case.php#107715
 	 * @param integer $case Either CASE_UPPER or CASE_LOWER (default).
 	 * @return ArrayObject Returns an array with its keys lower or uppercased.
 	 */
@@ -232,9 +233,12 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 				'default'   => \CASE_LOWER, 
 			], 
 		]);
+		$case = $flag === \CASE_LOWER ? MB_CASE_LOWER : MB_CASE_UPPER;
+		$array = [];
 
-		// does not return FALSE if an array is provided
-		$array = array_change_key_case($this->getArrayCopy(), $flag);
+		foreach ($this as $key => $value) {
+			$array[mb_convert_case($key, $case, 'UTF-8')] = $value;
+		}
 
 		return new static($array);
 	}

@@ -7,6 +7,18 @@ class ChangeKeyCaseTest extends PHPUnit_Framework_TestCase
 {
 	private $classname = '\Dormilich\Core\ArrayObject';
 
+	public function testChangeKeyCaseReturnsArrayObject()
+	{
+		$xao = new XArray([
+			'fOo' => 1, 
+			'Bar' => 2, 
+		]);
+		$obj = $xao->changeKeyCase();
+
+		$this->assertInstanceOf($this->classname, $obj);
+		$this->assertNotEquals($xao, $obj);
+	}
+
 	public function testChangeKeyCaseToUpper()
 	{
 		$xao = new XArray([
@@ -19,9 +31,6 @@ class ChangeKeyCaseTest extends PHPUnit_Framework_TestCase
 		];
 		$obj = $xao->changeKeyCase(\CASE_UPPER);
 		$this->assertEquals($expected, (array) $obj);
-
-		$this->assertNotEquals($xao, $obj);
-		$this->assertInstanceOf($this->classname, $obj);
 	}
 
 	public function testChangeKeyCaseToLower()
@@ -36,9 +45,6 @@ class ChangeKeyCaseTest extends PHPUnit_Framework_TestCase
 		];
 		$obj = $xao->changeKeyCase(\CASE_LOWER);
 		$this->assertEquals($expected, (array) $obj);
-
-		$this->assertNotEquals($xao, $obj);
-		$this->assertInstanceOf($this->classname, $obj);
 	}
 
 	public function testChangeKeyCaseUsingDefault()
@@ -53,9 +59,6 @@ class ChangeKeyCaseTest extends PHPUnit_Framework_TestCase
 		];
 		$obj = $xao->changeKeyCase();
 		$this->assertEquals($expected, (array) $obj);
-
-		$this->assertNotEquals($xao, $obj);
-		$this->assertInstanceOf($this->classname, $obj);
 	}
 
 	public function invalidCaseConstantProvider()
@@ -80,8 +83,21 @@ class ChangeKeyCaseTest extends PHPUnit_Framework_TestCase
 		];
 		$obj = $xao->changeKeyCase($param);
 
-		$this->assertInstanceOf($this->classname, $obj);
 		$this->assertEquals($expected, (array) $obj);
-		$this->assertNotEquals($xao, $obj);
+	}
+
+	public function testChangeKeyCaseMultibyteKeys()
+	{
+		$xao = new XArray([
+			'cœur'  => 1, 
+			'Søren' => 2, 
+		]);
+		$expected = [
+			'CŒUR'  => 1, 
+			'SØREN' => 2, 
+		];
+		$obj = $xao->changeKeyCase(\CASE_UPPER);
+
+		$this->assertEquals($expected, (array) $obj);
 	}
 }
