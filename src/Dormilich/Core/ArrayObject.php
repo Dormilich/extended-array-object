@@ -557,6 +557,22 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	public function xintersect($input, callable $callback = null)
+	{
+		if (is_null($callback) and is_callable($input)) {
+			throw new \RuntimeException('Nothing to compare from given.');
+		}
+		$obj  = clone $this;
+		$self = $obj->exchangeArray((array) $input);
+
+		if (is_null($callback)) {
+			return $obj->intersect($self);
+		}
+		else {
+			return $obj->intersect($self, $callback);
+		}
+	}
+
 	/**
 	 * Compares the array against one or more other arrays and returns the 
 	 * elements in the array whose keys are present in all of the other 
