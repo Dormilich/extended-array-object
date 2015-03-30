@@ -918,15 +918,16 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
-
-			$source   = $this->getArrayCopy();
-			$arg_list = array_map(function ($arg) use ($source) {
-				return array_intersect_key((array) $arg, $source);
-			}, func_get_args());
-			$arg_list = array_filter($arg_list, 'count');
-
-			array_unshift($arg_list, $source);
-
+			$xargs = new self(func_get_args());
+			$fn    = function ($arg) {
+				return $this->xkintersect((array) $arg)->getArrayCopy();
+			};
+			$arg_list = $xargs
+				->map($fn->bindTo($this))
+				->filter('count')
+				->unshift($this->getArrayCopy())
+				->getArrayCopy()
+			;
 			$array = call_user_func_array('array_replace', $arg_list);
 
 			restore_error_handler();
