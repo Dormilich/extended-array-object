@@ -557,6 +557,16 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	/**
+	 * Compares the input against the array object and returns the elements 
+	 * in the input whose values are present in the array object. This is the 
+	 * reverse method to ArrayObject::intersect().
+	 * 
+	 * @param mixed $input An array that is comared against the array object. 
+	 * @param callable $callback (optional) A function that compares the 
+	 * 			array values.
+	 * @return ArrayObject The intersect between input and array object.
+	 */
 	public function xintersect($input, callable $callback = null)
 	{
 		if (is_null($callback) and is_callable($input)) {
