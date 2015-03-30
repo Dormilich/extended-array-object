@@ -625,6 +625,22 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	public function xkintersect($input, callable $callback = null)
+	{
+		if (is_null($callback) and is_callable($input)) {
+			throw new \RuntimeException('Nothing to compare from given.');
+		}
+		$obj  = clone $this;
+		$self = $obj->exchangeArray((array) $input);
+
+		if (is_null($callback)) {
+			return $obj->kintersect($self);
+		}
+		else {
+			return $obj->kintersect($self, $callback);
+		}
+	}
+
 	/**
 	 * Compares the array against one or more other arrays and returns the 
 	 * elements that are present in all of the other arrays using the keys 

@@ -1473,7 +1473,7 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
     public function testXKIntersectWithArrayObject()
     {
         $xao1 = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
-        $xao2 = new XArray(['x' => 4, 'z' => 5]);
+        $xao2 = new XArray(['a' => 4, 'z' => 5]);
         $obj  = $xao1->xkintersect($xao2);
 
         $this->assertEquals(['z' => 5], (array) $obj);
