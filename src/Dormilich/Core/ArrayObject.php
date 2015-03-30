@@ -684,6 +684,19 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	public function xaintersect($input)
+	{
+		$obj  = clone $this;
+		$self = $obj->exchangeArray((array) $input);
+		
+		$args = func_get_args();
+		array_shift($args);
+		$last = array_slice($args, -2);
+		array_unshift($last, $self);
+
+		return call_user_func_array([$obj, 'aintersect'], $last);
+	}
+
 	/**
 	 * Join the array’s elements with a string.
 	 * 
