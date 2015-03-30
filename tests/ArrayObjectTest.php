@@ -1450,6 +1450,79 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['xxx'], (array) $obj);
     }
 
+    ### xxkintersect()
+    ###########################################################################
+
+    public function testXKIntersectReturnsArrayObject()
+    {
+        $xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+        $obj = $xao->xkintersect(['x' => 4, 'z' => 5]);
+
+        $this->assertInstanceOf($this->classname, $obj);
+        $this->assertNotSame($xao, $obj);
+    }
+
+    public function testXKIntersectWithArray()
+    {
+        $xao = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+        $obj = $xao->xkintersect(['a' => 4, 'z' => 5]);
+
+        $this->assertEquals(['z' => 5], (array) $obj);
+    }
+
+    public function testXKIntersectWithArrayObject()
+    {
+        $xao1 = new XArray(['x' => 1, 'y' => 2, 'z' => 3]);
+        $xao2 = new XArray(['x' => 4, 'z' => 5]);
+        $obj  = $xao1->xkintersect($xao2);
+
+        $this->assertEquals(['z' => 5], (array) $obj);
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testXKIntersectWithoutArrayFails()
+    {
+        $xao = new XArray([1, 2, 3]);
+        $obj = $xao->xkintersect('length_compare_func');
+    }
+
+    public function testXKIntersectAcceptsFunction()
+    {
+        $xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+        $obj = $xao->xkintersect(['a' => 4, 'abc' => 'xyz'], 'length_compare_func');
+
+        $this->assertEquals(['a' => 4], (array) $obj);
+    }
+
+    public function testXKIntersectAcceptsClosure()
+    {
+        $xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+        $obj = $xao->xkintersect(['a' => 4, 'abc' => 'xyz'], function ($a, $b) {
+            return length_compare_func($a, $b);
+        });
+
+        $this->assertEquals(['a' => 4], (array) $obj);
+    }
+
+    public function testXKIntersectAcceptsStaticCallback()
+    {
+        $xao = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+        $obj = $xao->xkintersect(['a' => 4, 'abc' => 'xyz'], ['CallbackTestMethods', 'static_length_compare']);
+
+        $this->assertEquals(['a' => 4], (array) $obj);
+    }
+
+    public function testXKIntersectAcceptsCallback()
+    {
+        $xao  = new XArray(['x' => 1, 'ab' => 2, 'z' => 3]);
+        $test = new CallbackTestMethods;
+        $obj  = $xao->xkintersect(['a' => 4, 'abc' => 'xyz'], [$test, 'length_compare']);
+
+        $this->assertEquals(['a' => 4], (array) $obj);
+    }
+
 	### join()
 	###########################################################################
 
