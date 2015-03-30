@@ -625,6 +625,16 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 	}
 
+	/**
+	 * Compares the input against the array object and returns the elements 
+	 * in the input whose keys are present in the array object. This is the 
+	 * reverse method to ArrayObject::kintersect().
+	 * 
+	 * @param mixed $input An array that is comared against the array object. 
+	 * @param callable $callback (optional) A function that compares the 
+	 * 			array keys.
+	 * @return ArrayObject The key intersect between input and array object.
+	 */
 	public function xkintersect($input, callable $callback = null)
 	{
 		if (is_null($callback) and is_callable($input)) {
