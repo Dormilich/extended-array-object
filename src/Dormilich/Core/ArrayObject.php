@@ -733,7 +733,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		}
 		catch (\ErrorException $exc) {
 			restore_error_handler();
-			// e.g. Notice: aray to string conversion
+			// e.g. Notice: array to string conversion
 			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
 		}
 	}
@@ -761,7 +761,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * applying the callback function to each one.
 	 * 
 	 * @param callable $callback Callback function to run for each element 
-	 *          in each array. Receives the element’s value and key as parameters.
+	 *          in the array. Receives the element’s value and key as parameters.
 	 * @param boolean $preserve_keys When set to TRUE keys will be preserved. 
 	 * 			Default is FALSE which will reindex the array numerically.
 	 * @return ArrayObject Returns an array containing all the elements of the 
