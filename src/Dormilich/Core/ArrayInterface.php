@@ -8,12 +8,32 @@ interface ArrayInterface
 	/**
 	 * @var integer Compare using the array values.
 	 */
-	const COMPARE_VALUE = 1;
-
+	const COMPARE_VALUE  = 1;
+	
 	/**
 	 * @var integer Compare using the array keys.
 	 */
-	const COMPARE_KEY   = 2;
+	const COMPARE_KEY    = 2;
+	
+	/**
+	 * @var boolean Compare using identity operator.
+	 */
+	const COMPARE_STRICT = true;
+	
+	/**
+	 * @var boolean Compare using equality operator.
+	 */
+	const COMPARE_LOOSE  = false;
+	
+	/**
+	 * @var boolean Preserve keys when modifying the array.
+	 */
+	const PRESERVE_KEYS  = true;
+	
+	/**
+	 * @var boolean Reindex the result array numerically. This may not apply to string keys.
+	 */
+	const IGNORE_KEYS    = false;
 
 	/**
 	 * Returns an array with all keys from array lowercased or uppercased. 
