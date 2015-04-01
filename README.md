@@ -45,7 +45,7 @@ the keys and values to the callback.
 - `array_rand()` as `rand()`, it returns the array elements instead of only the keys.
 - `array_reduce()` as `reduce()`, if no initial value is given, the first array element is used
 as initial value.
-- `*sort()` as …
+- `*sort()`, the native sort methods (ksort/asort) are extended to return the object instance.
 - `array_walk()` as `walk()`, if no userdata are given, the array itself is injected as userdata.
 
 ### Functions with drastically changed behaviour or syntax
