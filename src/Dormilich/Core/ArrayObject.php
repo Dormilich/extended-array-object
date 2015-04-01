@@ -927,7 +927,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 			restore_error_handler();
 			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
 		}
-	
 	}
 
 	/**
@@ -1129,12 +1128,21 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 *          considered to be respectively less than, equal to, or 
 	 *          greater than the second. 
 	 * @return ArrayObject Returns the array object.
+	 * @throws LogicException Invalid callback definition given.
 	 */
 	public function uasort(callable $cmp_function)
 	{
-		parent::uasort($cmp_function);
+		try {
+			set_error_handler([$this, 'errorHandler']);
+			parent::uasort($cmp_function);
+			restore_error_handler();
 
-		return $this;
+			return $this;
+		} 
+		catch (\ErrorException $exc) {
+			restore_error_handler();
+			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
+		}
 	}
 
 	/**
@@ -1148,12 +1156,21 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 *          considered to be respectively less than, equal to, or 
 	 *          greater than the second. 
 	 * @return ArrayObject Returns the array object.
+	 * @throws LogicException Invalid callback definition given.
 	 */
 	public function uksort(callable $cmp_function)
 	{
-		parent::uksort($cmp_function);
+		try {
+			set_error_handler([$this, 'errorHandler']);
+			parent::uksort($cmp_function);
+			restore_error_handler();
 
-		return $this;
+			return $this;
+		} 
+		catch (\ErrorException $exc) {
+			restore_error_handler();
+			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
+		}
 	}
 
 	/**
