@@ -330,6 +330,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @param callable $callback (optional) A function that compares the 
 	 * 			array values.
 	 * @return ArrayObject The diff between input and array object.
+	 * @throws RuntimeException Missing comparison input.
 	 */
 	public function xdiff($input, callable $callback = null)
 	{
@@ -422,7 +423,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * 			ArrayInterface::COMPARE_KEY.
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are not present in any of the other arrays. 
-	 * @throws RuntimeException Input cannot be converted to an array.
+	 * @throws RuntimeException Missing comparison input.
 	 */
 	public function adiff($input)
 	{
@@ -450,6 +451,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @param callable|null $key_compare_func (optional) Function to compare 
 	 * 			the array keys.
 	 * @return ArrayObject The diff between input and array object.
+	 * @throws RuntimeException Missing comparison input.
 	 */
 	public function xadiff($input)
 	{
@@ -570,6 +572,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @param callable $callback (optional) A function that compares the 
 	 * 			array values.
 	 * @return ArrayObject The intersect between input and array object.
+	 * @throws RuntimeException Missing comparison input.
 	 */
 	public function xintersect($input, callable $callback = null)
 	{
@@ -638,6 +641,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @param callable $callback (optional) A function that compares the 
 	 * 			array keys.
 	 * @return ArrayObject The key intersect between input and array object.
+	 * @throws RuntimeException Missing comparison input.
 	 */
 	public function xkintersect($input, callable $callback = null)
 	{
@@ -672,6 +676,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are present in all of the other arrays. 
 	 * @throws RuntimeException Input cannot be converted to an array.
+	 * @throws RuntimeException Missing comparison input.
 	 */
 	public function aintersect($input)
 	{
@@ -699,6 +704,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @param callable|null $key_compare_func (optional) Function to compare 
 	 * 			the array keys.
 	 * @return ArrayObject The intersect between input and array object.
+	 * @throws RuntimeException Missing comparison input.
 	 */
 	public function xaintersect($input)
 	{
@@ -818,7 +824,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		} 
 		catch (\ErrorException $exc) {
 			restore_error_handler();
-			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
+			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
 		}
 	}
 
@@ -891,19 +897,37 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	 * @param mixed $initial It will be used at the beginning of the process, 
 	 *          or as a final result in case the array is empty. 
 	 * @return mixed Returns the resulting value. 
+	 * @throws LogicException Invalid callback definition given.
 	 */
-	public function reduce(callable $callback, $initial = NULL)
+	public function reduce(callable $callback)
 	{
-		if ($this->count() === 0) {
-			return $initial;
-		}
-		$array = $this->getArrayCopy();
-		// assuming that NULL won’t be passed as initial value
-		if (is_null($initial)) {
-			$initial = array_shift($array);
-		}
+		try {
+			if (func_num_args() === 1) {
+				$initial = NULL;
+			}
+			else {
+				$initial = func_get_arg(1);
+			}
 
-		return array_reduce($array, $callback, $initial);
+			if ($this->count() === 0) {
+				return $initial;
+			}
+
+			set_error_handler([$this, 'errorHandler']);
+			$array = $this->getArrayCopy();
+			if (func_num_args() === 1) {
+				$initial = array_shift($array);
+			}
+			$result = array_reduce($array, $callback, $initial);
+			restore_error_handler();
+
+			return $result;
+		} 
+		catch (\ErrorException $exc) {
+			restore_error_handler();
+			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
+		}
+	
 	}
 
 	/**

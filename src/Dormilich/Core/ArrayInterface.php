@@ -374,7 +374,7 @@ interface ArrayInterface
 	 *          or as a final result in case the array is empty. 
 	 * @return mixed Returns the resulting value. 
 	 */
-	public function reduce(callable $callback, $initial = NULL);
+	public function reduce(callable $callback);
 
 	/**
 	 * Replaces the values of the array with values having the same keys in 
