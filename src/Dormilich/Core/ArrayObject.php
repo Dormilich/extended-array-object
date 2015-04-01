@@ -940,7 +940,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		} 
 		catch (\ErrorException $exc) {
 			restore_error_handler();
-			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
+			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
 		}
 	}
 
