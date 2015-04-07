@@ -483,7 +483,12 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 				$array = array_filter($this->getArrayCopy(), $callback, \ARRAY_FILTER_USE_BOTH);
 			}
 			else {
-				$array = array_filter($this->getArrayCopy(), $callback);
+				$array = [];
+				foreach ($this as $key => $value) {
+					if (call_user_func($callback, $value, $key)) {
+						$array[$key] = $value;
+					}
+				}
 			}
 			restore_error_handler();
 

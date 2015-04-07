@@ -83,10 +83,6 @@ class FilterTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testFilterKeyValueCallbackParameters()
 	{
-		if (!defined('ARRAY_FILTER_USE_BOTH')) {
-			return;
-		}
-
 		$xao      = new XArray([2 => 3, 5 => 1, 7 => 9]);
 		$expected = [2 => 3, 7 => 9];
 
