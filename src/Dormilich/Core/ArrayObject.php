@@ -279,6 +279,21 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return in_array($needle, $this->getArrayCopy(), $flag);
 	}
 
+	public function countValues()
+	{
+		try {
+			set_error_handler([$this, 'errorHandler']);
+			$array = array_count_values($this->getArrayCopy());
+			restore_error_handler();
+
+			return new static($array);
+		}
+		catch (\ErrorException $exc) {
+			restore_error_handler();
+			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
+		}
+	}
+
 	/**
 	 * Compares the array against one or more other arrays and returns the 
 	 * elements in the array whose values are not present in any of the other 
