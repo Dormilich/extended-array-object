@@ -745,13 +745,15 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	{
 		$obj  = clone $this;
 		$self = $obj->exchangeArray((array) $input);
+		$num  = func_num_args();
 		
-		$args = func_get_args();
-		array_shift($args);
-		$last = array_slice($args, -2);
-		array_unshift($last, $self);
-
-		return call_user_func_array([$obj, 'aintersect'], $last);
+		if ($num === 1) {
+			return $obj->aintersect($self);
+		}
+		elseif ($num === 3) {
+			return $obj->aintersect($self, func_get_arg(1), func_get_arg(2));
+		}
+		throw new \RuntimeException('Invalid number of arguments given. ' . __METHOD__ . ' requires exactly 1 or 3 arguments.');
 	}
 
 	/**
@@ -980,12 +982,11 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
-			$xargs = new self(func_get_args());
-			$fn    = function ($arg) {
-				return $this->xkintersect((array) $arg)->getArrayCopy();
-			};
+			$xargs    = new self(func_get_args());
 			$arg_list = $xargs
-				->map($fn->bindTo($this))
+				->map(function ($arg) {
+					return $this->xkintersect($arg)->getArrayCopy();
+				})
 				->filter('count')
 				->unshift($this->getArrayCopy())
 				->getArrayCopy()
