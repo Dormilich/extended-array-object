@@ -451,7 +451,7 @@ interface ArrayInterface
 	 *          behaviour by setting preserve_keys to TRUE. 
 	 * @return ArrayObject Returns the slice. 
 	 */
-	public function slice ($offset, $length = NULL, $preserve_keys = false);
+	public function slice($offset, $length = NULL, $preserve_keys = false);
 
 	/**
 	 * Removes the elements designated by offset and length from the input 

@@ -59,14 +59,14 @@ class SliceTest extends PHPUnit_Framework_TestCase
 
     public function testSlicePreservingKeys()
     {
-        $xao = new XArray(['x' => 8, 'y' => 3, 'z' => 7]);
+        $xao = new XArray([3 => 5, 6 => 2, 0 => 6, 7 => 3]);
 
         // without
-        $this->assertEquals([3,7], (array) $xao->slice(1, 2));
-        $this->assertEquals([3,7], (array) $xao->slice(1, 2, XAInterface::IGNORE_KEYS));
+        $this->assertEquals([2,6], (array) $xao->slice(1, 2));
+        $this->assertEquals([2,6], (array) $xao->slice(1, 2, XAInterface::IGNORE_KEYS));
         // with
-        $this->assertEquals(['y' => 3, 'z' => 7], (array) $xao->slice(1, 2, XAInterface::PRESERVE_KEYS));
+        $this->assertEquals([6 => 2, 0 => 6], (array) $xao->slice(1, 2, XAInterface::PRESERVE_KEYS));
         // without length
-        $this->assertEquals(['z' => 7], (array) $xao->slice(1, NULL, XAInterface::PRESERVE_KEYS));
+        $this->assertEquals([6 => 2, 0 => 6, 7 => 3], (array) $xao->slice(1, NULL, XAInterface::PRESERVE_KEYS));
     }
 }

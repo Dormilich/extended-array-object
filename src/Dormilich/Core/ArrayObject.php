@@ -1091,6 +1091,13 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return $this;
 	}
 
+	public function slice($offset, $length = NULL, $preserve_keys = false)
+	{
+		$array = array_slice($this->getArrayCopy(), $offset, $length, $preserve_keys);
+
+		return new static($array);
+	}
+
 	/**
 	 * Sorts the entries such that the keys maintain their correlation with 
 	 * the entries they are associated with. This is used mainly when sorting 
