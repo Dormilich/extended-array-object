@@ -1118,7 +1118,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 
 	/**
 	 * Removes the elements designated by offset and length from the array 
-	 * objeect, and replaces them with the elements of the replacement array, 
+	 * object, and replaces them with the elements of the replacement array, 
 	 * if supplied. 
 	 * 
 	 * Note that numeric keys in the array are not preserved. 
