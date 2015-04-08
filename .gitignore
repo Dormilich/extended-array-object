@@ -4,3 +4,7 @@ vendor/
 
 # Sublime packages
 .phpintel
+
+# Mac system files
+.DS_Store
+*/.DS_Store
