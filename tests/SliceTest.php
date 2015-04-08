@@ -16,6 +16,14 @@ class SliceTest extends PHPUnit_Framework_TestCase
         $this->assertNotSame($xao, $obj);
     }
 
+    public function testSliceDoesNotAlterObject()
+    {
+        $xao = new XArray([1,2,3]);
+        $obj = $xao->slice(1);
+
+        $this->assertEquals([1,2,3], (array) $xao);
+    }
+
     public function testSliceWithOffsetOnly()
     {
         $xao = new XArray([1,2,3,4,5]);

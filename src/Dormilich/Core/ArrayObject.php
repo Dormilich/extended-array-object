@@ -1065,10 +1065,9 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	public function unshift($value)
 	{
 		$array = $this->getArrayCopy();
-		foreach (array_reverse(func_get_args()) as $arg) {
-			// cannot use call_user_func_array() due to the reference
-			array_unshift($array, $arg);
-		}
+		$args  = array_merge([&$array], func_get_args());
+		call_user_func_array('array_unshift', $args);
+
 		$this->exchangeArray($array);
 
 		return $this;
@@ -1115,6 +1114,24 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		$array = array_slice($this->getArrayCopy(), $offset, $length, $preserve_keys);
 
 		return new static($array);
+	}
+
+	public function splice($offset)
+	{
+		try {
+			set_error_handler([$this, 'errorHandler']);
+			$array = $this->getArrayCopy();
+			$args  = array_merge([&$array], func_get_args());
+			$slice = call_user_func_array('array_splice', $args);
+			$this->exchangeArray($array);
+			restore_error_handler();
+
+			return new static($slice);
+		} 
+		catch (\ErrorException $exc) {
+			restore_error_handler();
+			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
+		}
 	}
 
 	/**
