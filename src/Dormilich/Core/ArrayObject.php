@@ -3,7 +3,7 @@
 
 namespace Dormilich\Core;
 
-class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInterface
+class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterface
 {
 	public function errorHandler($code, $msg, $file, $line)
 	{

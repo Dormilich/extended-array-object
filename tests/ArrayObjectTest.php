@@ -5,6 +5,13 @@ use Dormilich\Core\ArrayInterface as XAInterface;
 
 class InterfaceTest extends PHPUnit_Framework_TestCase
 {
+	public function testArrayInterfaceInterfaceExists()
+	{
+		$xao = new XArray;
+
+		$this->assertInstanceOf('\Dormilich\Core\ArrayInterface', $xao);
+	}
+
 	public function testArrayAccessInterfaceExists()
 	{
 		$xao = new XArray;
