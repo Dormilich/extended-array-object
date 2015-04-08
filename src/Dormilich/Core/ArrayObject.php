@@ -174,6 +174,11 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 			$fn     = 'array_%s_uassoc';
 			$args[] = $key_compare;
 		}
+		elseif (!$value_compare and $key_compare and $flag === ArrayInterface::COMPARE_VALUE|ArrayInterface::COMPARE_KEY) {
+			$fn     = 'array_u%s_uassoc';
+			$args[] = $key_compare;
+			$args[] = $key_compare;
+		}
 		else {
 			$fn     = 'array_%s_assoc';
 		}
