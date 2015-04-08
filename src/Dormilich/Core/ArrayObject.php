@@ -480,13 +480,15 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 	{
 		$obj  = clone $this;
 		$self = $obj->exchangeArray((array) $input);
-		
-		$args = func_get_args();
-		array_shift($args);
-		$last = array_slice($args, -2);
-		array_unshift($last, $self);
+		$num  = func_num_args();
 
-		return call_user_func_array([$obj, 'adiff'], $last);
+		if ($num === 1) {
+			return $obj->adiff($self);
+		}
+		elseif ($num === 3) {
+			return $obj->adiff($self, func_get_arg(1), func_get_arg(2));
+		}
+		throw new \RuntimeException('Invalid number of arguments given. ' . __METHOD__ . ' requires exactly 1 or 3 arguments.');
 	}
 
 	/**
