@@ -1116,6 +1116,31 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable #, ArrayInte
 		return new static($array);
 	}
 
+	/**
+	 * Removes the elements designated by offset and length from the array 
+	 * objeect, and replaces them with the elements of the replacement array, 
+	 * if supplied. 
+	 * 
+	 * Note that numeric keys in the array are not preserved. 
+	 * 
+	 * @param integer $offset If offset is positive then the start of removed 
+	 * 			portion is at that offset from the beginning of the array. If 
+	 * 			offset is negative then it starts that far from the end of the array. 
+	 * @param integer $length If length is omitted, removes everything from 
+	 * 			offset to the end of the array. If length is specified and is 
+	 * 			positive, then that many elements will be removed. If length 
+	 * 			is specified and is negative then the end of the removed 
+	 * 			portion will be that many elements from the end of the array. 
+	 * @param array $replacement If replacement array is specified, then the 
+	 * 			removed elements are replaced with elements from this array. 
+	 * 			If replacement is not an array, it will be typecast to one.
+	 * 			If offset and length are such that nothing is removed, then 
+	 * 			the elements from the replacement array are inserted in the 
+	 * 			place specified by the offset. Note that keys in replacement 
+	 * 			array are not preserved. 
+	 * @return ArrayObject Returns the array consisting of the extracted elements. 
+	 * @throws RuntimeException Too many arguments.
+	 */
 	public function splice($offset)
 	{
 		try {
