@@ -1,5 +1,5 @@
 {
-	"name": "Dormilich/extended-array-object",
+	"name": "dormilich/extended-array-object",
 	"description" : "Bringing array functions to the ArrayObject",
 	"license": "GPL v2.0",
 	"authors": [
