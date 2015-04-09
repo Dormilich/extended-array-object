@@ -296,9 +296,10 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
-			$array = array_count_values($this->getArrayCopy());
-			restore_error_handler();
 
+			$array = array_count_values($this->getArrayCopy());
+
+			restore_error_handler();
 			return new static($array);
 		}
 		catch (\ErrorException $exc) {
@@ -339,8 +340,8 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 			else {
 				$array = call_user_func_array('array_diff', $arg_list);
 			}
-			restore_error_handler();
 
+			restore_error_handler();
 			return new static($array);
 		}
 		catch (\ErrorException $exc) {
@@ -403,8 +404,8 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 			else {
 				$array = call_user_func_array('array_diff_key', $arg_list);
 			}
-			restore_error_handler();
 
+			restore_error_handler();
 			return new static($array);
 		}
 		catch (\ErrorException $exc) {
@@ -457,9 +458,10 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
-			$array = $this->interdiffAssocCall('diff', func_get_args());
-			restore_error_handler();
 
+			$array = $this->interdiffAssocCall('diff', func_get_args());
+
+			restore_error_handler();
 			return new static($array);
 		}
 		catch (\ErrorException $exc) {
@@ -509,6 +511,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
+
 			if (defined('ARRAY_FILTER_USE_BOTH')) {
 				$array = array_filter($this->getArrayCopy(), $callback, \ARRAY_FILTER_USE_BOTH);
 			}
@@ -520,8 +523,8 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 					}
 				}
 			}
-			restore_error_handler();
 
+			restore_error_handler();
 			return new static($array);
 		} 
 		catch (\ErrorException $exc) {
@@ -543,9 +546,10 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
-			$array = array_flip($this->getArrayCopy());
-			restore_error_handler();
 
+			$array = array_flip($this->getArrayCopy());
+
+			restore_error_handler();
 			return new static($array);
 		} 
 		catch (\ErrorException $exc) {
@@ -588,8 +592,8 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 			else {
 				$array = call_user_func_array('array_intersect', $arg_list);
 			}
-			restore_error_handler();
 
+			restore_error_handler();
 			return new static($array);
 		}
 		catch (\ErrorException $exc) {
@@ -657,8 +661,8 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 			else {
 				$array = call_user_func_array('array_intersect_key', $arg_list);
 			}
-			restore_error_handler();
 
+			restore_error_handler();
 			return new static($array);
 		}
 		catch (\ErrorException $exc) {
@@ -717,9 +721,10 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
-			$array = $this->interdiffAssocCall('intersect', func_get_args());
-			restore_error_handler();
 
+			$array = $this->interdiffAssocCall('intersect', func_get_args());
+
+			restore_error_handler();
 			return new static($array);
 		}
 		catch (\ErrorException $exc) {
@@ -769,9 +774,10 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
-			$string = implode($glue, $this->getArrayCopy());
-			restore_error_handler();
 
+			$string = implode($glue, $this->getArrayCopy());
+
+			restore_error_handler();
 			return $string;
 		}
 		catch (\ErrorException $exc) {
@@ -823,8 +829,8 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 			if ($preserve_keys) {
 				$result = array_combine($keys, $result);
 			}
-			restore_error_handler();
 
+			restore_error_handler();
 			return new static($result);
 		} 
 		catch (\ErrorException $exc) {
@@ -856,7 +862,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 			$array = call_user_func_array('array_replace', $args);
 
 			restore_error_handler();
-
 			return new static($array);
 		} 
 		catch (\ErrorException $exc) {
@@ -951,13 +956,14 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 			}
 
 			set_error_handler([$this, 'errorHandler']);
+
 			$array = $this->getArrayCopy();
 			if (func_num_args() === 1) {
 				$initial = array_shift($array);
 			}
 			$result = array_reduce($array, $callback, $initial);
-			restore_error_handler();
 
+			restore_error_handler();
 			return $result;
 		} 
 		catch (\ErrorException $exc) {
@@ -982,6 +988,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
+
 			$xargs    = new self(func_get_args());
 			$arg_list = $xargs
 				->map(function ($arg) {
@@ -994,7 +1001,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 			$array = call_user_func_array('array_replace', $arg_list);
 
 			restore_error_handler();
-
 			return new static($array);
 		} 
 		catch (\ErrorException $exc) {
@@ -1146,12 +1152,13 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
+
 			$array = $this->getArrayCopy();
 			$args  = array_merge([&$array], func_get_args());
 			$slice = call_user_func_array('array_splice', $args);
 			$this->exchangeArray($array);
-			restore_error_handler();
 
+			restore_error_handler();
 			return new static($slice);
 		} 
 		catch (\ErrorException $exc) {
@@ -1238,9 +1245,10 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
-			parent::uasort($cmp_function);
-			restore_error_handler();
 
+			parent::uasort($cmp_function);
+
+			restore_error_handler();
 			return $this;
 		} 
 		catch (\ErrorException $exc) {
@@ -1266,9 +1274,10 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
-			parent::uksort($cmp_function);
-			restore_error_handler();
 
+			parent::uksort($cmp_function);
+
+			restore_error_handler();
 			return $this;
 		} 
 		catch (\ErrorException $exc) {
@@ -1289,9 +1298,10 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
-			$array = array_unique($this->getArrayCopy(), $sort_flags);
-			restore_error_handler();
 
+			$array = array_unique($this->getArrayCopy(), $sort_flags);
+
+			restore_error_handler();
 			return new static($array);
 		} 
 		catch (\ErrorException $exc) {
@@ -1333,6 +1343,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	{
 		try {
 			set_error_handler([$this, 'errorHandler']);
+
 			$array = $this->getArrayCopy();
 
 			if (NULL === $userdata) {
@@ -1343,8 +1354,8 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 				throw new \RuntimeException('Execution of ' . __METHOD__ . ' failed.');
 			}
 			$this->exchangeArray($array);
-			restore_error_handler();
 
+			restore_error_handler();
 			return $this;
 		} 
 		catch (\ErrorException $exc) {
