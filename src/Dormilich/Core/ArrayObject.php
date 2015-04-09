@@ -238,7 +238,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 				'default'   => \CASE_LOWER, 
 			], 
 		]);
-		$case = $flag === \CASE_LOWER ? MB_CASE_LOWER : MB_CASE_UPPER;
+		$case  = $flag === \CASE_LOWER ? \MB_CASE_LOWER : \MB_CASE_UPPER;
 		$array = [];
 
 		foreach ($this as $key => $value) {
