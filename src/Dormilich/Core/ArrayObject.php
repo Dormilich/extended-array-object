@@ -37,6 +37,9 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 		}
 
 		$arg_list = array_map(function ($arg) {
+			if ($arg instanceof \Iterator) {
+				return iterator_to_array($arg);
+			}
 			return (array) $arg;
 		}, $args);
 
@@ -259,10 +262,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 */
 	public function concat($input)
 	{
-		$args  = array_map(function ($item) {
-			return (array) $item;
-		}, func_get_args());
-		array_unshift($args, $this->getArrayCopy());
+		$args  = $this->getArrayArgumentList(func_get_args());
 		$array = call_user_func_array('array_merge', $args);
 
 		return new static($array);
