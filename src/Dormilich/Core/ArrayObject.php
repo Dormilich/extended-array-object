@@ -23,6 +23,26 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	}
 
 	/**
+	 * Encodes the array data as JSON string.
+	 * 
+	 * @return string JSON encoded array data.
+	 */
+	public function json()
+	{
+		return json_encode($this);
+	}
+
+	/**
+	 * Prevent accidental string conversion.
+	 * 
+	 * @throws RuntimeException
+	 */
+	public function __toString()
+	{
+		throw new \RuntimeException('ArrayObject to string conversion.');
+	}
+
+	/**
 	 * Convert all elements in the argument list into arrays and prepend 
 	 * the array of this instance.
 	 * 

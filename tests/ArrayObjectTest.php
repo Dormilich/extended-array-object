@@ -200,4 +200,13 @@ class InterfaceTest extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals($array, json_decode($json, true));
 	}
+
+	public function testJsonMethodCall()
+	{
+		$array = [1, 2, 3];
+		$xao   = new XArray($array);
+		$json  = $xao->json();
+
+		$this->assertEquals($array, json_decode($json, true));
+	}	
 }
