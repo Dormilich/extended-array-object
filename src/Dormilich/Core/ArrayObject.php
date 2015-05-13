@@ -25,11 +25,22 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	/**
 	 * Encodes the array data as JSON string.
 	 * 
+	 * @param integer $options A JSON_* encoding constant.
+	 * @param integer $depth Set the maximum depth. Must be greater than zero. 
 	 * @return string JSON encoded array data.
+	 * @throws RuntimeException Conversion failed. Contains the JSON error code 
+	 * 			(JSON_ERROR_*) from json_last_error().
 	 */
 	public function json()
 	{
-		return json_encode($this);
+		$args   = func_get_args();
+		array_unshift($args, $this);
+		$result = call_user_func_array('json_encode', $args);
+
+		if (false === $result) {
+			throw new \RuntimeException('Failed to convert ArrayObject to JSON.', json_last_error());
+		}
+		return $result;
 	}
 
 	/**

@@ -208,5 +208,14 @@ class InterfaceTest extends PHPUnit_Framework_TestCase
 		$json  = $xao->json();
 
 		$this->assertEquals($array, json_decode($json, true));
-	}	
+	}
+
+	/**
+	 * @expectedException RuntimeException
+	 */
+	public function testJsonThrowsExceptionOnInvalidContent()
+	{
+		$xao = new XArray([acos(8)]); // NAN
+		$xao->json();
+	}
 }
