@@ -218,4 +218,12 @@ class InterfaceTest extends PHPUnit_Framework_TestCase
 		$xao = new XArray([acos(8)]); // NAN
 		$xao->json();
 	}
+
+	public function testCreateObjectFromnStaticMethod()
+	{
+		$xao = XArray::from([1,2,3]);
+		$this->assertInstanceOf('\Dormilich\Core\ArrayInterface', $xao);
+		$test = new XArray([1,2,3]);
+		$this->assertEquals($test, $xao);		
+	}
 }
