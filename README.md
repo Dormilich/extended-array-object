@@ -64,20 +64,24 @@ All methods throw exceptions when they encounter an error. This effectively allo
 use Dormilich\Core\ArrayObject;
 
 try {
-    $error_string = 'Duplicate names: ' . ArrayObject::from($_POST['group'])
-    ->map(function ($item) {
-        return $item['name'];
-    })
-    ->countValues()
-    ->filter(function ($count) {
-        return $count > 1;
-    })
-    ->map(function ($count, $name) {
-        return sprintf('%d× %s', $count, $name);
-    })
-    ->join(', ');
+    $duplicates = ArrayObject::from($_POST['group'])
+        ->map(function ($item) {
+            return $item['name'];
+        })
+        ->countValues()
+        ->filter(function ($count) {
+            return $count > 1;
+        })
+        ->map(function ($count, $name) {
+            return sprintf('%d× %s', $count, $name);
+        })
+    ;
+
+    if (count($duplicates)) {
+        $error_string = 'Duplicate names: ' . $duplicates->join(', ');
+    }
 }
 catch (Exception $exc) {
-    $error_string = $exc->getMessage();
+    error_log($exc->getMessage());
 }
 ```
