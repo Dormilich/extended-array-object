@@ -60,12 +60,12 @@ All methods throw exceptions when they encounter an error. This effectively allo
 ## Examples
 
 * Filtering for duplicate data in a POST variable
-```
-use Dormilich\Core\ArrayObject as XArray;
+```php
+use Dormilich\Core\ArrayObject;
 
 try {
-    $group = new XArray($_POST['group']);
-    $error_string = 'Duplicate names: ' . $group->map(function ($item) {
+    $error_string = 'Duplicate names: ' . ArrayObject::from($_POST['group'])
+    ->map(function ($item) {
         return $item['name'];
     })
     ->countValues()
