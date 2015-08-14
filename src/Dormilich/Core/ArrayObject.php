@@ -29,6 +29,20 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 		}
 	}
 
+	/**
+	 * Static constructor. The difference to the constructor is that it’s immediately available for chaining.
+	 * 
+	 * @param mixed $input An array or object (with externally iterable properties)
+	 * @param integer $flags Flags to control the behaviour of the ArrayObject object.
+	 * @param string $iterator_class Specify the class that will be used for iteration of the ArrayObject object.
+	 * @param ArrayObject $previous ArrayObject of the operation that created this object.
+	 * @return self
+	 */
+	public static function from($input, $flags = 0, $iterator_class = 'ArrayIterator')
+	{
+		return new static($input, $flags, $iterator_class);
+	}
+
 	protected function create($input)
 	{
 		return new static($input, $this->getFlags(), $this->getIteratorClass(), $this);
