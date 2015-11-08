@@ -50,7 +50,7 @@ class MapTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException LogicException
+	 * @expectedException ErrorException
 	 */
 	public function testMapFailsForInvalidCallback()
 	{

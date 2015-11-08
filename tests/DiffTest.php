@@ -207,7 +207,7 @@ class DiffTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException RuntimeException
+	 * @expectedException ErrorException
 	 */
 	public function testKDiffWithInvalidNonArray()
 	{

@@ -167,7 +167,7 @@ class IntersectTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException RuntimeException
+	 * @expectedException ErrorException
 	 */
 	public function testKIntersectWithInvalidNonArray()
 	{

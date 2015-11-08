@@ -62,8 +62,19 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 		throw new \UnderflowException('There is no object available from the call history.');
 	}
 
+	/**
+	 * Convert errors to exceptions and reset the error handler while at it.
+	 * 
+	 * @param integer $code Error code.
+	 * @param string $msg Error message.
+	 * @param string $file File where the error originated.
+	 * @param integer $line Line where the error originated.
+	 * @return ErrorException
+	 */
 	public function errorHandler($code, $msg, $file, $line)
 	{
+		restore_error_handler();
+
 		throw new \ErrorException($msg, 0, $code, $file, $line);
 	}
 
@@ -98,16 +109,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 			throw new \RuntimeException('Failed to convert ArrayObject to JSON.', json_last_error());
 		}
 		return $result;
-	}
-
-	/**
-	 * Prevent accidental string conversion.
-	 * 
-	 * @throws RuntimeException
-	 */
-	public function __toString()
-	{
-		throw new \RuntimeException('ArrayObject to string conversion.');
 	}
 
 	/**
@@ -378,22 +379,16 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * 
 	 * @return ArrayObject Returns an associative array of values from array 
 	 *          as keys and their count as value. 
-	 * @throws RuntimeException A value is not a string or integer.
+	 * @throws ErrorException A value is not a string or integer.
 	 */
 	public function countValues()
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			$array = array_count_values($this->getArrayCopy());
+		$array = array_count_values($this->getArrayCopy());
 
-			restore_error_handler();
-			return $this->create($array);
-		}
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
-		}
+		restore_error_handler();
+		return $this->create($array);
 	}
 
 	/**
@@ -409,33 +404,27 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are not present in any of the other arrays. 
 	 * @throws RuntimeException Missing comparison input.
-	 * @throws RuntimeException Forced array conversion of a non-convertable 
+	 * @throws ErrorException Forced array conversion of a non-convertable 
 	 * 			value.
 	 */
 	public function diff($input)
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			$args     = func_get_args();
-			$callback = $this->getCallbackArgument($args);
-			$arg_list = $this->getArrayArgumentList($args);
+		$args     = func_get_args();
+		$callback = $this->getCallbackArgument($args);
+		$arg_list = $this->getArrayArgumentList($args);
 
-			if ($callback) {
-				$arg_list[] = $callback;
-				$array = call_user_func_array('array_udiff', $arg_list);
-			}
-			else {
-				$array = call_user_func_array('array_diff', $arg_list);
-			}
-
-			restore_error_handler();
-			return $this->create($array);
+		if ($callback) {
+			$arg_list[] = $callback;
+			$array = call_user_func_array('array_udiff', $arg_list);
 		}
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
+		else {
+			$array = call_user_func_array('array_diff', $arg_list);
 		}
+
+		restore_error_handler();
+		return $this->create($array);
 	}
 
 	/**
@@ -474,32 +463,26 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are not present in any of the other arrays. 
 	 * @throws RuntimeException Missing comparison input.
-	 * @throws RuntimeException Input cannot be converted to array keys.
+	 * @throws ErrorException Input cannot be converted to array keys.
 	 */
 	public function kdiff($input)
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			$args     = func_get_args();
-			$callback = $this->getCallbackArgument($args);
-			$arg_list = $this->getArrayKeyArgumentList($args);
+		$args     = func_get_args();
+		$callback = $this->getCallbackArgument($args);
+		$arg_list = $this->getArrayKeyArgumentList($args);
 
-			if ($callback) {
-				$arg_list[] = $callback;
-				$array = call_user_func_array('array_diff_ukey', $arg_list);
-			}
-			else {
-				$array = call_user_func_array('array_diff_key', $arg_list);
-			}
-
-			restore_error_handler();
-			return $this->create($array);
+		if ($callback) {
+			$arg_list[] = $callback;
+			$array = call_user_func_array('array_diff_ukey', $arg_list);
 		}
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
+		else {
+			$array = call_user_func_array('array_diff_key', $arg_list);
 		}
+
+		restore_error_handler();
+		return $this->create($array);
 	}
 
 	/**
@@ -544,18 +527,12 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 */
 	public function adiff($input)
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			$array = $this->interdiffAssocCall('diff', func_get_args());
+		$array = $this->interdiffAssocCall('diff', func_get_args());
 
-			restore_error_handler();
-			return $this->create($array);
-		}
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
-		}
+		restore_error_handler();
+		return $this->create($array);
 	}
 
 	/**
@@ -593,32 +570,26 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * 
 	 * @param callable $callback The callback function to use.
 	 * @return ArrayObject Returns the filtered array. 
-	 * @throws LogicException Invalid callback definition given.
+	 * @throws ErrorException Invalid callback definition given.
 	 */
 	public function filter(callable $callback)
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			if (defined('ARRAY_FILTER_USE_BOTH')) {
-				$array = array_filter($this->getArrayCopy(), $callback, \ARRAY_FILTER_USE_BOTH);
-			}
-			else {
-				$array = [];
-				foreach ($this as $key => $value) {
-					if (call_user_func($callback, $value, $key)) {
-						$array[$key] = $value;
-					}
+		if (defined('ARRAY_FILTER_USE_BOTH')) {
+			$array = array_filter($this->getArrayCopy(), $callback, \ARRAY_FILTER_USE_BOTH);
+		}
+		else {
+			$array = [];
+			foreach ($this as $key => $value) {
+				if (call_user_func($callback, $value, $key)) {
+					$array[$key] = $value;
 				}
 			}
-
-			restore_error_handler();
-			return $this->create($array);
-		} 
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
 		}
+
+		restore_error_handler();
+		return $this->create($array);
 	}
 
 	/**
@@ -628,22 +599,16 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * value, and all others will be lost. 
 	 * 
 	 * @return ArrayObject Returns the flipped array.
-	 * @throws RuntimeException Failed to flip the array.
+	 * @throws ErrorException Failed to flip the array.
 	 */
 	public function flip()
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			$array = array_flip($this->getArrayCopy());
+		$array = array_flip($this->getArrayCopy());
 
-			restore_error_handler();
-			return $this->create($array);
-		} 
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
-		}
+		restore_error_handler();
+		return $this->create($array);
 	}
 
 	/**
@@ -661,33 +626,27 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are present in all of the other arrays. 
 	 * @throws RuntimeException Missing comparison input.
-	 * @throws RuntimeException Forced array conversion of a non-convertable 
+	 * @throws ErrorException Forced array conversion of a non-convertable 
 	 * 			value.
 	 */
 	public function intersect($input)
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			$args     = func_get_args();
-			$callback = $this->getCallbackArgument($args);
-			$arg_list = $this->getArrayArgumentList($args);
+		$args     = func_get_args();
+		$callback = $this->getCallbackArgument($args);
+		$arg_list = $this->getArrayArgumentList($args);
 
-			if ($callback) {
-				$arg_list[] = $callback;
-				$array = call_user_func_array('array_uintersect', $arg_list);
-			}
-			else {
-				$array = call_user_func_array('array_intersect', $arg_list);
-			}
-
-			restore_error_handler();
-			return $this->create($array);
+		if ($callback) {
+			$arg_list[] = $callback;
+			$array = call_user_func_array('array_uintersect', $arg_list);
 		}
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
+		else {
+			$array = call_user_func_array('array_intersect', $arg_list);
 		}
+
+		restore_error_handler();
+		return $this->create($array);
 	}
 
 	/**
@@ -731,32 +690,26 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are present in all of the other arrays. 
 	 * @throws RuntimeException Missing comparison input.
-	 * @throws RuntimeException Input cannot be converted to array keys.
+	 * @throws ErrorException Input cannot be converted to array keys.
 	 */
 	public function kintersect($input)
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			$args     = func_get_args();
-			$callback = $this->getCallbackArgument($args);
-			$arg_list = $this->getArrayKeyArgumentList($args);
+		$args     = func_get_args();
+		$callback = $this->getCallbackArgument($args);
+		$arg_list = $this->getArrayKeyArgumentList($args);
 
-			if ($callback) {
-				$arg_list[] = $callback;
-				$array = call_user_func_array('array_intersect_ukey', $arg_list);
-			}
-			else {
-				$array = call_user_func_array('array_intersect_key', $arg_list);
-			}
-
-			restore_error_handler();
-			return $this->create($array);
+		if ($callback) {
+			$arg_list[] = $callback;
+			$array = call_user_func_array('array_intersect_ukey', $arg_list);
 		}
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
+		else {
+			$array = call_user_func_array('array_intersect_key', $arg_list);
 		}
+
+		restore_error_handler();
+		return $this->create($array);
 	}
 
 	/**
@@ -807,18 +760,12 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 */
 	public function aintersect($input)
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			$array = $this->interdiffAssocCall('intersect', func_get_args());
+		$array = $this->interdiffAssocCall('intersect', func_get_args());
 
-			restore_error_handler();
-			return $this->create($array);
-		}
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
-		}
+		restore_error_handler();
+		return $this->create($array);
 	}
 
 	/**
@@ -856,23 +803,16 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * @return string Returns a string containing a string representation of 
 	 *          all the array elements in the same order, with the glue string 
 	 *          between each element. 
-	 * @throws RuntimeExceeption Forced string conversion of a non-scalar value.
+	 * @throws ErrorExceeption Forced string conversion of a non-scalar value.
 	 */
 	public function join($glue = '')
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			$string = implode($glue, $this->getArrayCopy());
+		$string = implode($glue, $this->getArrayCopy());
 
-			restore_error_handler();
-			return $string;
-		}
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			// e.g. Notice: array to string conversion
-			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
-		}
+		restore_error_handler();
+		return $string;
 	}
 
 	/**
@@ -907,24 +847,18 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 */
 	public function map(callable $callback, $preserve_keys = false)
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			$values = $this->getArrayCopy();
-			$keys   = array_keys($values);
-			$result = array_map($callback, $values, $keys);
+		$values = $this->getArrayCopy();
+		$keys   = array_keys($values);
+		$result = array_map($callback, $values, $keys);
 
-			if ($preserve_keys) {
-				$result = array_combine($keys, $result);
-			}
-
-			restore_error_handler();
-			return $this->create($result);
-		} 
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
+		if ($preserve_keys) {
+			$result = array_combine($keys, $result);
 		}
+
+		restore_error_handler();
+		return $this->create($result);
 	}
 
 	/**
@@ -939,23 +873,17 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * 
 	 * @param mixed $input The first array from which elements will be extracted. 
 	 * @return ArrayObject Returns an array on success.
-	 * @throws RuntimeException An error occurred.
+	 * @throws ErrorException An error occurred.
 	 */
 	public function merge($input)
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			$args  = $this->getArrayArgumentList(func_get_args());
-			$array = call_user_func_array('array_replace', $args);
+		$args  = $this->getArrayArgumentList(func_get_args());
+		$array = call_user_func_array('array_replace', $args);
 
-			restore_error_handler();
-			return $this->create($array);
-		} 
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
-		}
+		restore_error_handler();
+		return $this->create($array);
 	}
 
 	/**
@@ -1027,37 +955,31 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * @param mixed $initial It will be used at the beginning of the process, 
 	 *          or as a final result in case the array is empty. 
 	 * @return mixed Returns the resulting value. 
-	 * @throws LogicException Invalid callback definition given.
+	 * @throws ErrorException Invalid callback definition given.
 	 */
 	public function reduce(callable $callback)
 	{
-		try {
-			if (func_num_args() === 1) {
-				$initial = NULL;
-			}
-			else {
-				$initial = func_get_arg(1);
-			}
-
-			if ($this->count() === 0) {
-				return $initial;
-			}
-
-			set_error_handler([$this, 'errorHandler']);
-
-			$array = $this->getArrayCopy();
-			if (func_num_args() === 1) {
-				$initial = array_shift($array);
-			}
-			$result = array_reduce($array, $callback, $initial);
-
-			restore_error_handler();
-			return $result;
-		} 
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
+		if (func_num_args() === 1) {
+			$initial = NULL;
 		}
+		else {
+			$initial = func_get_arg(1);
+		}
+
+		if ($this->count() === 0) {
+			return $initial;
+		}
+
+		set_error_handler([$this, 'errorHandler']);
+
+		$array = $this->getArrayCopy();
+		if (func_num_args() === 1) {
+			$initial = array_shift($array);
+		}
+		$result = array_reduce($array, $callback, $initial);
+
+		restore_error_handler();
+		return $result;
 	}
 
 	/**
@@ -1070,31 +992,25 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * 
 	 * @param mixed $input The array from which elements will be extracted. 
 	 * @return ArrayObject Returns an array on success.
-	 * @throws RuntimeException An error occurred.
+	 * @throws ErrorException An error occurred.
 	 */
 	public function replace($input)
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			$xargs    = new self(func_get_args());
-			$arg_list = $xargs
-				->map(function ($arg) {
-					return $this->xkintersect($arg)->getArrayCopy();
-				})
-				->filter('count')
-				->unshift($this->getArrayCopy())
-				->getArrayCopy()
-			;
-			$array = call_user_func_array('array_replace', $arg_list);
+		$xargs    = new self(func_get_args());
+		$arg_list = $xargs
+			->map(function ($arg) {
+				return $this->xkintersect($arg)->getArrayCopy();
+			})
+			->filter('count')
+			->unshift($this->getArrayCopy())
+			->getArrayCopy()
+		;
+		$array = call_user_func_array('array_replace', $arg_list);
 
-			restore_error_handler();
-			return $this->create($array);
-		} 
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
-		}
+		restore_error_handler();
+		return $this->create($array);
 	}
 
 	/**
@@ -1234,25 +1150,19 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * 			place specified by the offset. Note that keys in replacement 
 	 * 			array are not preserved. 
 	 * @return ArrayObject Returns the array consisting of the extracted elements. 
-	 * @throws RuntimeException Too many arguments.
+	 * @throws ErrorException Too many arguments.
 	 */
 	public function splice($offset)
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			$array = $this->getArrayCopy();
-			$args  = array_merge([&$array], func_get_args());
-			$slice = call_user_func_array('array_splice', $args);
-			$this->exchangeArray($array);
+		$array = $this->getArrayCopy();
+		$args  = array_merge([&$array], func_get_args());
+		$slice = call_user_func_array('array_splice', $args);
+		$this->exchangeArray($array);
 
-			restore_error_handler();
-			return $this->create($slice);
-		} 
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
-		}
+		restore_error_handler();
+		return $this->create($slice);
 	}
 
 	/**
@@ -1327,22 +1237,16 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 *          considered to be respectively less than, equal to, or 
 	 *          greater than the second. 
 	 * @return ArrayObject Returns the array object.
-	 * @throws LogicException Invalid callback definition given.
+	 * @throws ErrorException Invalid callback definition given.
 	 */
 	public function uasort(callable $cmp_function)
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			parent::uasort($cmp_function);
+		parent::uasort($cmp_function);
 
-			restore_error_handler();
-			return $this;
-		} 
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
-		}
+		restore_error_handler();
+		return $this;
 	}
 
 	/**
@@ -1360,18 +1264,12 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 */
 	public function uksort(callable $cmp_function)
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			parent::uksort($cmp_function);
+		parent::uksort($cmp_function);
 
-			restore_error_handler();
-			return $this;
-		} 
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
-		}
+		restore_error_handler();
+		return $this;
 	}
 
 	/**
@@ -1380,22 +1278,16 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * @param integer $sort_flags The optional second parameter sort_flags 
 	 *          may be used to modify the sorting behavior.
 	 * @return ArrayObject Returns the filtered array. 
-	 * @throws RuntimeExceeption Forced string conversion of a non-scalar value.
+	 * @throws ErrorExceeption Forced string conversion of a non-scalar value.
 	 */
 	public function unique($sort_flags = \SORT_STRING)
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			$array = array_unique($this->getArrayCopy(), $sort_flags);
+		$array = array_unique($this->getArrayCopy(), $sort_flags);
 
-			restore_error_handler();
-			return $this->create($array);
-		} 
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \RuntimeException($exc->getMessage(), $exc->getCode(), $exc);
-		}
+		restore_error_handler();
+		return $this->create($array);
 	}
 
 	/**
@@ -1424,31 +1316,25 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 *          it will be passed as the third parameter to the callback 
 	 *          instead of the array. 
 	 * @return ArrayObject Returns the array on success.
-	 * @throws LogicException Invalid callback definition given.
+	 * @throws ErrorException Invalid callback definition given.
 	 * @throws RuntimeException Execution failed.
 	 */
 	public function walk(callable $callback, $userdata = NULL)
 	{
-		try {
-			set_error_handler([$this, 'errorHandler']);
+		set_error_handler([$this, 'errorHandler']);
 
-			$array = $this->getArrayCopy();
+		$array = $this->getArrayCopy();
 
-			if (NULL === $userdata) {
-				$userdata = $array;
-			}
-			if (true !== array_walk($array, $callback, $userdata)) {
-				restore_error_handler();
-				throw new \RuntimeException('Execution of ' . __METHOD__ . ' failed.');
-			}
-			$this->exchangeArray($array);
-
-			restore_error_handler();
-			return $this;
-		} 
-		catch (\ErrorException $exc) {
-			restore_error_handler();
-			throw new \LogicException($exc->getMessage(), $exc->getCode(), $exc);
+		if (NULL === $userdata) {
+			$userdata = $array;
 		}
+		if (true !== array_walk($array, $callback, $userdata)) {
+			restore_error_handler();
+			throw new \RuntimeException('Execution of ' . __METHOD__ . ' failed.');
+		}
+		$this->exchangeArray($array);
+
+		restore_error_handler();
+		return $this;
 	}
 }

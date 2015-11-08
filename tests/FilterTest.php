@@ -94,7 +94,7 @@ class FilterTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException LogicException
+	 * @expectedException ErrorException
 	 */
 	public function testFilterFailsForInvalidCallback()
 	{
