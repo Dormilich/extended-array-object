@@ -43,6 +43,12 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 		return new static($input, $flags, $iterator_class);
 	}
 
+	/**
+	 * Create a new instance using the settings from the current instance.
+	 * 
+	 * @param mixed $input An array or object (with externally iterable properties)
+	 * @return static An new instance of the currently used class.
+	 */
 	protected function create($input)
 	{
 		return new static($input, $this->getFlags(), $this->getIteratorClass(), $this);
@@ -63,19 +69,23 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	}
 
 	/**
-	 * Convert errors to exceptions and reset the error handler while at it.
+	 * Convert errors to exceptions and reset the error handler while at it. 
+	 * The nested ErrorException serves as means to get a hold on the line the 
+	 * original error occurred at.
 	 * 
 	 * @param integer $code Error code.
 	 * @param string $msg Error message.
 	 * @param string $file File where the error originated.
 	 * @param integer $line Line where the error originated.
-	 * @return ErrorException
+	 * @return RuntimeException
 	 */
 	public function errorHandler($code, $msg, $file, $line)
 	{
 		restore_error_handler();
 
-		throw new \ErrorException($msg, 0, $code, $file, $line);
+		$error = new \ErrorException($msg, 0, $code, $file, $line);
+
+		throw new \RuntimeException($msg, $code, $error);
 	}
 
 	/**
@@ -379,7 +389,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * 
 	 * @return ArrayObject Returns an associative array of values from array 
 	 *          as keys and their count as value. 
-	 * @throws ErrorException A value is not a string or integer.
+	 * @throws RuntimeException A value is not a string or integer.
 	 */
 	public function countValues()
 	{
@@ -404,7 +414,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are not present in any of the other arrays. 
 	 * @throws RuntimeException Missing comparison input.
-	 * @throws ErrorException Forced array conversion of a non-convertable 
+	 * @throws RuntimeException Forced array conversion of a non-convertable 
 	 * 			value.
 	 */
 	public function diff($input)
@@ -463,7 +473,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are not present in any of the other arrays. 
 	 * @throws RuntimeException Missing comparison input.
-	 * @throws ErrorException Input cannot be converted to array keys.
+	 * @throws RuntimeException Input cannot be converted to array keys.
 	 */
 	public function kdiff($input)
 	{
@@ -570,7 +580,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * 
 	 * @param callable $callback The callback function to use.
 	 * @return ArrayObject Returns the filtered array. 
-	 * @throws ErrorException Invalid callback definition given.
+	 * @throws RuntimeException Invalid callback definition given.
 	 */
 	public function filter(callable $callback)
 	{
@@ -599,7 +609,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * value, and all others will be lost. 
 	 * 
 	 * @return ArrayObject Returns the flipped array.
-	 * @throws ErrorException Failed to flip the array.
+	 * @throws RuntimeException Failed to flip the array.
 	 */
 	public function flip()
 	{
@@ -626,7 +636,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are present in all of the other arrays. 
 	 * @throws RuntimeException Missing comparison input.
-	 * @throws ErrorException Forced array conversion of a non-convertable 
+	 * @throws RuntimeException Forced array conversion of a non-convertable 
 	 * 			value.
 	 */
 	public function intersect($input)
@@ -690,7 +700,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * @return ArrayObject Returns an array containing all the entries from 
 	 * 			the array that are present in all of the other arrays. 
 	 * @throws RuntimeException Missing comparison input.
-	 * @throws ErrorException Input cannot be converted to array keys.
+	 * @throws RuntimeException Input cannot be converted to array keys.
 	 */
 	public function kintersect($input)
 	{
@@ -873,7 +883,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * 
 	 * @param mixed $input The first array from which elements will be extracted. 
 	 * @return ArrayObject Returns an array on success.
-	 * @throws ErrorException An error occurred.
+	 * @throws RuntimeException An error occurred.
 	 */
 	public function merge($input)
 	{
@@ -955,7 +965,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * @param mixed $initial It will be used at the beginning of the process, 
 	 *          or as a final result in case the array is empty. 
 	 * @return mixed Returns the resulting value. 
-	 * @throws ErrorException Invalid callback definition given.
+	 * @throws RuntimeException Invalid callback definition given.
 	 */
 	public function reduce(callable $callback)
 	{
@@ -992,7 +1002,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * 
 	 * @param mixed $input The array from which elements will be extracted. 
 	 * @return ArrayObject Returns an array on success.
-	 * @throws ErrorException An error occurred.
+	 * @throws RuntimeException An error occurred.
 	 */
 	public function replace($input)
 	{
@@ -1150,7 +1160,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * 			place specified by the offset. Note that keys in replacement 
 	 * 			array are not preserved. 
 	 * @return ArrayObject Returns the array consisting of the extracted elements. 
-	 * @throws ErrorException Too many arguments.
+	 * @throws RuntimeException Too many arguments.
 	 */
 	public function splice($offset)
 	{
@@ -1237,9 +1247,9 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 *          considered to be respectively less than, equal to, or 
 	 *          greater than the second. 
 	 * @return ArrayObject Returns the array object.
-	 * @throws ErrorException Invalid callback definition given.
+	 * @throws RuntimeException Invalid callback definition given.
 	 */
-	public function uasort(callable $cmp_function)
+	public function uasort($cmp_function)
 	{
 		set_error_handler([$this, 'errorHandler']);
 
@@ -1262,7 +1272,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 * @return ArrayObject Returns the array object.
 	 * @throws LogicException Invalid callback definition given.
 	 */
-	public function uksort(callable $cmp_function)
+	public function uksort($cmp_function)
 	{
 		set_error_handler([$this, 'errorHandler']);
 
@@ -1316,7 +1326,7 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	 *          it will be passed as the third parameter to the callback 
 	 *          instead of the array. 
 	 * @return ArrayObject Returns the array on success.
-	 * @throws ErrorException Invalid callback definition given.
+	 * @throws RuntimeException Invalid callback definition given.
 	 * @throws RuntimeException Execution failed.
 	 */
 	public function walk(callable $callback, $userdata = NULL)

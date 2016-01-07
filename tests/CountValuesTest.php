@@ -26,7 +26,7 @@ class CountValuesTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ErrorException
+     * @expectedException RuntimeException
      */
     public function testCountValuesWithNonScalarValues()
     {
