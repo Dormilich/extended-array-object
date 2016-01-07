@@ -970,26 +970,20 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	public function reduce(callable $callback)
 	{
 		if (func_num_args() === 1) {
-			$initial = NULL;
+			$carry = $this->shift();
 		}
 		else {
-			$initial = func_get_arg(1);
-		}
-
-		if ($this->count() === 0) {
-			return $initial;
+			$carry = func_get_arg(1);
 		}
 
 		set_error_handler([$this, 'errorHandler']);
 
-		$array = $this->getArrayCopy();
-		if (func_num_args() === 1) {
-			$initial = array_shift($array);
+		foreach ($this as $key => $value) {
+			$carry = call_user_func($callback, $carry, $value, $key);
 		}
-		$result = array_reduce($array, $callback, $initial);
 
 		restore_error_handler();
-		return $result;
+		return $carry;
 	}
 
 	/**

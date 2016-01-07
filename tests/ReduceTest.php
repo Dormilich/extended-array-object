@@ -117,4 +117,18 @@ class ReduceTest extends PHPUnit_Framework_TestCase
 
 		$this->assertSame(6, $product);
 	}
+
+	/**
+	 * @depends testReduceSkipsInitialValueIfNoneGiven
+	 */
+	public function testReduceCanUseArrayKeysInCallback()
+	{
+		$xao     = new XArray(['a' => 1, 'b' => 2, 'c' => 3]);
+		// this would return 0 if the default initial value of NULL gets paased
+		$string = $xao->reduce(function ($carry, $value, $key) {
+			return $carry .= $key . ':' . $value . '|';
+		}, '|');
+
+		$this->assertSame('|a:1|b:2|c:3|', $string);
+	}
 }
