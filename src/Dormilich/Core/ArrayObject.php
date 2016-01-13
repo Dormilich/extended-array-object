@@ -3,9 +3,27 @@
 
 namespace Dormilich\Core;
 
+use Dormilich\Traits;
+
 class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterface
 {
 	private $previous;
+
+	use Traits\ArrayChangeKeyCase,
+		Traits\ArrayContains,
+		Traits\ArrayCountValues,
+		Traits\ArrayFilter,
+		Traits\ArrayFlip,
+		Traits\ArrayJoin,
+		Traits\ArrayKeys,
+		Traits\ArrayMap,
+		Traits\ArrayRand,
+		Traits\ArrayReverse,
+		Traits\ArraySearch,
+		Traits\ArraySlice,
+		Traits\ArrayUnique,
+		Traits\ArrayValues
+	;
 
 	/**
 	 * Create ArrayObject instance according to the native constructor 
@@ -321,36 +339,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	}
 
 	/**
-	 * Returns an array with all keys from the array lowercased or uppercased. 
-	 * Numbered indices are left as is. 
-	 * 
-	 * If the case parameter is invalid then its default value (CASE_LOWER) 
-	 * will be used instead.
-	 * 
-	 * @see http://php.net/manual/en/function.array-change-key-case.php#107715
-	 * @param integer $case Either CASE_UPPER or CASE_LOWER (default).
-	 * @return ArrayObject Returns an array with its keys lower or uppercased.
-	 */
-	public function changeKeyCase($case = \CASE_LOWER)
-	{
-		$flag = filter_var($case, \FILTER_VALIDATE_INT, [
-			'options' => [
-				'min_range' => 0, 
-				'max_range' => 1, 
-				'default'   => \CASE_LOWER, 
-			], 
-		]);
-		$case  = $flag === \CASE_LOWER ? \MB_CASE_LOWER : \MB_CASE_UPPER;
-		$array = [];
-
-		foreach ($this as $key => $value) {
-			$array[mb_convert_case($key, $case, 'UTF-8')] = $value;
-		}
-
-		return $this->create($array);
-	}
-
-	/**
 	 * Merges the elements of the array with one or more arrays together so 
 	 * that the values of one are appended to the end of the previous one. 
 	 * For elements with the same string key, the later value overwrites the 
@@ -364,40 +352,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 		$args  = $this->getArrayArgumentList(func_get_args());
 		$array = call_user_func_array('array_merge', $args);
 
-		return $this->create($array);
-	}
-
-	/**
-	 * Checks if a value exists in the array using loose comparison unless 
-	 * strict is set.
-	 * 
-	 * @param mixed $needle The searched value.
-	 * @param bool $strict If the parameter strict is set to TRUE then contains() 
-	 *          will also check the types of the needle in the array.
-	 * @return boolean Returns TRUE if needle is found in the array, FALSE otherwise. 
-	 */
-	public function contains($needle, $strict = false)
-	{
-		$flag  = filter_var($strict, \FILTER_VALIDATE_BOOLEAN);
-
-		return in_array($needle, $this->getArrayCopy(), $flag);
-	}
-
-	/**
-	 * Returns an array using the values of the array as keys and their 
-	 * frequency in the array as values. 
-	 * 
-	 * @return ArrayObject Returns an associative array of values from array 
-	 *          as keys and their count as value. 
-	 * @throws RuntimeException A value is not a string or integer.
-	 */
-	public function countValues()
-	{
-		set_error_handler([$this, 'errorHandler']);
-
-		$array = array_count_values($this->getArrayCopy());
-
-		restore_error_handler();
 		return $this->create($array);
 	}
 
@@ -571,54 +525,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 			return $obj->adiff($self, func_get_arg(1), func_get_arg(2));
 		}
 		throw new \RuntimeException('Invalid number of arguments given. ' . __METHOD__ . ' requires exactly 1 or 3 arguments.');
-	}
-
-	/**
-	 * Iterates over each value in the array passing them to the callback 
-	 * function. If the callback function returns true, the current value from 
-	 * the array is returned into the result array. Array keys are preserved. 
-	 * 
-	 * @param callable $callback The callback function to use.
-	 * @return ArrayObject Returns the filtered array. 
-	 * @throws RuntimeException Invalid callback definition given.
-	 */
-	public function filter(callable $callback)
-	{
-		set_error_handler([$this, 'errorHandler']);
-
-		if (defined('ARRAY_FILTER_USE_BOTH')) {
-			$array = array_filter($this->getArrayCopy(), $callback, \ARRAY_FILTER_USE_BOTH);
-		}
-		else {
-			$array = [];
-			foreach ($this as $key => $value) {
-				if (call_user_func($callback, $value, $key)) {
-					$array[$key] = $value;
-				}
-			}
-		}
-
-		restore_error_handler();
-		return $this->create($array);
-	}
-
-	/**
-	 * Exchanges all keys with their associated values in the array.
-	 * 
-	 * If a value has several occurrences, the latest key will be used as its 
-	 * value, and all others will be lost. 
-	 * 
-	 * @return ArrayObject Returns the flipped array.
-	 * @throws RuntimeException Failed to flip the array.
-	 */
-	public function flip()
-	{
-		set_error_handler([$this, 'errorHandler']);
-
-		$array = array_flip($this->getArrayCopy());
-
-		restore_error_handler();
-		return $this->create($array);
 	}
 
 	/**
@@ -807,71 +713,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	}
 
 	/**
-	 * Join the array’s elements with a string.
-	 * 
-	 * @param string $glue Defaults to an empty string. 
-	 * @return string Returns a string containing a string representation of 
-	 *          all the array elements in the same order, with the glue string 
-	 *          between each element. 
-	 * @throws ErrorExceeption Forced string conversion of a non-scalar value.
-	 */
-	public function join($glue = '')
-	{
-		set_error_handler([$this, 'errorHandler']);
-
-		$string = implode($glue, $this->getArrayCopy());
-
-		restore_error_handler();
-		return $string;
-	}
-
-	/**
-	 * Return all the keys or a subset of the keys of the array.
-	 * 
-	 * @param mixed $search_value If specified, then only keys containing 
-	 * 			these values are returned. 
-	 * @param boolean $strict Determines if strict comparison (===) should be 
-	 * 			used during the search. 
-	 * @return ArrayObject Returns an array of all the (specified) keys in the array.  
-	 */
-	public function keys()
-	{
-		$args = func_get_args();
-		array_unshift($args, $this->getArrayCopy());
-		$keys = call_user_func_array('array_keys', $args);
-
-		return $this->create($keys);
-	}
-
-	/**
-	 * Returns an array containing all the elements of the array after 
-	 * applying the callback function to each one.
-	 * 
-	 * @param callable $callback Callback function to run for each element 
-	 *          in the array. Receives the element’s value and key as parameters.
-	 * @param boolean $preserve_keys When set to TRUE keys will be preserved. 
-	 * 			Default is FALSE which will reindex the array numerically.
-	 * @return ArrayObject Returns an array containing all the elements of the 
-	 *          array after applying the callback function to each one. 
-	 * @throws LogicException Invalid callback definition given.
-	 */
-	public function map(callable $callback, $preserve_keys = false)
-	{
-		set_error_handler([$this, 'errorHandler']);
-
-		$values = $this->getArrayCopy();
-		$keys   = array_keys($values);
-		$result = array_map($callback, $values, $keys);
-
-		if ($preserve_keys) {
-			$result = array_combine($keys, $result);
-		}
-
-		restore_error_handler();
-		return $this->create($result);
-	}
-
-	/**
 	 * Replaces the values of the array with values having the same keys in 
 	 * each of the following arrays. If a key from the first array exists in 
 	 * the second array, its value will be replaced by the value from the 
@@ -924,32 +765,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 			$this->append($arg);
 		}
 		return $this;
-	}
-
-	/**
-	 * Picks one or more random entries out of an array, and returns them.
-	 * Num must be a value between 1 and the array length.
-	 * 
-	 * @param integer $num Specifies how many entries should be picked. 
-	 * @return ArrayObject Returns an array of the selected entries.
-	 * @throws InvalidArgumentException Num argument is invalid or outside 
-	 * 			the allowed range.
-	 */
-	public function rand($num = 1)
-	{
-		$length = filter_var($num, \FILTER_VALIDATE_INT, ['options' => [
-			'min_range' => 1, 
-			'max_range' => $this->count(), 
-		]]);
-		// extra test since TRUE would pass the int validation
-		if (!$length or !is_numeric($num)) {
-			throw new \InvalidArgumentException('Invalid length specifier given.');
-		}
-		$array = $this->getArrayCopy();
-		$keys  = (array) array_rand($array, $length);
-		$array = array_intersect_key($array, array_flip($keys));
-
-		return $this->create($array);
 	}
 
 	/**
@@ -1018,40 +833,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 	}
 
 	/**
-	 * Return an array with elements in reverse order.
-	 * 
-	 * @param boolean $preserve_keys If set to TRUE numeric keys are preserved. 
-	 *          Non-numeric keys are not affected by this setting and will 
-	 *          always be preserved. 
-	 * @return ArrayObject Returns the reversed array. 
-	 */
-	public function reverse($preserve_keys = false)
-	{
-		$flag  = filter_var($preserve_keys, \FILTER_VALIDATE_BOOLEAN);
-		$array = array_reverse($this->getArrayCopy(), $flag);
-
-		return $this->create($array);
-	}
-
-	/**
-	 * Searches the array for a given value and returns the corresponding key 
-	 * if successful.
-	 * 
-	 * @param mixed $search_value The searched value. If search_value is a 
-	 * 			string, the comparison is done in a case-sensitive manner. 
-	 * @param boolean $strict If the third parameter strict is set to TRUE 
-	 * 			then the search() method will search for identical elements 
-	 * 			in the array. This means it will also check the types of the 
-	 * 			search_value in the array, and objects must be the same instance. 
-	 * @return mixed Returns the key for search_value if it is found in the 
-	 * 			array, FALSE otherwise. 
-	 */
-	public function search($search_value, $strict = false)
-	{
-		return array_search($search_value, $this->getArrayCopy(), $strict);
-	}
-
-	/**
 	 * Shifts the first value of the array off and returns it, shortening the 
 	 * array by one element and moving everything down. All numerical array 
 	 * keys will be modified to start counting from zero while literal keys 
@@ -1103,32 +884,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 		$this->exchangeArray($array);
 
 		return $this;
-	}
-
-	/**
-	 * Returns the sequence of elements from the array object as specified by 
-	 * the offset and length parameters. 
-	 * 
-	 * @param integer $offset If offset is non-negative, the sequence will 
-	 *          start at that offset in the array. If offset is negative, the 
-	 *          sequence will start that far from the end of the array. 
-	 * @param integer $length If length is given and is positive, then the 
-	 *          sequence will have up to that many elements in it. If the 
-	 *          array is shorter than the length, then only the available 
-	 *          array elements will be present. If length is given and is 
-	 *          negative then the sequence will stop that many elements from 
-	 *          the end of the array. If it is omitted, then the sequence will 
-	 *          have everything from offset up until the end of the array. 
-	 * @param boolean $preserve_keys Note that slice() will reorder and reset 
-	 *          the numeric array indices by default. You can change this 
-	 *          behaviour by setting preserve_keys to TRUE. 
-	 * @return ArrayObject Returns the slice. 
-	 */
-	public function slice($offset, $length = NULL, $preserve_keys = false)
-	{
-		$array = array_slice($this->getArrayCopy(), $offset, $length, $preserve_keys);
-
-		return $this->create($array);
 	}
 
 	/**
@@ -1274,36 +1029,6 @@ class ArrayObject extends \ArrayObject implements \JsonSerializable, ArrayInterf
 
 		restore_error_handler();
 		return $this;
-	}
-
-	/**
-	 * returns a new array without duplicate values. 
-	 * 
-	 * @param integer $sort_flags The optional second parameter sort_flags 
-	 *          may be used to modify the sorting behavior.
-	 * @return ArrayObject Returns the filtered array. 
-	 * @throws ErrorExceeption Forced string conversion of a non-scalar value.
-	 */
-	public function unique($sort_flags = \SORT_STRING)
-	{
-		set_error_handler([$this, 'errorHandler']);
-
-		$array = array_unique($this->getArrayCopy(), $sort_flags);
-
-		restore_error_handler();
-		return $this->create($array);
-	}
-
-	/**
-	 * Returns all the values from the array and indexes the array numerically. 
-	 * 
-	 * @return ArrayObject The array of the values. 
-	 */
-	public function values()
-	{
-		$values = array_values($this->getArrayCopy());
-
-		return $this->create($values);
 	}
 
 	/**
