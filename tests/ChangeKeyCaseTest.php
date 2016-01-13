@@ -47,6 +47,20 @@ class ChangeKeyCaseTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, (array) $obj);
 	}
 
+	public function testChangeKeyCaseToTitle()
+	{
+		$xao = new XArray([
+			'fOo' => 1, 
+			'Bar' => 2, 
+		]);
+		$expected = [
+			'Foo' => 1, 
+			'Bar' => 2, 
+		];
+		$obj = $xao->changeKeyCase(\MB_CASE_TITLE);
+		$this->assertEquals($expected, (array) $obj);
+	}
+
 	public function testChangeKeyCaseUsingDefault()
 	{
 		$xao = new XArray([

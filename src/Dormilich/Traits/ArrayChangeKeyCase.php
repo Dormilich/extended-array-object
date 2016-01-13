@@ -12,7 +12,7 @@ trait ArrayChangeKeyCase
      * will be used instead.
      * 
      * @see http://php.net/manual/en/function.array-change-key-case.php#107715
-     * @param integer $case Either CASE_UPPER or CASE_LOWER (default).
+     * @param integer $case Either CASE_UPPER, CASE_LOWER (default), or MB_CASE_TITLE.
      * @return ArrayObject Returns an array with its keys lower or uppercased.
      */
     public function changeKeyCase($case = \CASE_LOWER)
@@ -24,7 +24,9 @@ trait ArrayChangeKeyCase
                 'default'   => \CASE_LOWER, 
             ], 
         ]);
-        $case  = $flag === \CASE_LOWER ? \MB_CASE_LOWER : \MB_CASE_UPPER;
+        if ($case !== \MB_CASE_TITLE) {
+            $case  = $flag === \CASE_LOWER ? \MB_CASE_LOWER : \MB_CASE_UPPER;
+        }
         $array = [];
 
         foreach ($this as $key => $value) {
